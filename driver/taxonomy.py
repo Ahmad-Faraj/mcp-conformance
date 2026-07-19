@@ -25,6 +25,7 @@ DATA = Path(__file__).resolve().parent.parent / "data"
 STARTUP = {
     "install-not-found": ("blocker", "package unresolvable; server unusable"),
     "install-error": ("blocker", "dependency/build failure; server unusable"),
+    "needs-auth-or-config": ("config", "requires credentials/config not declared as such; not a defect but a usability gap"),
     "crash-python-exception": ("blocker", "uncaught exception at startup"),
     "crash-with-error-output": ("blocker", "process aborts before handshake"),
     "crash-exit-1": ("blocker", "nonzero exit before handshake"),
