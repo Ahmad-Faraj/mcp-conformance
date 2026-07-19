@@ -29,6 +29,47 @@ OUT = DATA / "probe_results.jsonl"
 NODE_IMAGE = "node:22-slim"
 UV_IMAGE = "ghcr.io/astral-sh/uv:python3.12-bookworm-slim"
 
+# Substrings that mean "the Docker engine failed", not "the package/server failed".
+# A prime/probe that dies for these reasons must NOT be recorded as install-error;
+# it is a harness-environment fault and the server is retried once the engine heals.
+DOCKER_ERR_SIGNS = (
+    "cannot connect to the docker daemon",
+    "error during connect",
+    "500 internal server error",
+    "the system cannot find the file specified",  # dead named pipe on Windows
+    "is the docker daemon running",
+    "docker daemon is not running",
+    "request returned internal server error",
+    "context deadline exceeded",
+)
+
+
+def is_docker_error(text: str) -> bool:
+    t = (text or "").lower()
+    return any(s in t for s in DOCKER_ERR_SIGNS)
+
+
+def docker_healthy() -> bool:
+    try:
+        r = subprocess.run(["docker", "version", "--format", "{{.Server.Version}}"],
+                           capture_output=True, text=True, timeout=25)
+        return r.returncode == 0 and bool(r.stdout.strip())
+    except Exception:  # noqa: BLE001
+        return False
+
+
+def wait_for_docker(max_wait: float = 600.0) -> bool:
+    """Block until the engine answers again (up to max_wait). Used to ride out a
+    transient engine crash without recording false failures."""
+    import time
+    waited = 0.0
+    while waited < max_wait:
+        if docker_healthy():
+            return True
+        time.sleep(10)
+        waited += 10
+    return False
+
 
 def requires_input(items) -> bool:
     """True if any declared variable/argument is marked required with no default."""
@@ -146,23 +187,41 @@ def main():
     done = 0
 
     def run_one(c):
-        primed = None
-        if args.offline_probe:
-            # Populate cache online (no probing), then measure fully offline so
-            # no server code has network access during the conformance probe.
-            proc = subprocess.run(prime_cmd(c["pkg"]), capture_output=True,
-                                  text=True, timeout=args.timeout + 120)
-            primed = proc.returncode == 0
-            if not primed:
-                res = {"started": False, "handshake_ok": False,
-                       "failure_class": "install-error",
-                       "checks": [{"id": "server-initialize", "verdict": "fail",
-                                   "detail": (proc.stderr or "")[-300:]}]}
-                res.update(_tag(c, primed))
-                return res
-        res = probe(docker_cmd(c["pkg"], offline=args.offline_probe), args.timeout)
-        res.update(_tag(c, primed))
-        return res
+        # Retry the whole server up to 3 times if the DOCKER ENGINE (not the
+        # package) fails, waiting for the engine to heal in between. This prevents
+        # a transient engine crash from being mis-recorded as install-error.
+        for attempt in range(3):
+            primed = None
+            if args.offline_probe:
+                # Populate cache online (no probing), then measure fully offline so
+                # no server code has network access during the conformance probe.
+                proc = subprocess.run(prime_cmd(c["pkg"]), capture_output=True,
+                                      text=True, timeout=args.timeout + 120)
+                primed = proc.returncode == 0
+                if not primed:
+                    if is_docker_error(proc.stderr):
+                        if wait_for_docker():
+                            continue  # engine healed; retry this server
+                        return {"_docker_dead": True, **_tag(c, primed)}
+                    res = {"started": False, "handshake_ok": False,
+                           "failure_class": "install-error",
+                           "checks": [{"id": "server-initialize", "verdict": "fail",
+                                       "detail": (proc.stderr or "")[-300:]}]}
+                    res.update(_tag(c, primed))
+                    return res
+            res = probe(docker_cmd(c["pkg"], offline=args.offline_probe), args.timeout)
+            # A launch failure whose stderr looks like an engine fault is retried too.
+            launch_err = next((ch for ch in res.get("checks", [])
+                               if ch["id"] == "launch"), None)
+            if launch_err and is_docker_error("\n".join(res.get("stderr_tail") or [])
+                                              + launch_err.get("detail", "")):
+                if wait_for_docker():
+                    continue
+                return {"_docker_dead": True, **_tag(c, primed)}
+            res.update(_tag(c, primed))
+            return res
+        # Exhausted retries with the engine still misbehaving.
+        return {"_docker_dead": True, **_tag(c, None)}
 
     commit = harness_commit()
 
@@ -187,6 +246,7 @@ def main():
                         "cmd": res.get("cmd"), "transcript": tr}, ensure_ascii=False),
             encoding="utf-8")
 
+    dead_streak = 0
     with OUT.open("a", encoding="utf-8") as out, ThreadPoolExecutor(args.workers) as ex:
         futures = {ex.submit(run_one, c): c for c in sample}
         for fut in as_completed(futures):
@@ -197,6 +257,20 @@ def main():
                 res = {"server_name": c["name"], "identifier": c["pkg"]["identifier"],
                        "registry_type": c["pkg"]["registryType"], "batch_error": str(e)}
             with lock:
+                # Engine-dead results are NOT recorded: they carry no information
+                # about the server and would poison the dataset. Left unwritten,
+                # --skip-done re-runs them next time. Abort if the engine is
+                # persistently dead so we fail loudly instead of silently skipping.
+                if res.get("_docker_dead"):
+                    dead_streak += 1
+                    print(f"[skip:{c['name']}] docker engine unavailable "
+                          f"(streak {dead_streak})")
+                    if dead_streak >= 15:
+                        print("ABORT: docker engine persistently unavailable; "
+                              "fix Docker then rerun with --skip-done to resume.")
+                        break
+                    continue
+                dead_streak = 0
                 stash_transcript(res)
                 out.write(json.dumps(res, ensure_ascii=False) + "\n")
                 out.flush()
