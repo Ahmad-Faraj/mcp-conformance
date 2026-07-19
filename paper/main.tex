@@ -37,9 +37,9 @@ scanning source code, mining issue trackers, or reading registry metadata. None
 has \emph{executed} the ecosystem to ask a prior question---do these
 servers actually run, and do they actually follow the protocol? We present the
 first execution-based conformance study of the MCP server ecosystem. From the
-official registry (\Nframe{} unique servers) we draw a random sample of
-\Nprobed{} self-contained, locally-installable servers, launch each in an isolated
-sandbox, and drive it through a conformance harness that exercises the initialization
+official registry (\Nframe{} unique servers) we execute a complete census of all
+\Nprobed{} self-contained, locally-installable servers, launching each in an isolated
+sandbox and driving it through a conformance harness that exercises the initialization
 lifecycle, tool listing, declared-schema validity, and behavior under three
 inputs a real agent session produces: unknown tool names, wrong-typed arguments,
 and malformed protocol frames. We find that only \HandshakeRate{} of installable
@@ -47,11 +47,10 @@ servers successfully start and complete a handshake; that \ErrAsResultRate{} of
 responding servers diverge from the specification's illustrated error-reporting
 behavior in an identical way we trace directly to SDK defaults; and that a
 non-trivial minority silently accept ill-typed tool arguments or fail on malformed
-input. We release the harness and dataset as reusable infrastructure, and frame
-this as a first execution-based measurement that a larger uniform-condition census
-can extend. Our results show that protocol conformance---not just
-security---is an unmet, measurable need, and that the gap between the written
-specification and deployed practice is wide and systematic.
+input. We release the harness and dataset as reusable infrastructure. Our results
+show that protocol conformance---not just security---is an unmet, measurable need,
+and that the gap between the written specification and deployed practice is wide and
+systematic.
 \end{abstract}
 
 \section{Introduction}

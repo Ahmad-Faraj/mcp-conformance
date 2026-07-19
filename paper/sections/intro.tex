@@ -23,9 +23,9 @@ plainly: the official suite tests the five SDKs, and no one tests the seventeen
 thousand servers built on them.
 
 We close that gap. We present the first execution-based conformance study of the
-MCP server ecosystem. Starting from the official registry, we draw a random sample
-of self-contained, locally-installable servers, launch each in a network-isolated
-sandbox, and drive it through a conformance harness that exercises the
+MCP server ecosystem. Starting from the official registry, we execute a complete
+census of every self-contained, locally-installable server, launch each in an
+isolated sandbox, and drive it through a conformance harness that exercises the
 initialization lifecycle, tool listing, declared-schema validity, and behavior
 under three inputs that arise in ordinary agent sessions: a call to an unknown
 tool, a call with a wrong-typed argument, and a malformed protocol frame. We grade
@@ -50,9 +50,8 @@ This paper makes four contributions:
 \begin{itemize}
   \item \textbf{The first execution-based, protocol-level conformance measurement of
     the MCP ecosystem} (C1): where all prior ecosystem studies are static, we
-    install and speak the protocol to a random sample of the registry, releasing an
-    open harness and dataset so the measurement is reproducible and extensible to a
-    larger uniform-condition census.
+    install and speak the protocol to a complete census of the eligible registry,
+    releasing an open harness and dataset so the measurement is fully reproducible.
   \item \textbf{A two-dimensional taxonomy} (C2) of startup-failure classes and
     conformance-violation classes, each tied to a concrete agent-facing consequence.
   \item \textbf{A root-cause account of the spec--practice divergence} (C3): by

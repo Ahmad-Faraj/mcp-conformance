@@ -96,24 +96,29 @@ def main():
     servers = list(by_name.values())
     print(f"attributing SDK for {len(servers)} handshaking servers...", file=sys.stderr)
 
-    rows = []
-    xtab = defaultdict(Counter)  # sdk -> Counter(verdict)
-    for i, r in enumerate(servers):
-        ident = r.get("identifier")
-        ver = r.get("server_version")
-        reg = r.get("registry_type")
+    def attribute(r):
+        ident, ver, reg = r.get("identifier"), r.get("server_version"), r.get("registry_type")
         if reg == "npm":
             fam, sdkver = npm_sdk(ident, ver)
         elif reg == "pypi":
             fam, sdkver = pypi_sdk(ident, ver)
         else:
             fam, sdkver = "unknown", None
-        v = unknown_verdict(r)
-        xtab[fam][v] += 1
-        rows.append({"server": r.get("server_name"), "registry": reg,
-                     "identifier": ident, "sdk_family": fam,
-                     "sdk_version": sdkver, "unknown_verdict": v})
-        print(f"  [{i+1}/{len(servers)}] {r.get('server_name')[:45]:45} -> {fam}", file=sys.stderr)
+        return {"server": r.get("server_name"), "registry": reg, "identifier": ident,
+                "sdk_family": fam, "sdk_version": sdkver, "unknown_verdict": unknown_verdict(r)}
+
+    # Metadata lookups are network-bound, so fan out across threads.
+    from concurrent.futures import ThreadPoolExecutor
+    rows = []
+    xtab = defaultdict(Counter)
+    done = 0
+    with ThreadPoolExecutor(max_workers=24) as ex:
+        for row in ex.map(attribute, servers):
+            rows.append(row)
+            xtab[row["sdk_family"]][row["unknown_verdict"]] += 1
+            done += 1
+            if done % 100 == 0:
+                print(f"  {done}/{len(servers)}", file=sys.stderr)
 
     with OUT.open("w", newline="", encoding="utf-8") as f:
         w = csv.DictWriter(f, fieldnames=["server", "registry", "identifier",
