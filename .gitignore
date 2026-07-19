@@ -1,4 +1,12 @@
 data/
 !data/summary.json
+paper/*.aux
+paper/*.log
+paper/*.out
+paper/*.pdf
+paper/*.bbl
+paper/*.blg
+paper/*.fls
+paper/*.fdb_latexmk
 __pycache__/
 *.pyc
