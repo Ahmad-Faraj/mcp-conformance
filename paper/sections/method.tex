@@ -15,8 +15,9 @@ that lacks a default. Criterion (iv) restricts us to servers that a client could
 launch without provisioning secrets, which both bounds the ethics of mass
 execution and defines a clean, reproducible population. We report the exclusion of
 remote-only and credential-requiring servers explicitly (Section~\ref{sec:threats})
-and treat the resulting frame as the denominator for all rates. From this frame we
-draw a fixed pseudo-random sample (seeded) of \Nprobed{} servers.
+and treat the resulting frame as the denominator for all rates. We probe the
+\emph{entire} frame---all \Nprobed{} eligible servers---so our measurement is a
+complete census of the eligible population, not a sample.
 
 \subsection{Conformance harness}
 The harness, \texttt{mcpprobe}, is a deliberately minimal, hand-written JSON-RPC
@@ -84,19 +85,22 @@ conformance probe runs with \texttt{-{}-network=none}. No server code has networ
 access while it is being measured, which both hardens the experiment and removes
 network flakiness and server-side outbound calls as confounders.
 
-\subsection{Dataset and probe conditions}
-Our analyzed dataset comprises \Nprobed{} servers probed under two conditions: a
-single-phase condition (install and probe in one networked container) and the
-two-phase network-isolated condition described above. We verified that the two
-conditions yield statistically indistinguishable results on every reported
+\subsection{Execution environment and probe condition}
+\label{sec:method-env}
+The census was executed on a single disposable cloud instance (no cloud
+credentials attached, so the blast radius of running untrusted code is one
+throwaway host) using the online single-phase condition: install and probe occur
+in one ephemeral \texttt{-{}-rm} container per server, with nothing cached between
+servers so that disk usage stays bounded across the full ecosystem. In a pilot on
+an independent subset we verified that this condition and the two-phase
+network-isolated condition yield statistically indistinguishable results on every
 metric---handshake yield ($54\%$ vs.\ $57\%$), error-as-result prevalence ($87\%$
 vs.\ $87\%$), and silent type non-enforcement ($7\%$ vs.\ $7\%$)---confirming that
-server-side protocol behavior is independent of the probe condition and justifying
-their pooling. Conformance analyses use the pooled set; the funnel is additionally
-reported per condition. Runs affected by transient sandbox-host failures (detected
-by a Docker-engine error signature in the launch transcript rather than a package
-or server error) are excluded prior to analysis, as they carry no information about
-the server under test.
+server-side protocol behavior is independent of the probe condition. A small number
+of probes ($\le 0.4\%$) were interrupted by an automated disk-guard that reclaims
+space if the host approaches capacity; these are recorded conservatively as
+non-handshaking and, being a property of the harness environment rather than the
+server, do not bias conformance rates (which are computed over responding servers).
 
 \subsection{Funnel accounting}
 Because ``does it even run'' is itself a research question, we count every stage:

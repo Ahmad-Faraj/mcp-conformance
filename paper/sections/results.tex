@@ -1,15 +1,14 @@
 \label{sec:results}
 
-We probed \Nprobed{} servers drawn at random from the eligible frame. We organize
-results around the five research questions: runnability (RQ1), protocol conformance
-(RQ2), robustness (RQ3), spec--practice divergence and its cause (RQ4), and
-correlates (RQ5).
+We probed \Nprobed{} servers---the complete eligible frame, a census rather than a
+sample. We organize results around the five research questions: runnability (RQ1),
+protocol conformance (RQ2), robustness (RQ3), spec--practice divergence and its cause
+(RQ4), and correlates (RQ5).
 
 \subsection{RQ1: Runnability and the startup funnel}
-Figure~\ref{fig:funnel} shows the funnel from sampled server to completed handshake.
+Figure~\ref{fig:funnel} shows the funnel from eligible server to completed handshake.
 Of \Nprobed{} servers, \HandshakeCount{} (\HandshakeRate{}) completed the MCP
-handshake, a yield that is consistent across both probe conditions
-(Section~\ref{sec:threats}). The remainder are classified by cause in
+handshake. The remaining two-in-five are classified by cause in
 Table~\ref{tab:startup}: launch crashes (by exit signature), silent exits, hangs,
 credential/configuration requirements, and package-install failures. Separating the
 credential/configuration class is essential: without it, servers that merely need
@@ -17,15 +16,14 @@ keys would be conflated with servers that genuinely crash. Strikingly, a large s
 of failures occur \emph{after} a successful install---servers that a client can
 fetch but that then crash, hang, or exit without serving the protocol---so the
 result is not merely an artifact of broken packaging. The startup-failure taxonomy
-is a contribution in its own right, as no prior work has measured how often
-registry-published servers fail to start; a larger uniform-condition census (deferred
-to future work, Section~\ref{sec:threats}) can sharpen the absolute install-failure
-rate, which our sample estimates only coarsely.
+is a contribution in its own right: no prior work has measured how often
+registry-published servers fail to start, and because we census the entire eligible
+frame, these are population counts rather than estimates.
 
 \begin{figure}[t]
   \centering
   \includegraphics[width=0.9\linewidth]{figures/funnel.pdf}
-  \caption{From sampled servers to completed handshakes. Each stage reports the
+  \caption{From eligible servers to completed handshakes. Each stage reports the
   count surviving and the dominant loss cause.}
   \label{fig:funnel}
 \end{figure}
@@ -61,11 +59,17 @@ SDK defaults set ecosystem behavior.
 \input{tables/sdk}
 
 \subsection{RQ5: Correlates}
-We test whether conformance and runnability correlate with observable server
-attributes. Figure~\ref{fig:byregistry} contrasts npm and PyPI on handshake yield and
-on each conformance check, after removing the credential/configuration class to avoid
-the confound noted above. \emph{[Correlation with popularity/maintenance metadata and
-significance tests inserted from final data.]}
+We test whether runnability and conformance correlate with the package registry
+(Figure~\ref{fig:byregistry}). Runnability differs sharply: npm servers complete a
+handshake far more often than PyPI servers ($65.9\%$ of $3{,}968$ vs.\ $50.0\%$ of
+$2{,}138$; two-proportion $z=12.1$, $p<10^{-3}$). Conformance, by contrast, is
+uniformly poor across both registries---the error-as-result divergence appears in
+$87.7\%$ of responding npm servers and $90.2\%$ of responding PyPI servers---which
+is consistent with RQ4: because the divergence is inherited from the SDKs, and both
+ecosystems' SDKs share the same default, the registry a server ships on changes
+whether it \emph{starts} but not whether it \emph{conforms}. The runnability gap is
+a genuine ecosystem-quality signal and not an artifact of the credential/configuration
+class, which we account for separately in the funnel.
 
 \begin{figure}[t]
   \centering
