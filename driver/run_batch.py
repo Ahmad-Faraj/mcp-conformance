@@ -13,6 +13,7 @@ Usage:
 import argparse
 import json
 import random
+import subprocess
 import sys
 import threading
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -50,18 +51,35 @@ def eligible_packages(server: dict):
         yield p
 
 
-def docker_cmd(pkg: dict) -> list[str]:
+def _pkg_spec(pkg: dict) -> str:
     ident, version = pkg["identifier"], pkg.get("version")
+    if pkg["registryType"] == "npm":
+        return f"{ident}@{version}" if version else ident
+    return f"{ident}=={version}" if version else ident
+
+
+def prime_cmd(pkg: dict) -> list[str]:
+    """Online install-only pass that populates the shared cache volume."""
+    if pkg["registryType"] == "npm":
+        return ["docker", "run", "--rm", "-v", "mcpprobe-npm:/root/.npm", NODE_IMAGE,
+                "npm", "exec", "-y", f"--package={_pkg_spec(pkg)}", "--", "true"]
+    return ["docker", "run", "--rm", "-v", "mcpprobe-uv:/root/.cache/uv", UV_IMAGE,
+            "uvx", "--from", _pkg_spec(pkg), "python", "-c", "0"]
+
+
+def docker_cmd(pkg: dict, offline: bool = False) -> list[str]:
     base = [
         "docker", "run", "--rm", "-i", "--init",
         "--memory", "768m", "--cpus", "1", "--pids-limit", "256",
         "--security-opt", "no-new-privileges",
     ]
+    if offline:
+        base += ["--network", "none"]
     if pkg["registryType"] == "npm":
-        spec = f"{ident}@{version}" if version else ident
-        return base + ["-v", "mcpprobe-npm:/root/.npm", NODE_IMAGE, "npx", "-y", spec]
-    spec = f"{ident}=={version}" if version else ident
-    return base + ["-v", "mcpprobe-uv:/root/.cache/uv", UV_IMAGE, "uvx", spec]
+        run = ["npx", "-y"] + (["--offline"] if offline else []) + [_pkg_spec(pkg)]
+        return base + ["-v", "mcpprobe-npm:/root/.npm", NODE_IMAGE] + run
+    run = ["uvx"] + (["--offline"] if offline else []) + [_pkg_spec(pkg)]
+    return base + ["-v", "mcpprobe-uv:/root/.cache/uv", UV_IMAGE] + run
 
 
 def main():
@@ -72,6 +90,8 @@ def main():
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--timeout", type=float, default=90.0)
     ap.add_argument("--workers", type=int, default=4)
+    ap.add_argument("--offline-probe", action="store_true",
+                    help="two-phase: online install pass, then probe with --network=none")
     args = ap.parse_args()
 
     candidates = []
@@ -93,12 +113,28 @@ def main():
     done = 0
 
     def run_one(c):
-        res = probe(docker_cmd(c["pkg"]), args.timeout)
-        res["server_name"] = c["name"]
-        res["server_version"] = c["version"]
-        res["registry_type"] = c["pkg"]["registryType"]
-        res["identifier"] = c["pkg"]["identifier"]
+        primed = None
+        if args.offline_probe:
+            # Populate cache online (no probing), then measure fully offline so
+            # no server code has network access during the conformance probe.
+            proc = subprocess.run(prime_cmd(c["pkg"]), capture_output=True,
+                                  text=True, timeout=args.timeout + 120)
+            primed = proc.returncode == 0
+            if not primed:
+                res = {"started": False, "handshake_ok": False,
+                       "failure_class": "install-error",
+                       "checks": [{"id": "server-initialize", "verdict": "fail",
+                                   "detail": (proc.stderr or "")[-300:]}]}
+                res.update(_tag(c, primed))
+                return res
+        res = probe(docker_cmd(c["pkg"], offline=args.offline_probe), args.timeout)
+        res.update(_tag(c, primed))
         return res
+
+    def _tag(c, primed):
+        return {"server_name": c["name"], "server_version": c["version"],
+                "registry_type": c["pkg"]["registryType"],
+                "identifier": c["pkg"]["identifier"], "primed": primed}
 
     OUT.parent.mkdir(exist_ok=True)
     with OUT.open("a", encoding="utf-8") as out, ThreadPoolExecutor(args.workers) as ex:
