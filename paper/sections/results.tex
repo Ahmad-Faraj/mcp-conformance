@@ -8,13 +8,19 @@ correlates (RQ5).
 \subsection{RQ1: Runnability and the startup funnel}
 Figure~\ref{fig:funnel} shows the funnel from sampled server to completed handshake.
 Of \Nprobed{} servers, \HandshakeCount{} (\HandshakeRate{}) completed the MCP
-handshake. The remainder are classified by cause in Table~\ref{tab:startup}: install
-failures, credential/configuration requirements, launch crashes (by exit signature),
-silent exits, and hangs. Separating the credential/configuration class is essential:
-without it, a registry whose servers merely need keys would appear less reliable than
-one whose servers genuinely crash. The startup-failure taxonomy is a contribution in
-its own right, as no prior work has measured how often registry-published servers
-fail to start.
+handshake, a yield that is consistent across both probe conditions
+(Section~\ref{sec:threats}). The remainder are classified by cause in
+Table~\ref{tab:startup}: launch crashes (by exit signature), silent exits, hangs,
+credential/configuration requirements, and package-install failures. Separating the
+credential/configuration class is essential: without it, servers that merely need
+keys would be conflated with servers that genuinely crash. Strikingly, a large share
+of failures occur \emph{after} a successful install---servers that a client can
+fetch but that then crash, hang, or exit without serving the protocol---so the
+result is not merely an artifact of broken packaging. The startup-failure taxonomy
+is a contribution in its own right, as no prior work has measured how often
+registry-published servers fail to start; a larger uniform-condition census (deferred
+to future work, Section~\ref{sec:threats}) can sharpen the absolute install-failure
+rate, which our sample estimates only coarsely.
 
 \begin{figure}[t]
   \centering

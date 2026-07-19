@@ -20,7 +20,7 @@
 \input{numbers} % \Nframe, \Neligible, \Nprobed, \HandshakeRate, ... (generated)
 
 \title{\bf Does Your MCP Server Actually Follow the Protocol?\\
-A Large-Scale Execution-Based Conformance Study of the\\ Model Context Protocol Ecosystem}
+An Execution-Based Conformance Study of the\\ Model Context Protocol Ecosystem}
 
 \author{Ahmed Faraj\\ Suez Canal University\\ \texttt{ahmed.faraj.cs@gmail.com}}
 
@@ -33,23 +33,25 @@ A Large-Scale Execution-Based Conformance Study of the\\ Model Context Protocol 
 The Model Context Protocol (MCP) has become the de-facto standard for connecting
 LLM agents to external tools, and public registries now list tens of thousands of
 servers. Yet every prior empirical study of this ecosystem is \emph{static}:
-scanning source code, mining issue trackers, or reading registry metadata. Nobody
-has \emph{executed} the ecosystem at scale to ask a prior question---do these
+scanning source code, mining issue trackers, or reading registry metadata. None
+has \emph{executed} the ecosystem to ask a prior question---do these
 servers actually run, and do they actually follow the protocol? We present the
 first execution-based conformance study of the MCP server ecosystem. From the
 official registry (\Nframe{} unique servers) we draw a random sample of
-\Nprobed{} self-contained, locally-installable servers, launch each in a network-isolated
+\Nprobed{} self-contained, locally-installable servers, launch each in an isolated
 sandbox, and drive it through a conformance harness that exercises the initialization
 lifecycle, tool listing, declared-schema validity, and behavior under three
 inputs a real agent session produces: unknown tool names, wrong-typed arguments,
 and malformed protocol frames. We find that only \HandshakeRate{} of installable
 servers successfully start and complete a handshake; that \ErrAsResultRate{} of
-responding servers violate the specification's error-reporting requirement in an
-identical way traceable to SDK defaults; and that a non-trivial minority silently
-accept ill-typed tool arguments or fail on malformed input. We release the harness
-and dataset as reusable infrastructure. Our results show that ecosystem-scale
-protocol conformance---not just security---is an unmet need, and that the gap
-between the written specification and deployed practice is wide and systematic.
+responding servers diverge from the specification's illustrated error-reporting
+behavior in an identical way we trace directly to SDK defaults; and that a
+non-trivial minority silently accept ill-typed tool arguments or fail on malformed
+input. We release the harness and dataset as reusable infrastructure, and frame
+this as a first execution-based measurement that a larger uniform-condition census
+can extend. Our results show that protocol conformance---not just
+security---is an unmet, measurable need, and that the gap between the written
+specification and deployed practice is wide and systematic.
 \end{abstract}
 
 \section{Introduction}
