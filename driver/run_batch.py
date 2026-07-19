@@ -124,11 +124,18 @@ def docker_cmd(pkg: dict, offline: bool = False) -> list[str]:
     base = ["docker", "run", "--rm", "-i", "--init"] + HARDENING
     if offline:
         base += ["--network", "none"]
+    # The persistent package cache is only needed for the two-phase offline probe
+    # (prime populates it, probe reads it offline). In online single-phase mode we
+    # deliberately omit it so each --rm container is fully ephemeral and disk usage
+    # stays flat -- essential for a full-ecosystem census on a fixed-size volume.
+    cache = offline
     if pkg["registryType"] == "npm":
         run = ["npx", "-y"] + (["--offline"] if offline else []) + [_pkg_spec(pkg)]
-        return base + ["-v", "mcpprobe-npm:/root/.npm", NODE_IMAGE] + run
+        vol = ["-v", "mcpprobe-npm:/root/.npm"] if cache else []
+        return base + vol + [NODE_IMAGE] + run
     run = ["uvx"] + (["--offline"] if offline else []) + [_pkg_spec(pkg)]
-    return base + ["-v", "mcpprobe-uv:/root/.cache/uv", UV_IMAGE] + run
+    vol = ["-v", "mcpprobe-uv:/root/.cache/uv"] if cache else []
+    return base + vol + [UV_IMAGE] + run
 
 
 def harness_commit() -> str:

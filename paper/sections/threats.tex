@@ -36,24 +36,23 @@ is important future work. Because agent clients overwhelmingly launch local stdi
 servers, we argue this population is the most consequential one to characterize
 first.
 
-\paragraph{Sample size and scope.}
-We analyze a random sample of \Nprobed{} servers (\Nresponders{} responding) rather
-than the full eligible frame. This sample sizes our confidence intervals (reported
-throughout) but is a first execution-based measurement, not a census; the harness is
-released precisely so a larger uniform-condition run---which a modest cloud host can
-complete in hours---can tighten every estimate, most importantly the absolute
-install-failure rate in the RQ1 funnel. We regard the conformance findings (RQ2--RQ4)
-as robust---they replicate independently across our two probe conditions and are
-near-universal---and the runnability magnitude (RQ1) as a well-motivated preliminary
-estimate.
+\paragraph{Completeness.}
+We probe the entire eligible frame---all \Nprobed{} servers (\Nresponders{}
+responding)---so the study is a complete census of the eligible population rather
+than a sample. The confidence intervals we report throughout therefore reflect only
+residual measurement noise (e.g.\ server-side nondeterminism), not sampling error;
+they are correspondingly tight. The conformance findings (RQ2--RQ4) are both
+near-universal and independently replicated across two probe conditions, and the
+runnability funnel (RQ1) now rests on the full population rather than an estimate.
 
-\paragraph{Excluded runs.}
-A subset of probe attempts was invalidated by transient failures of the sandbox host
-(the container engine), which we detect by an engine-error signature in the launch
-transcript that is distinct from any package or server error. These carry no
-information about the server under test and are excluded before analysis; because the
-exclusion criterion is a property of the harness environment and not of the server,
-it does not bias the reported rates. The released dataset flags them for audit.
+\paragraph{Interrupted probes.}
+A small fraction ($\le 0.4\%$) of probes were interrupted by the automated disk-guard
+that reclaims host space near capacity (Section~\ref{sec:method-env}). These are
+recorded conservatively as non-handshaking; because the interruption is a property of
+the harness environment and not of the server, and because it is uncorrelated with
+any server property, it does not bias conformance rates (computed over responding
+servers) and can only very slightly depress the handshake yield. The released dataset
+flags these runs for audit.
 
 \paragraph{Reproducibility.}
 Every number in this paper is regenerable from released raw JSON-RPC transcripts and

@@ -14,11 +14,11 @@ Usage:
   python make_disclosure.py   # writes data/DISCLOSURE_PRIVATE.md (git-ignored)
 """
 
+import argparse
 import json
 from pathlib import Path
 
 DATA = Path(__file__).resolve().parent.parent / "data"
-RESULTS = DATA / "probe_results.jsonl"
 FRAME = DATA / "frame_latest.jsonl"
 OUT = DATA / "DISCLOSURE_PRIVATE.md"
 
@@ -35,6 +35,10 @@ def repo_url(server: dict) -> str:
 
 
 def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--in", dest="inp", default=str(DATA / "probe_final.jsonl"))
+    args = ap.parse_args()
+
     # Map server name -> repository URL from the frame.
     repos = {}
     with FRAME.open(encoding="utf-8") as f:
@@ -43,7 +47,7 @@ def main():
             repos[e["server"]["name"]] = repo_url(e["server"])
 
     findings = []
-    with RESULTS.open(encoding="utf-8") as f:
+    with open(args.inp, encoding="utf-8") as f:
         for line in f:
             r = json.loads(line)
             if not r.get("handshake_ok"):
