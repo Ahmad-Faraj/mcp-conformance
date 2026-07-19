@@ -1,2 +1,30 @@
-% TODO: written after the final dataset lands.
-\emph{[Section drafted after final data.]}
+This study executes third-party code and probes servers for defects, so we adopt
+the norms of responsible measurement research.
+
+\paragraph{Safe execution.}
+Every server---during both installation and probing---runs inside an isolated
+container with all Linux capabilities dropped, no new privileges, bounded memory,
+CPU, and process counts, and no host filesystem access beyond a package cache
+volume. The install phase, which executes arbitrary \texttt{postinstall} and build
+scripts with network access, receives the same isolation as the probe phase; the
+probe phase additionally runs with networking disabled. We execute no server that
+declares a requirement for credentials, both because it lies outside our frame and
+because doing so could send real requests to third-party systems.
+
+\paragraph{Responsible disclosure.}
+A subset of our findings are security-relevant: a server that crashes or hangs on a
+malformed frame is a denial-of-service primitive, and a server that emits
+non-protocol bytes on its stdio channel can desynchronize a client. We report these
+only in aggregate and through anonymized case studies. We do not publish a
+name-and-shame list of individual servers. Security-relevant findings are recorded
+in a private disclosure log with maintainer contacts resolved from registry
+repository metadata, and are reported to maintainers before publication; where a
+finding is exploitable, per-server details are withheld until a reasonable
+disclosure window has elapsed. The released dataset is filtered accordingly.
+
+\paragraph{Registry and maintainer impact.}
+Our crawl uses the registry's public API within its rate limits, and our installs
+draw from public package registries in the ordinary way. We cache aggressively to
+avoid redundant load. We view the released harness as a benefit to maintainers: it
+lets any author check their own server's conformance before publishing, which is
+the outcome the community's proposed pre-publish conformance checklist seeks.

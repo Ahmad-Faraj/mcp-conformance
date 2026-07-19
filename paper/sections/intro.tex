@@ -1,2 +1,62 @@
-% TODO: written after the final dataset lands.
-\emph{[Section drafted after final data.]}
+Large language model agents increasingly act on the world through external tools,
+and the Model Context Protocol (MCP) has become the dominant standard for
+connecting them. In under two years MCP has gone from a single vendor's proposal
+to an ecosystem with public registries listing tens of thousands of servers; the
+official registry alone contains \Nframe{} unique servers at the time of our study.
+When an agent selects a tool and an MCP server mishandles the request---returns a
+malformed result, accepts ill-typed arguments, or simply fails to start---the
+agent does not merely lose a capability; it may proceed on wrong output with full
+confidence. The reliability of this server layer is therefore a reliability
+property of every agent built on top of it.
+
+Yet we know remarkably little about how these servers actually behave, because
+every prior empirical study of the MCP ecosystem examines servers \emph{without
+running them}. Existing work scans source code and metadata for health and
+maintainability, crawls registries to characterize scale and supply-chain
+structure, or mines GitHub issues to taxonomize faults reported by users. These
+static lenses answer valuable questions, but they cannot answer a prior and
+strikingly basic one: \emph{if you install these servers and speak the protocol to
+them, do they work, and do they follow the specification?} The protocol maintainers
+ship a conformance test suite, but it exercises the handful of official SDKs in
+continuous integration; it has never been pointed at the deployed ecosystem. Put
+plainly: the official suite tests the five SDKs, and no one tests the seventeen
+thousand servers built on them.
+
+We close that gap. We present the first execution-based conformance study of the
+MCP server ecosystem. Starting from the official registry, we draw a random sample
+of self-contained, locally-installable servers, launch each in a network-isolated
+sandbox, and drive it through a conformance harness that exercises the
+initialization lifecycle, tool listing, declared-schema validity, and behavior
+under three inputs that arise in ordinary agent sessions: a call to an unknown
+tool, a call with a wrong-typed argument, and a malformed protocol frame. We grade
+each server against the protocol version it negotiates, and we take care to
+separate genuine specification requirements (RFC-2119 \textsf{MUST}/\textsf{SHOULD})
+from behavior the specification merely illustrates by example.
+
+Our findings are consistent and, in places, striking. Only \HandshakeRate{} of
+installable servers successfully start and complete a protocol handshake; the
+remainder fail in ways we classify into a startup-failure taxonomy, from install
+errors to silent exits to hangs. Among servers that do respond, \ErrAsResultRate{}
+report a call to a non-existent tool as a ``successful'' tool-execution error
+(\texttt{isError: true}) rather than the JSON-RPC protocol error the specification
+illustrates---and we trace this near-universal divergence to its cause: it is the
+default behavior of the official SDKs, inherited wholesale by the servers built on
+them. A smaller but important minority silently accept ill-typed arguments or fail
+on malformed input, the latter a denial-of-service primitive. Throughout, we find
+that the gap between the written specification and deployed practice is wide,
+systematic, and explicable.
+
+This paper makes four contributions:
+\begin{itemize}
+  \item \textbf{The first execution-based, protocol-level conformance measurement of
+    the MCP ecosystem} (C1), at a scale and level of reproducibility not previously
+    attempted, releasing an open harness and dataset.
+  \item \textbf{A two-dimensional taxonomy} (C2) of startup-failure classes and
+    conformance-violation classes, each tied to a concrete agent-facing consequence.
+  \item \textbf{A root-cause account of the spec--practice divergence} (C3): by
+    attributing each server to its SDK, we show the dominant divergence is
+    institutionalized in the official SDKs rather than independently reinvented.
+  \item \textbf{Open infrastructure} (C4): a conformance harness that extends the
+    official suite's scenarios to arbitrary deployed servers, plus the released
+    measurement dataset, enabling the ecosystem to monitor its own conformance.
+\end{itemize}

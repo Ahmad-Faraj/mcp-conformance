@@ -1,2 +1,70 @@
-% TODO: written after the final dataset lands.
-\emph{[Section drafted after final data.]}
+\label{sec:results}
+
+We probed \Nprobed{} servers drawn at random from the eligible frame. We organize
+results around the five research questions: runnability (RQ1), protocol conformance
+(RQ2), robustness (RQ3), spec--practice divergence and its cause (RQ4), and
+correlates (RQ5).
+
+\subsection{RQ1: Runnability and the startup funnel}
+Figure~\ref{fig:funnel} shows the funnel from sampled server to completed handshake.
+Of \Nprobed{} servers, \HandshakeCount{} (\HandshakeRate{}) completed the MCP
+handshake. The remainder are classified by cause in Table~\ref{tab:startup}: install
+failures, credential/configuration requirements, launch crashes (by exit signature),
+silent exits, and hangs. Separating the credential/configuration class is essential:
+without it, a registry whose servers merely need keys would appear less reliable than
+one whose servers genuinely crash. The startup-failure taxonomy is a contribution in
+its own right, as no prior work has measured how often registry-published servers
+fail to start.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.9\linewidth]{figures/funnel.pdf}
+  \caption{From sampled servers to completed handshakes. Each stage reports the
+  count surviving and the dominant loss cause.}
+  \label{fig:funnel}
+\end{figure}
+
+\input{tables/startup}
+
+\subsection{RQ2--RQ3: Conformance and robustness}
+Table~\ref{tab:verdicts} reports the verdict distribution for each check over the
+\Nresponders{} responding servers, with 95\% Wilson confidence intervals. Lifecycle
+and tool-listing conformance are high; the discriminating checks are error handling,
+argument type enforcement, and malformed-input survival. \NoTypecheckRate{} of
+responders silently accepted a wrong-typed required argument, and
+\MalformedDiesRate{} crashed or hung on a malformed frame---the latter an
+availability risk we treat under responsible disclosure.
+
+\input{tables/verdicts}
+
+\subsection{RQ4: The spec--practice divergence and its cause}
+\ErrAsResultRate{} of responding servers reported a call to a non-existent tool as
+an \texttt{isError} tool-execution result rather than the JSON-RPC protocol error the
+specification illustrates. As established in Section~\ref{sec:threats}, we treat this
+as a divergence rather than a violation, because the specification uses no RFC-2119
+keyword here. To explain its near-universality, we attribute each server to its SDK
+from package metadata (Table~\ref{tab:sdk}). The behavior tracks the SDK: the
+official TypeScript and Python SDKs and the popular FastMCP framework all default to
+it, and even most hand-rolled servers follow suit. A small number of
+TypeScript-SDK servers emit the protocol error, showing the conforming behavior is
+achievable within the SDK but is not its default. We confirm this directly against
+the official reference servers, which exhibit the same divergence. The finding is
+therefore not that thousands of authors independently erred, but that a handful of
+SDK defaults set ecosystem behavior.
+
+\input{tables/sdk}
+
+\subsection{RQ5: Correlates}
+We test whether conformance and runnability correlate with observable server
+attributes. Figure~\ref{fig:byregistry} contrasts npm and PyPI on handshake yield and
+on each conformance check, after removing the credential/configuration class to avoid
+the confound noted above. \emph{[Correlation with popularity/maintenance metadata and
+significance tests inserted from final data.]}
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.9\linewidth]{figures/by_registry.pdf}
+  \caption{Handshake yield and conformance-check pass rates by package registry,
+  with 95\% confidence intervals.}
+  \label{fig:byregistry}
+\end{figure}
