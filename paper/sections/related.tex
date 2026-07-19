@@ -1,0 +1,47 @@
+\subsection{The Model Context Protocol}
+MCP standardizes how LLM agents discover and invoke external tools. A client and
+server negotiate a protocol version and capabilities during an
+\texttt{initialize} handshake, after which the client can list tools
+(\texttt{tools/list}) and invoke them (\texttt{tools/call}). Messages follow
+JSON-RPC 2.0, including its error-object semantics and reserved error codes. The
+most common deployment is a local server communicating over stdio, where stdout
+carries protocol traffic exclusively. The specification is versioned by date, and
+servers may negotiate down to a version they support.
+
+\subsection{Static studies of the MCP ecosystem}
+The ecosystem has been studied at scale, but statically. Health-and-maintainability
+work analyzes source and metadata of roughly 1,900 servers with static scanners
+and code-smell detectors~\cite{mcpfirstglance}. Registry-measurement work crawls
+multiple marketplaces and characterizes scale, maintenance, and supply-chain
+concentration for on the order of 8,000 servers, but from listing metadata rather
+than execution~\cite{mcpcrawler}. Fault taxonomies derive categories of runtime
+misbehavior by \emph{mining GitHub issues}~\cite{runtimefaults,realfaults}; these
+report that tool faults and schema-enforcement problems dominate the fault
+landscape---smoke that our harness measures directly as fire. None of these works
+executes servers to test conformance.
+
+\subsection{Execution-based work is security-focused}
+Where prior work does execute MCP servers, it targets security rather than
+conformance, and on small or synthetic populations. Sandboxed behavioral scanners
+and taint-style analyzers hunt vulnerabilities on curated or intentionally
+vulnerable server sets~\cite{sandboxscan,viper}; a security-invariants benchmark
+\emph{deliberately avoids live third-party execution}, using fixtures and a
+40-repository metadata sample~\cite{securityinvariants}; malicious-server detection
+and authentication studies likewise scope to security surfaces~\cite{maliciousmcp,
+remoteauth}. Protocol conformance---whether a server that is neither malicious nor
+vulnerable actually behaves as the specification requires---is a distinct question
+that this line of work does not address.
+
+\subsection{Conformance tooling and the gap we fill}
+The protocol maintainers ship an official conformance suite, but it tests the
+handful of official SDKs in continuous integration; it has not been pointed at the
+deployed ecosystem. The community has begun proposing a pre-publish conformance
+checklist for server authors, evidencing demand for exactly the measurement we
+provide. Practitioner audits have reported striking headline numbers (e.g., that a
+majority of listed servers are unmaintained), but without published methodology,
+data, or protocol-level testing. To our knowledge, ours is the first reproducible,
+protocol-level, execution-based conformance measurement of the MCP server
+ecosystem, released with an open harness and dataset. In spirit it follows a long
+line of empirical software-engineering measurement studies that execute a
+population to characterize how it really behaves, rather than how its documentation
+says it should.
