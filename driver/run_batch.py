@@ -92,7 +92,14 @@ def main():
     ap.add_argument("--workers", type=int, default=4)
     ap.add_argument("--offline-probe", action="store_true",
                     help="two-phase: online install pass, then probe with --network=none")
+    ap.add_argument("--skip-done", action="store_true",
+                    help="skip servers already present in probe_results.jsonl (resume)")
     args = ap.parse_args()
+
+    done_names: set[str] = set()
+    if args.skip_done and OUT.exists():
+        with OUT.open(encoding="utf-8") as f:
+            done_names = {json.loads(l).get("server_name") for l in f}
 
     candidates = []
     with FRAME.open(encoding="utf-8") as f:
@@ -107,6 +114,9 @@ def main():
                                    "pkg": pkgs[0]})
     print(f"eligible candidates in frame: {len(candidates)}")
     random.Random(args.seed).shuffle(candidates)
+    if done_names:
+        candidates = [c for c in candidates if c["name"] not in done_names]
+        print(f"resume: {len(done_names)} already probed, {len(candidates)} remaining")
     sample = candidates[args.offset : args.offset + args.n]
 
     lock = threading.Lock()

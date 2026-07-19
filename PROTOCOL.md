@@ -89,6 +89,17 @@ the pilot (package installation requires it); the full run will split install an
 phases so probing happens with `--network=none`. Nothing from a probed server touches
 the host filesystem.
 
+## Network condition (dataset hygiene)
+
+Decided 2026-07-19: the n=223 pilot was probed *with* network access (development
+data only). The final *reported* dataset is a single clean run entirely under
+`--network=none` (two-phase: install online, probe offline). This removes network
+flakiness and any server-side outbound calls as confounders, and makes "conformance
+under isolation" a crisp, reproducible condition. Cache-warming from pilot/dev runs
+makes the final offline re-run fast. Any server whose behavior differs online vs.
+offline is itself recorded (a server that *requires* network during a probe is a
+finding, not noise).
+
 ## Funnel reporting (RQ1)
 
 Every stage is counted and reported: declared → eligible (self-contained stdio npm/pypi)
