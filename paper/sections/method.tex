@@ -1,0 +1,84 @@
+We measure the MCP server ecosystem by \emph{executing} it. This section defines
+the sampling frame, the conformance harness, the sandbox, and the grading rules.
+The harness and the released dataset make every number reproducible.
+
+\subsection{Sampling frame}
+We crawl the official MCP registry (\texttt{registry.modelcontextprotocol.io})
+via its cursor-paginated API, retaining the latest published version of each
+server. This yields \Nframe{} unique servers. Each server declares zero or more
+\emph{packages} (installable artifacts on npm, PyPI, OCI, NuGet, or Cargo) and/or
+\emph{remotes} (hosted HTTP endpoints). Our study population is the set of servers
+that are (i) locally installable, (ii) use the \texttt{stdio} transport, (iii)
+distributed on npm or PyPI (the two dominant registries), and (iv)
+\emph{self-contained}: they declare no required environment variable or argument
+that lacks a default. Criterion (iv) restricts us to servers that a client could
+launch without provisioning secrets, which both bounds the ethics of mass
+execution and defines a clean, reproducible population. We report the exclusion of
+remote-only and credential-requiring servers explicitly (Section~\ref{sec:threats})
+and treat the resulting frame as the denominator for all rates. From this frame we
+draw a fixed pseudo-random sample (seeded) of \Nprobed{} servers.
+
+\subsection{Conformance harness}
+The harness, \texttt{mcpprobe}, is a deliberately minimal, hand-written JSON-RPC
+client speaking line-delimited messages over the server's stdio. We do \emph{not}
+use an official SDK client: to observe raw behavior---including responses to
+malformed frames---the probe must not inherit any SDK-side correction or
+validation. The harness offers protocol version \texttt{2025-06-18} at
+initialization, records the version the server \emph{negotiates}, and grades all
+subsequent checks against that negotiated version rather than the latest
+specification.
+
+Each server is driven through the following checks, whose identifiers align with
+the categories of the official \texttt{modelcontextprotocol/conformance} suite
+where an analogue exists:
+
+\begin{itemize}
+  \item \textbf{server-initialize}: the \texttt{initialize} request must return a
+    result carrying a protocol version and a capabilities object; the harness then
+    sends \texttt{notifications/initialized}.
+  \item \textbf{ping}: a \texttt{ping} must return an empty-object result.
+  \item \textbf{tools-list}: if the server advertises the tools capability,
+    \texttt{tools/list} must return an array in which every entry has a
+    \texttt{name} and an \texttt{inputSchema} object.
+  \item \textbf{tools-schema-valid}: each declared \texttt{inputSchema} must be a
+    valid JSON Schema (checked by meta-validation).
+  \item \textbf{tools-call-unknown}: calling a non-existent tool must be rejected.
+    The specification requires a JSON-RPC error (\texttt{-32602}/\texttt{-32601}).
+  \item \textbf{tools-call-invalid-args}: for a tool with a typed required
+    property, calling it with a wrong-typed value must be rejected (protocol error
+    or an \texttt{isError} result).
+  \item \textbf{malformed-json}: after receiving a syntactically invalid frame, the
+    server must not crash or hang; a subsequent \texttt{ping} must still succeed.
+  \item \textbf{stdout-purity}: under the stdio transport, the server must emit only
+    protocol messages on stdout; any non-JSON line is a channel-corruption defect.
+\end{itemize}
+
+\subsection{Grading and the error-as-result category}
+Verdicts are \textsf{pass}, \textsf{fail}, \textsf{warn}, \textsf{skip}, and one
+category introduced by calibration: \textsf{error-as-result}. When validating the
+harness against the official reference servers (\texttt{server-memory},
+\texttt{server-everything}), we found they answer an unknown-tool call not with the
+specified JSON-RPC \texttt{-32602} error but with a \emph{successful} response whose
+\texttt{result.isError} flag is set. Because this behavior originates in the
+official SDKs and is therefore ecosystem-wide, we grade it as its own category
+rather than a failure, and quantify its prevalence as a first-class result: it is
+the clearest instance of specification text diverging from universal practice.
+
+\subsection{Sandbox}
+Executing thousands of untrusted packages demands isolation. Each server runs in a
+fresh container (\texttt{node:22-slim} for npm, an \texttt{astral-sh/uv} image for
+PyPI) with a memory cap, a single CPU, a PID limit, \texttt{no-new-privileges}, and
+no host filesystem mounts other than a package-cache volume. Measurement uses a
+\textbf{two-phase} protocol: an online install pass populates the cache, then the
+conformance probe runs with \texttt{-{}-network=none}. No server code has network
+access while it is being measured, which both hardens the experiment and removes
+network flakiness and server-side outbound calls as confounders.
+
+\subsection{Funnel accounting}
+Because ``does it even run'' is itself a research question, we count every stage:
+declared $\rightarrow$ eligible (self-contained stdio npm/PyPI) $\rightarrow$
+sampled $\rightarrow$ container started $\rightarrow$ process launched
+$\rightarrow$ handshake completed $\rightarrow$ probed. Servers that never reach a
+handshake are classified into startup-failure categories
+(Section~\ref{sec:results}) from their exit code and stderr, so that the yield loss
+is characterized rather than merely reported.
