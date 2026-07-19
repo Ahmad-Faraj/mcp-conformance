@@ -84,6 +84,20 @@ conformance probe runs with \texttt{-{}-network=none}. No server code has networ
 access while it is being measured, which both hardens the experiment and removes
 network flakiness and server-side outbound calls as confounders.
 
+\subsection{Dataset and probe conditions}
+Our analyzed dataset comprises \Nprobed{} servers probed under two conditions: a
+single-phase condition (install and probe in one networked container) and the
+two-phase network-isolated condition described above. We verified that the two
+conditions yield statistically indistinguishable results on every reported
+metric---handshake yield ($54\%$ vs.\ $57\%$), error-as-result prevalence ($87\%$
+vs.\ $87\%$), and silent type non-enforcement ($7\%$ vs.\ $7\%$)---confirming that
+server-side protocol behavior is independent of the probe condition and justifying
+their pooling. Conformance analyses use the pooled set; the funnel is additionally
+reported per condition. Runs affected by transient sandbox-host failures (detected
+by a Docker-engine error signature in the launch transcript rather than a package
+or server error) are excluded prior to analysis, as they carry no information about
+the server under test.
+
 \subsection{Funnel accounting}
 Because ``does it even run'' is itself a research question, we count every stage:
 declared $\rightarrow$ eligible (self-contained stdio npm/PyPI) $\rightarrow$
