@@ -1,2 +1,37 @@
-% TODO: written after the final dataset lands.
-\emph{[Section drafted after final data.]}
+\paragraph{A specification is only as strong as its keywords.}
+The most prevalent divergence we measure---unknown-tool calls returned as
+\texttt{isError} results rather than JSON-RPC protocol errors---is not, strictly, a
+violation, because the specification never says \textsf{MUST}. It categorizes the
+behavior in prose and shows one example. That single editorial choice, multiplied
+across the official SDKs that had to pick an interpretation, produced an ecosystem
+in which the written categorization is descriptively false for the large majority of
+servers. The lesson generalizes beyond MCP: in a protocol whose conformance is
+mediated by a few dominant SDKs, non-normative language does not leave behavior
+unconstrained---it delegates the constraint to the SDK authors. Where the
+specification wants uniformity, it must say \textsf{MUST}.
+
+\paragraph{The SDK is the ecosystem.}
+Attributing servers to their SDK collapses thousands of independent authorship
+decisions into a handful of library defaults. This is good news and bad news. The
+bad news is that a single suboptimal default propagates to everyone. The good news
+is that the ecosystem is correspondingly \emph{fixable at the source}: a change to a
+handful of SDKs, or a clarified specification plus updated SDK defaults, would move
+the conformance numbers for the whole population at once. Our results argue for
+treating SDK defaults as ecosystem policy and testing them against the spec directly.
+
+\paragraph{Startup failure is an availability tax.}
+That a large fraction of installable servers never reach a handshake reframes
+``server selection'' for agent builders as an empirical reliability problem, not a
+catalog lookup. Registries rank servers by popularity and recency; none, today,
+surface whether a server \emph{starts}. A pre-publish conformance gate---exactly the
+kind the community has begun to discuss---would convert our one-time measurement into
+a standing quality signal.
+
+\paragraph{Implications.}
+For SDK authors: revisit the unknown-tool and argument-validation defaults, and
+consider emitting protocol errors where the spec's own categorization points.
+For the specification: promote the error-handling categorization to normative
+language, or explicitly bless both mechanisms. For registries: add a conformance and
+liveness signal. For agent frameworks: treat wrong-typed-argument acceptance and
+malformed-input fragility as client-side risks to defend against, since a
+non-trivial minority of servers exhibit them.

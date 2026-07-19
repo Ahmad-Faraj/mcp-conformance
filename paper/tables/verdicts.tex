@@ -1,0 +1,19 @@
+\begin{table}[t]
+\centering
+\caption{Verdict distribution per check over responding servers, with 95\% Wilson CIs on the pass (or documented) rate.}
+\label{tab:verdicts}
+\begin{tabular}{lrrrr}
+\toprule
+Check & Pass & Fail & Other & Pass rate (95\% CI) \\
+\midrule
+server-initialize & 217 & 0 & 0 & 100.0 (98.3--100.0) \\
+ping & 216 & 1 & 0 & 99.5 (97.4--99.9) \\
+tools-list & 215 & 2 & 0 & 99.1 (96.7--99.7) \\
+tools-schema-valid & 214 & 1 & 0 & 98.6 (96.0--99.5) \\
+tools-call-unknown & 7 & 12 & 198 & 3.2 (1.6--6.5) \\
+tools-call-invalid-args & 197 & 15 & 5 & 90.8 (86.2--94.0) \\
+malformed-json & 215 & 2 & 0 & 99.1 (96.7--99.7) \\
+stdout-purity & 217 & 0 & 0 & 100.0 (98.3--100.0) \\
+\bottomrule
+\end{tabular}
+\end{table}

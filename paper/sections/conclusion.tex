@@ -1,2 +1,11 @@
-% TODO: written after the final dataset lands.
-\emph{[Section drafted after final data.]}
+The MCP server ecosystem has been measured statically many times but never
+executed at scale. By installing and speaking the protocol to a random sample of
+the registry, we found that a large fraction of installable servers do not
+successfully start, and that among those that do, a near-universal divergence from
+the written specification's error-handling categorization is inherited directly
+from the official SDKs. Neither fact is visible to a static scanner or a registry
+crawl; both matter to anyone building on this layer. We release our conformance
+harness and dataset so that the measurement can be repeated, extended to remote and
+credentialed servers, and---most usefully---run by server authors before they
+publish. Conformance, not just security, is now a measurable and improvable property
+of the ecosystem.

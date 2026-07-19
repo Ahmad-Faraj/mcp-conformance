@@ -1,2 +1,44 @@
-% TODO: written after the final dataset lands.
-\emph{[Section drafted after final data.]}
+\label{sec:threats}
+
+\paragraph{Construct validity.}
+Our verdicts operationalize ``conformance,'' and a poorly chosen operationalization
+could over- or under-count. We mitigate this in three ways. First, we grade each
+server against the protocol version it \emph{negotiates}, not the latest
+specification, so a server is never penalized for a requirement that postdates its
+target revision. Second, we distinguish normative requirements from illustrative
+ones: the most prevalent divergence we report (unknown-tool responses) is graded as
+a distinct \textsf{error-as-result} category rather than a failure, precisely
+because the specification expresses it in prose and an example rather than an
+RFC-2119 keyword. Third, we calibrated the harness against the official reference
+servers before the study and confirmed it reproduces their known-good behavior on
+every check except the SDK-level divergence we set out to measure.
+
+\paragraph{Internal validity.}
+Measurement runs under network isolation (\texttt{-{}-network=none}), which removes
+network flakiness and server-side outbound calls as confounders but could, in
+principle, penalize a server that requires network access during initialization.
+Because our frame excludes servers declaring required credentials or arguments, and
+because the checks we grade (handshake, tool listing, error handling) are local
+protocol behaviors, we expect this effect to be small; servers whose behavior
+demonstrably requires network access are recorded as such rather than silently
+scored as failures. Sandbox heterogeneity across language runtimes is a further
+source of noise, which we bound by pinning base images and package versions and by
+stamping every result with the harness commit that produced it.
+
+\paragraph{External validity.}
+Our population is self-contained, locally-installable servers distributed on npm and
+PyPI using the stdio transport. This excludes remote-only servers (which we cannot
+execute without provisioning hosted infrastructure) and servers requiring
+credentials (which we exclude for both ethics and reproducibility). We report the
+size of each excluded class explicitly and confine all rates to the stated frame;
+we do not claim they generalize to remote or credentialed servers, whose conformance
+is important future work. Because agent clients overwhelmingly launch local stdio
+servers, we argue this population is the most consequential one to characterize
+first.
+
+\paragraph{Reproducibility.}
+Every number in this paper is regenerable from released raw JSON-RPC transcripts and
+the pinned harness commit. The sampling seed, registry snapshot, base images, and
+package versions are all recorded. Because the registry is a moving target, we
+report the crawl date and treat the snapshot, not the live registry, as the object
+of study.
