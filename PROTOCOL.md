@@ -30,6 +30,25 @@ the seventeen-thousand-server ecosystem built on them.** The issue-mining taxono
 tool faults and schema enforcement to be the top fault categories — motivation we cite:
 they saw the smoke in issue trackers; we measure the fire.
 
+### Novelty boundary (adversarial check, 2026-07-19)
+
+Closest works verified and differentiated:
+- **Security-invariants benchmark (2606.29073):** fixture-based, "deliberately avoids live
+  third-party execution"; its ecosystem sample is 40 repos of README metadata. No conformance.
+- **MCP-SandboxScan (2601.01241), VIPER-MCP (2605.21392), malicious-server detection
+  (2604.01905):** security/vulnerability detection on curated or vulnerable-by-design sets,
+  not spec conformance across the registry ecosystem.
+- **Remote-server auth study (2605.22333):** remote servers, authentication security only.
+- **Practitioner blogs (non-peer-reviewed, cite as motivation):** RapidClaw "52% dead"
+  audit (1,847 servers — maintenance-liveness rubric, methodology and data not public);
+  digitalapplied 100-server stress test (task success, not protocol conformance).
+- **Community signal:** modelcontextprotocol Discussion #2682 proposes a pre-publish
+  conformance checklist — the ecosystem is asking for exactly this measurement; nobody
+  has done it.
+
+No academic work executes registry-published MCP servers at scale and measures protocol
+conformance. Claim stands as of 2026-07-19.
+
 ## Sampling frame
 
 Official registry (`registry.modelcontextprotocol.io`) crawled 2026-07-19: 54,320
