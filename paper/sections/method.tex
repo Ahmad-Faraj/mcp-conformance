@@ -43,10 +43,20 @@ where an analogue exists:
   \item \textbf{tools-schema-valid}: each declared \texttt{inputSchema} must be a
     valid JSON Schema (checked by meta-validation).
   \item \textbf{tools-call-unknown}: calling a non-existent tool must be rejected.
-    The specification requires a JSON-RPC error (\texttt{-32602}/\texttt{-32601}).
+    The specification's Error Handling section categorizes ``Unknown tools'' under
+    \emph{Protocol Errors} (standard JSON-RPC errors) and illustrates this with a
+    \texttt{-32602} example, as opposed to \emph{Tool Execution Errors} reported as
+    a result with \texttt{isError: true}. Crucially, this categorization is prose
+    plus an example; it uses no RFC-2119 \textsf{MUST}/\textsf{SHOULD} keyword. We
+    therefore do not treat a non-conforming response as a ``violation''; instead we
+    record which of the two mechanisms the server uses (see
+    \textsf{error-as-result} below).
   \item \textbf{tools-call-invalid-args}: for a tool with a typed required
-    property, calling it with a wrong-typed value must be rejected (protocol error
-    or an \texttt{isError} result).
+    property, calling it with a wrong-typed value should be rejected. The spec is
+    itself ambiguous here---it lists ``Invalid arguments'' under Protocol Errors but
+    ``Invalid input data'' under Tool Execution Errors---so we count \emph{either} a
+    protocol error \emph{or} an \texttt{isError} result as acceptable, and flag only
+    a plain success response (the tool ran on ill-typed input) as a defect.
   \item \textbf{malformed-json}: after receiving a syntactically invalid frame, the
     server must not crash or hang; a subsequent \texttt{ping} must still succeed.
   \item \textbf{stdout-purity}: under the stdio transport, the server must emit only

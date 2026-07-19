@@ -56,6 +56,8 @@ class ServerProcess:
         self.lines: queue.Queue[str | None] = queue.Queue()
         self.stderr_tail: list[str] = []
         self.stdout_noise: list[str] = []  # non-JSON lines on stdout = violation
+        self.io_log: list[tuple[float, str, str]] = []  # (t, "send"/"recv", raw)
+        self._t0 = time.monotonic()
         self._next_id = 0
         threading.Thread(target=self._read_stdout, daemon=True).start()
         threading.Thread(target=self._read_stderr, daemon=True).start()
@@ -71,6 +73,7 @@ class ServerProcess:
             del self.stderr_tail[:-40]
 
     def send_raw(self, text: str):
+        self.io_log.append((round(time.monotonic() - self._t0, 3), "send", text[:2000]))
         self.proc.stdin.write(text + "\n")
         self.proc.stdin.flush()
 
@@ -97,6 +100,7 @@ class ServerProcess:
                 return {"_probe": "timeout"}
             if line is None:
                 return {"_probe": "eof"}
+            self.io_log.append((round(time.monotonic() - self._t0, 3), "recv", line[:2000]))
             if not line.strip():
                 continue
             try:
@@ -131,14 +135,30 @@ def check(result, cid, verdict, detail=""):
     result["checks"].append({"id": cid, "verdict": verdict, "detail": detail})
 
 
+AUTH_CONFIG_PATTERNS = (
+    "api key", "api_key", "apikey", "missing token", "environment variable",
+    "env var", "not set", "is required", "must be set", "no such env",
+    "authentication", "unauthorized", "credentials", "config not found",
+    "missing configuration", "please set", "requires a", "set the ",
+)
+
+
 def classify_failure(exit_code, stderr_lines) -> str:
-    """Attribute a pre-handshake death to an install vs. startup-crash stage."""
+    """Attribute a pre-handshake death to a stage/cause.
+
+    Distinguishes install failure, credential/config requirement, and genuine
+    startup crash. The auth/config class is essential: without it, a registry
+    whose servers merely need keys would look less reliable than one whose
+    servers actually crash, confounding cross-registry comparison.
+    """
     text = "\n".join(stderr_lines).lower()
     if "npm error 404" in text or "npm error code e404" in text:
         return "install-not-found"
     if "npm error" in text or "no solution found when resolving" in text \
             or "distribution not found" in text or "no matching distribution" in text:
         return "install-error"
+    if any(p in text for p in AUTH_CONFIG_PATTERNS):
+        return "needs-auth-or-config"
     if "traceback (most recent call last)" in text:
         return "crash-python-exception"
     if "error" in text:
@@ -294,6 +314,7 @@ def probe(cmd: list[str], timeout: float) -> dict:
         result["stdout_noise"] = sp.stdout_noise[:5]
         result["stderr_tail"] = sp.stderr_tail[-10:]
         result["duration_s"] = round(time.monotonic() - t0, 2)
+        result["transcript"] = sp.io_log
     return result
 
 

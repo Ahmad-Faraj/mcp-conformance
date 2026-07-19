@@ -58,21 +58,29 @@ def _pkg_spec(pkg: dict) -> str:
     return f"{ident}=={version}" if version else ident
 
 
+# Isolation applied to EVERY container (install and probe). The install phase is
+# the most dangerous moment -- npm postinstall / PyPI build scripts run arbitrary
+# code with network on -- so it gets the same caps as probing, minus the network
+# cut (installs need the registry). cap-drop ALL + no-new-privileges neuter
+# privilege escalation; resource caps bound a hostile install.
+HARDENING = [
+    "--memory", "768m", "--cpus", "1", "--pids-limit", "256",
+    "--security-opt", "no-new-privileges", "--cap-drop", "ALL",
+]
+
+
 def prime_cmd(pkg: dict) -> list[str]:
-    """Online install-only pass that populates the shared cache volume."""
+    """Online, hardened install-only pass that populates the shared cache volume."""
+    base = ["docker", "run", "--rm"] + HARDENING
     if pkg["registryType"] == "npm":
-        return ["docker", "run", "--rm", "-v", "mcpprobe-npm:/root/.npm", NODE_IMAGE,
-                "npm", "exec", "-y", f"--package={_pkg_spec(pkg)}", "--", "true"]
-    return ["docker", "run", "--rm", "-v", "mcpprobe-uv:/root/.cache/uv", UV_IMAGE,
-            "uvx", "--from", _pkg_spec(pkg), "python", "-c", "0"]
+        return base + ["-v", "mcpprobe-npm:/root/.npm", NODE_IMAGE,
+                       "npm", "exec", "-y", f"--package={_pkg_spec(pkg)}", "--", "true"]
+    return base + ["-v", "mcpprobe-uv:/root/.cache/uv", UV_IMAGE,
+                   "uvx", "--from", _pkg_spec(pkg), "python", "-c", "0"]
 
 
 def docker_cmd(pkg: dict, offline: bool = False) -> list[str]:
-    base = [
-        "docker", "run", "--rm", "-i", "--init",
-        "--memory", "768m", "--cpus", "1", "--pids-limit", "256",
-        "--security-opt", "no-new-privileges",
-    ]
+    base = ["docker", "run", "--rm", "-i", "--init"] + HARDENING
     if offline:
         base += ["--network", "none"]
     if pkg["registryType"] == "npm":
@@ -80,6 +88,21 @@ def docker_cmd(pkg: dict, offline: bool = False) -> list[str]:
         return base + ["-v", "mcpprobe-npm:/root/.npm", NODE_IMAGE] + run
     run = ["uvx"] + (["--offline"] if offline else []) + [_pkg_spec(pkg)]
     return base + ["-v", "mcpprobe-uv:/root/.cache/uv", UV_IMAGE] + run
+
+
+def harness_commit() -> str:
+    """Git commit of the harness, stamped into every result for provenance."""
+    try:
+        out = subprocess.run(["git", "rev-parse", "--short", "HEAD"],
+                             cwd=Path(__file__).resolve().parent, capture_output=True,
+                             text=True, timeout=10)
+        h = out.stdout.strip()
+        dirty = subprocess.run(["git", "status", "--porcelain"],
+                              cwd=Path(__file__).resolve().parent, capture_output=True,
+                              text=True, timeout=10).stdout.strip()
+        return h + ("-dirty" if dirty else "") if h else "unknown"
+    except Exception:  # noqa: BLE001
+        return "unknown"
 
 
 def main():
@@ -141,12 +164,29 @@ def main():
         res.update(_tag(c, primed))
         return res
 
+    commit = harness_commit()
+
     def _tag(c, primed):
         return {"server_name": c["name"], "server_version": c["version"],
                 "registry_type": c["pkg"]["registryType"],
-                "identifier": c["pkg"]["identifier"], "primed": primed}
+                "identifier": c["pkg"]["identifier"], "primed": primed,
+                "harness_commit": commit}
 
     OUT.parent.mkdir(exist_ok=True)
+    tdir = DATA / "transcripts"
+    tdir.mkdir(exist_ok=True)
+
+    def stash_transcript(res):
+        """Move the raw JSON-RPC transcript to its own file; keep results lean."""
+        tr = res.pop("transcript", None)
+        if tr is None:
+            return
+        safe = (res.get("server_name") or "unknown").replace("/", "__")
+        (tdir / f"{safe}.json").write_text(
+            json.dumps({"harness_commit": res.get("harness_commit"),
+                        "cmd": res.get("cmd"), "transcript": tr}, ensure_ascii=False),
+            encoding="utf-8")
+
     with OUT.open("a", encoding="utf-8") as out, ThreadPoolExecutor(args.workers) as ex:
         futures = {ex.submit(run_one, c): c for c in sample}
         for fut in as_completed(futures):
@@ -157,6 +197,7 @@ def main():
                 res = {"server_name": c["name"], "identifier": c["pkg"]["identifier"],
                        "registry_type": c["pkg"]["registryType"], "batch_error": str(e)}
             with lock:
+                stash_transcript(res)
                 out.write(json.dumps(res, ensure_ascii=False) + "\n")
                 out.flush()
                 done += 1

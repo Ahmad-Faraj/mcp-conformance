@@ -1,3 +1,4 @@
 data/
+!data/summary.json
 __pycache__/
 *.pyc
