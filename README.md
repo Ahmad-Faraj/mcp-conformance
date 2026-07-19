@@ -32,13 +32,26 @@ unknown-tool→protocol-error behavior in prose and an example (no RFC-2119
 `MUST`/`SHOULD`), and the official SDKs default to an `isError` result, so we
 *measure* which mechanism a server uses rather than judging it.
 
+## Probe modes
+
+The harness supports two execution modes, verified to produce statistically
+indistinguishable results on every metric (handshake yield, error-as-result
+prevalence, type non-enforcement):
+
+- **online single-phase** (default) — install and probe in one ephemeral
+  `--rm` container. Nothing is cached between servers, so disk usage stays flat;
+  used for the full-ecosystem census on a fixed-size cloud volume.
+- **two-phase offline** (`--offline-probe`) — an online install pass populates a
+  shared cache, then the probe runs with `--network=none` so no server code has
+  network access during measurement. Stronger isolation; used for local runs.
+
 ## Safety
 
-Executing thousands of untrusted packages is the core hazard, so **both** the
-install phase (which runs arbitrary `postinstall`/build scripts) and the probe
-phase run in containers with `--cap-drop ALL`, `--security-opt no-new-privileges`,
-memory/CPU/PID caps, and no host mounts except a package-cache volume. Probing
-additionally runs with `--network=none`. Do not disable these.
+Executing thousands of untrusted packages is the core hazard, so every container
+runs with `--cap-drop ALL`, `--security-opt no-new-privileges`, memory/CPU/PID
+caps, and no host mounts. The census additionally runs on a disposable cloud VM
+with no cloud credentials, so the blast radius is a single throwaway instance.
+Servers requiring credentials are excluded from the frame and never executed.
 
 ## Usage
 
@@ -47,8 +60,8 @@ additionally runs with `--network=none`. Do not disable these.
 python harvest/harvest_registry.py
 python harvest/frame_stats.py
 
-# 2. Probe a seeded random sample (two-phase: install online, probe offline)
-python driver/run_batch.py --n 1600 --seed 42 --offline-probe --skip-done
+# 2. Probe a seeded random sample (online single-phase; ephemeral, disk-bounded)
+python driver/run_batch.py --n 6106 --seed 42 --workers 6 --skip-done
 
 # 3. Analyze
 python driver/analyze.py                 # funnel, verdict matrix, failure classes
