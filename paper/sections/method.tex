@@ -1,6 +1,16 @@
 We measure the MCP server ecosystem by \emph{executing} it. This section defines
-the sampling frame, the conformance harness, the sandbox, and the grading rules.
-The harness and the released dataset make every number reproducible.
+the sampling frame, the conformance harness, the sandbox, and the grading rules
+(Figure~\ref{fig:pipeline}). The harness and the released dataset make every number
+reproducible.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\linewidth]{figures/pipeline.pdf}
+  \caption{Measurement pipeline. Every eligible server is installed and executed in
+  its own disposable container, then driven through the conformance probe and graded
+  against the protocol version it negotiates.}
+  \label{fig:pipeline}
+\end{figure}
 
 \subsection{Sampling frame}
 We crawl the official MCP registry (\texttt{registry.modelcontextprotocol.io})

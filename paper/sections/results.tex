@@ -1,31 +1,30 @@
 \label{sec:results}
 
-We probed \Nprobed{} servers---the complete eligible frame, a census rather than a
-sample. We organize results around the five research questions: runnability (RQ1),
-protocol conformance (RQ2), robustness (RQ3), spec--practice divergence and its cause
-(RQ4), and correlates (RQ5).
+We probed \Nprobed{} servers: the complete eligible frame, a census rather than a
+sample.
 
 \subsection{RQ1: Runnability and the startup funnel}
-Figure~\ref{fig:funnel} shows the funnel from eligible server to completed handshake.
-Of \Nprobed{} servers, \HandshakeCount{} (\HandshakeRate{}) completed the MCP
-handshake. The remaining two-in-five are classified by cause in
-Table~\ref{tab:startup}: launch crashes (by exit signature), silent exits, hangs,
-credential/configuration requirements, and package-install failures. Separating the
-credential/configuration class is essential: without it, servers that merely need
-keys would be conflated with servers that genuinely crash. Strikingly, a large share
-of failures occur \emph{after} a successful install---servers that a client can
-fetch but that then crash, hang, or exit without serving the protocol---so the
-result is not merely an artifact of broken packaging. The startup-failure taxonomy
-is a contribution in its own right: no prior work has measured how often
+\HandshakeCountCorr{} of \Nprobed{} servers (\HandshakeRateCorr{}) complete the MCP
+handshake once the entry-point artifact described in Section~\ref{sec:rq5} is
+corrected; the uncorrected census figure is \HandshakeRate{}. Roughly two in five
+never serve the protocol at all. Figure~\ref{fig:failures} classifies those failures
+by cause.
+
+Two distinctions matter for reading that figure. First, servers that merely need
+credentials or configuration are counted separately from servers that crash;
+conflating them would blame the ecosystem for what is a documentation gap. Second,
+most failures occur \emph{after} a successful install: the package downloads, then
+the process crashes, hangs, or exits without speaking the protocol. The failure is in
+the software, not the packaging. No prior work has measured how often
 registry-published servers fail to start, and because we census the entire eligible
 frame, these are population counts rather than estimates.
 
 \begin{figure}[t]
   \centering
-  \includegraphics[width=0.9\linewidth]{figures/funnel.pdf}
-  \caption{From eligible servers to completed handshakes. Each stage reports the
-  count surviving and the dominant loss cause.}
-  \label{fig:funnel}
+  \includegraphics[width=\linewidth]{figures/failures.pdf}
+  \caption{Why servers never reach a handshake. Configuration requirements and the
+  entry-point artifact are separated from genuine startup failures.}
+  \label{fig:failures}
 \end{figure}
 
 \input{tables/startup}
@@ -47,7 +46,8 @@ an \texttt{isError} tool-execution result rather than the JSON-RPC protocol erro
 specification illustrates. As established in Section~\ref{sec:threats}, we treat this
 as a divergence rather than a violation, because the specification uses no RFC-2119
 keyword here. To explain its near-universality, we attribute each server to its SDK
-from package metadata (Table~\ref{tab:sdk}). The behavior tracks the SDK: the
+from package metadata (Figure~\ref{fig:sdk}, Table~\ref{tab:sdk}). The behavior
+tracks the SDK: the
 official TypeScript and Python SDKs and the popular FastMCP framework all default to
 it. A small number of TypeScript-SDK servers emit the protocol error, showing the
 conforming behavior is achievable within the SDK but is not its default. We confirm
@@ -65,37 +65,50 @@ official SDKs, into a layer of third-party wrappers that inherit their defaults.
 finding is not that thousands of authors independently erred, but that a handful of
 SDK defaults, propagated both directly and through wrappers, set ecosystem behavior.
 
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\linewidth]{figures/sdk.pdf}
+  \caption{The divergence tracks the SDK, not the author. Every SDK family answers an
+  unknown-tool call with an \texttt{isError} result rather than a protocol error in
+  the large majority of cases. Bars show 95\% Wilson intervals; families with fewer
+  than 25 servers appear in Table~\ref{tab:sdk} only.}
+  \label{fig:sdk}
+\end{figure}
+
 \input{tables/sdk}
 
 \subsection{RQ5: Correlates}
+\label{sec:rq5}
 We test whether runnability and conformance correlate with the package registry
 (Figure~\ref{fig:byregistry}). Runnability differs sharply: npm servers complete a
-handshake far more often than PyPI servers ($65.9\%$ of $3{,}968$ vs.\ $50.0\%$ of
-$2{,}138$; two-proportion $z=12.1$, $p<10^{-3}$). Conformance, by contrast, is
-uniformly poor across both registries---the error-as-result divergence appears in
-$87.7\%$ of responding npm servers and $90.2\%$ of responding PyPI servers---which
-is consistent with RQ4: because the divergence is inherited from the SDKs, and both
-ecosystems' SDKs share the same default, the registry a server ships on changes
-whether it \emph{starts} but not whether it \emph{conforms}.
+handshake far more often than PyPI servers (\NpmRate{} of \NpmN{} vs.\ \PypiRateRaw{}
+of \PypiN{}; two-proportion $z=12.1$, $p<10^{-3}$). Conformance does not differ: the
+error-as-result divergence appears in $87.7\%$ of responding npm servers and $90.2\%$
+of responding PyPI servers. This is what RQ4 predicts. Because the divergence is
+inherited from the SDKs, and both language ecosystems' SDKs share the same default,
+the registry a server ships on changes whether it \emph{starts} but not whether it
+\emph{conforms}.
 
-The runnability gap requires care, because roughly half of it is an artifact of how
-PyPI servers must be launched. We launch PyPI servers as \texttt{uvx <package>},
-which resolves only if the package's console script is named after the package;
-npm's \texttt{npx} instead resolves the entry point from \texttt{package.json} and
-has no such requirement. \(466\) PyPI servers---\(21.8\%\) of the PyPI
-population---installed successfully but were never launched for this reason alone,
-each shipping a working script under a different name. Re-probing a random sample of
-\(30\) of them with the entry point resolved, \(40\%\) (95\% CI \(24.6\)--\(57.7\))
-complete a handshake; the remainder fail for genuine reasons (Python exceptions,
-hangs, undeclared configuration). Extrapolating, PyPI runnability is \(58.8\%\)
-(95\% CI \(55.4\)--\(62.6\)) rather than \(50.0\%\), and the gap against npm narrows
-from \(15.9\) to \(7.1\) percentage points (95\% CI \(3.3\)--\(10.5\)). The gap is
-therefore real and remains significant, but the headline figure overstates it
-roughly twofold, and we report the entry-point-corrected estimate as the honest one.
-This is itself an ecosystem finding: registry metadata does not record a server's
-entry point, so a client following the registry alone cannot launch a fifth of
-published PyPI servers. We treat the corrected figure as an estimate pending a full
-re-probe of all \(466\), and release the validation sample with the dataset.
+Part of this gap is an artifact of our own launcher, and we corrected it rather than
+reporting it. We launch PyPI servers as \texttt{uvx <package>}, which resolves only
+if the package's console script is named after the package; npm's \texttt{npx}
+resolves the entry point from \texttt{package.json} and has no such requirement.
+\NEntrypointBlocked{} PyPI servers---\EntrypointBlockedPct{} of the PyPI
+population---installed successfully but were never launched for this reason alone. We
+re-probed all of them with the entry point resolved from the installed package
+metadata. \EntrypointRecovered{} (\EntrypointRecoveryRate{}) then completed a
+handshake; the rest failed for reasons unrelated to naming (Python exceptions, hangs,
+undeclared configuration). Correcting for this raises PyPI runnability from
+\PypiRateRaw{} to \PypiRateCorr{} and the overall census figure to
+\HandshakeRateCorr{}, which we report as the headline throughout. The npm--PyPI gap
+narrows from \GapRaw{} to \GapCorr{} percentage points but remains large: the gap is
+real, not a measurement artifact.
+
+The entry-point problem is itself an ecosystem finding. Registry metadata does not
+record a server's entry point, so a client following the registry alone cannot launch
+a fifth of published PyPI servers---and once the entry point is resolved, nine in ten
+of those servers still fail to start. Discoverability and runnability are distinct
+failures, and the registry surfaces neither.
 
 \begin{figure}[t]
   \centering
