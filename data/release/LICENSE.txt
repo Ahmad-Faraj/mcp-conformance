@@ -1,0 +1,16 @@
+Creative Commons Attribution 4.0 International (CC BY 4.0)
+
+You are free to share and adapt this dataset for any purpose, including
+commercially, provided you give appropriate credit.
+
+Cite as:
+  A. Faraj. "Does Your MCP Server Actually Follow the Protocol? An Execution-Based
+  Conformance Study of the Model Context Protocol Ecosystem." 2026.
+  https://github.com/Ahmad-Faraj/mcp-conformance
+
+Full text: https://creativecommons.org/licenses/by/4.0/legalcode
+
+NOTE ON THIRD-PARTY CONTENT: this dataset records the observed runtime behaviour of
+independently published software. Records are measurements, not claims about the
+intent or quality of any author's work. Servers behind security-relevant findings are
+pseudonymised pending maintainer disclosure and must not be de-anonymised.

@@ -77,7 +77,10 @@ def main():
     # intervals above are too narrow. Recompute each headline rate on a subset
     # holding one server per publisher, to bound how far the clustering moves it.
     def publisher(r):
-        return (r.get("server_name") or "").split("/")[0]
+        # The public release carries a hashed publisher_id, because pseudonymised
+        # server names lose their namespace prefix. Prefer it when present so the
+        # clustering check reproduces identically from the released dataset.
+        return r.get("publisher_id") or (r.get("server_name") or "").split("/")[0]
 
     pub_counts = Counter(publisher(r) for r in rows)
     seen, uniq = set(), []

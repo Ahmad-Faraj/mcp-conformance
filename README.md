@@ -45,6 +45,34 @@ prevalence, type non-enforcement):
   shared cache, then the probe runs with `--network=none` so no server code has
   network access during measurement. Stronger isolation; used for local runs.
 
+## Headline results
+
+Census of the complete eligible frame: **6,106 servers**, drawn from a 17,432-server
+registry snapshot.
+
+| Finding | Result |
+|---|---|
+| Complete a protocol handshake | **61.1%** (95% CI 59.8–62.3) — two in five never serve the protocol |
+| Answer an unknown tool with an `isError` result instead of a JSON-RPC protocol error | **88.4%** (95% CI 87.3–89.4) |
+| Silently accept a wrong-typed required argument | **7.4%** |
+| Crash or hang on a malformed frame | **0.5%** |
+
+The error-as-result divergence tracks the **SDK**, not the author: official TypeScript
+SDK 90% (n=2,347), official Python SDK 88% (n=645), FastMCP 100% (n=375). A handful of
+library defaults, not thousands of independent mistakes, set ecosystem behaviour.
+
+Robustness: servers are not independent (6,106 servers come from 3,913 publishers;
+the largest ships 305). Recomputing one-server-per-publisher holds every finding
+(handshake 58.5%, error-as-result 85.2%).
+
+## Dataset
+
+`data/release/` holds the public, disclosure-filtered dataset — per-server verdicts,
+the entry-point re-probe, SDK attribution, and the registry snapshot. Identities
+behind security-relevant findings are pseudonymised pending maintainer disclosure,
+and credential material observed at runtime is redacted; aggregates are unaffected.
+See `data/release/DATASET.md`.
+
 ## Safety
 
 Executing thousands of untrusted packages is the core hazard, so every container
