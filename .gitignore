@@ -11,6 +11,8 @@ data/release/*
 !data/release/probe_census.jsonl
 !data/release/sdk_attribution.csv
 !data/release/summary.json
+# Required to reproduce the entry-point-corrected runnability figure.
+!data/release/entrypoint_reprobe.jsonl
 # The registry snapshot is needed to verify the eligibility funnel (17,432 -> 6,106),
 # so it ships with the release despite its size.
 !data/release/frame_latest.jsonl
