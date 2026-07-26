@@ -33,18 +33,16 @@ each server against the protocol version it negotiates, and we take care to
 separate genuine specification requirements (RFC-2119 \textsf{MUST}/\textsf{SHOULD})
 from behavior the specification merely illustrates by example.
 
-Our findings are consistent and, in places, striking. Only \HandshakeRate{} of
-installable servers successfully start and complete a protocol handshake; the
-remainder fail in ways we classify into a startup-failure taxonomy, from install
-errors to silent exits to hangs. Among servers that do respond, \ErrAsResultRate{}
-report a call to a non-existent tool as a ``successful'' tool-execution error
-(\texttt{isError: true}) rather than the JSON-RPC protocol error the specification
-illustrates---and we trace this near-universal divergence to its cause: it is the
-default behavior of the official SDKs, inherited wholesale by the servers built on
-them. A smaller but important minority silently accept ill-typed arguments or fail
-on malformed input, the latter a denial-of-service primitive. Throughout, we find
-that the gap between the written specification and deployed practice is wide,
-systematic, and explicable.
+Only \HandshakeRateCorr{} of installable servers start and complete a protocol
+handshake. The rest fail in ways we classify into a startup-failure taxonomy, from
+install errors to silent exits to hangs. Among servers that do respond,
+\ErrAsResultRate{} report a call to a non-existent tool as a ``successful''
+tool-execution error (\texttt{isError: true}) rather than the JSON-RPC protocol error
+the specification illustrates. We trace this near-universal divergence to its cause:
+it is the default behavior of the official SDKs, inherited by the servers built on
+them. A smaller share silently accept ill-typed arguments (\NoTypecheckRate{}) or die
+on a malformed frame (\MalformedDiesRate{}), the latter a denial-of-service
+primitive.
 
 This paper makes four contributions:
 \begin{itemize}
