@@ -107,6 +107,18 @@ systematic.
 \section{Conclusion}
 \input{sections/conclusion}
 
+\paragraph{Data and code availability.}
+The conformance harness, the analysis pipeline, and the disclosure-filtered census
+dataset are available at
+\url{https://github.com/Ahmad-Faraj/mcp-conformance}, with the harness pinned at tag
+\texttt{harness-v1.0}. The release contains one record per probed server---every
+verdict behind every number in this paper---together with the registry snapshot that
+defines the sampling frame, so the eligibility funnel and all reported rates can be
+recomputed independently. Two filters are applied and documented with the data: the
+identities of \(211\) servers carrying security-relevant findings are withheld
+pending disclosure, and credential material that servers emitted at runtime is
+redacted. Neither filter alters any verdict or count.
+
 \paragraph{AI assistance.}
 This work made substantial use of an AI assistant, including implementation of the
 measurement harness and analysis code and drafting of this manuscript. The author

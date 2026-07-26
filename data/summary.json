@@ -1,0 +1,66 @@
+{
+  "n": 6106,
+  "started": 6089,
+  "handshake_ok": 3685,
+  "failure_classes": {
+    "crash-exit-1": 773,
+    "install-error": 262,
+    "exit-silent": 319,
+    "needs-auth-or-config": 299,
+    "crash-with-error-output": 313,
+    "crash-exit-2": 114,
+    "crash-python-exception": 110,
+    "hang-no-reply": 132,
+    "crash-exit-127": 30,
+    "?": 19,
+    "install-not-found": 19,
+    "crash-exit-137": 27,
+    "crash-exit-255": 1,
+    "crash-exit-3": 1,
+    "crash-exit-4": 1,
+    "crash-exit-254": 1
+  },
+  "verdicts": {
+    "server-initialize": {
+      "pass": 3685
+    },
+    "ping": {
+      "pass": 3638,
+      "fail": 47
+    },
+    "tools-list": {
+      "pass": 3673,
+      "fail": 5,
+      "skip": 7
+    },
+    "tools-schema-valid": {
+      "pass": 3671,
+      "fail": 2
+    },
+    "tools-call-unknown": {
+      "error-as-result": 3258,
+      "warn": 122,
+      "pass": 139,
+      "fail": 166
+    },
+    "tools-call-invalid-args": {
+      "pass": 3309,
+      "fail": 273,
+      "skip": 103
+    },
+    "malformed-json": {
+      "pass": 3668,
+      "fail": 17
+    },
+    "stdout-purity": {
+      "pass": 3654,
+      "fail": 31
+    }
+  },
+  "negotiated_versions": {
+    "2025-06-18": 3576,
+    "2025-03-26": 12,
+    "2024-11-05": 92,
+    "2025-11-25": 5
+  }
+}
