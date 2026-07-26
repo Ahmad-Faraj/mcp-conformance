@@ -14,14 +14,20 @@ servers before the study and confirmed it reproduces their known-good behavior o
 every check except the SDK-level divergence we set out to measure.
 
 \paragraph{Internal validity.}
-Measurement runs under network isolation (\texttt{-{}-network=none}), which removes
-network flakiness and server-side outbound calls as confounders but could, in
-principle, penalize a server that requires network access during initialization.
-Because our frame excludes servers declaring required credentials or arguments, and
-because the checks we grade (handshake, tool listing, error handling) are local
-protocol behaviors, we expect this effect to be small; servers whose behavior
-demonstrably requires network access are recorded as such rather than silently
-scored as failures. Sandbox heterogeneity across language runtimes is a further
+The census was measured in the single-phase condition, with the network available
+during both install and probe (Section~\ref{sec:method-env}). This avoids penalizing
+a server that legitimately contacts the network during initialization, but it does
+not remove server-side outbound calls as a confounder. The exposure is concentrated
+in one check. For \textsf{tools-call-invalid-args} we accept an \texttt{isError}
+result as evidence that the server rejected the ill-typed argument; an
+\texttt{isError} produced instead by an unrelated runtime or network failure is
+indistinguishable to the harness, and would be counted as argument checking that did
+not in fact occur. The reported rate of silent type non-enforcement is therefore a
+\emph{lower bound}. The lifecycle, tool-listing, error-handling, malformed-input and
+stdout-purity checks are local protocol behaviors and are not exposed to this
+confound. A network-isolated replication would tighten the argument-checking result,
+and the harness supports that condition directly. Sandbox heterogeneity across
+language runtimes is a further
 source of noise, which we bound by pinning base images and package versions and by
 stamping every result with the harness commit that produced it.
 
@@ -39,11 +45,30 @@ first.
 \paragraph{Completeness.}
 We probe the entire eligible frame---all \Nprobed{} servers (\Nresponders{}
 responding)---so the study is a complete census of the eligible population rather
-than a sample. The confidence intervals we report throughout therefore reflect only
-residual measurement noise (e.g.\ server-side nondeterminism), not sampling error;
-they are correspondingly tight. The conformance findings (RQ2--RQ4) are both
-near-universal and independently replicated across two probe conditions, and the
-runnability funnel (RQ1) now rests on the full population rather than an estimate.
+than a sample. The confidence intervals we report throughout therefore reflect
+residual measurement noise (e.g.\ server-side nondeterminism) rather than sampling
+error, and should be read together with the publisher-clustering caveat below. The
+conformance findings (RQ2--RQ4) are near-universal, and the runnability funnel (RQ1)
+rests on the full population rather than an estimate.
+
+\paragraph{Publisher clustering.}
+The \Nprobed{} servers in our frame come from only \Npublishers{} distinct registry
+namespaces, and the distribution is heavy-tailed: the largest single publisher
+accounts for \TopPublisherN{} servers (\TopPublisherPct{} of the census) and the ten
+largest for \TopTenPct{}. Servers from one publisher frequently share a template and
+behave near-identically, so they are not independent observations, and the Wilson
+intervals we report---which assume independent trials---understate the true
+uncertainty. To bound the effect, we recompute each headline rate on a
+publisher-deduplicated subset retaining one server per namespace (\NuniqPub{}
+servers). Every estimate moves by a few points and no conclusion changes: handshake
+yield \HandshakeRatePub{} (against \HandshakeRate{} for the full census),
+error-as-result \ErrAsResultRatePub{} (against \ErrAsResultRate{}), and silent type
+non-enforcement \NoTypecheckRatePub{} (against \NoTypecheckRate{}). Notably the
+single largest publisher is atypical in runnability (a \(26.2\%\) handshake yield
+against \(60.4\%\) overall), and alone depresses the census figure by \(1.8\)
+percentage points. We report the full-census figures as our primary result, because the
+census rather than a sample of publishers is the object of study, and the
+publisher-deduplicated figures as the robustness check.
 
 \paragraph{Interrupted probes.}
 A small fraction ($\le 0.4\%$) of probes were interrupted by the automated disk-guard

@@ -78,12 +78,16 @@ the clearest instance of specification text diverging from universal practice.
 \subsection{Sandbox}
 Executing thousands of untrusted packages demands isolation. Each server runs in a
 fresh container (\texttt{node:22-slim} for npm, an \texttt{astral-sh/uv} image for
-PyPI) with a memory cap, a single CPU, a PID limit, \texttt{no-new-privileges}, and
-no host filesystem mounts other than a package-cache volume. Measurement uses a
-\textbf{two-phase} protocol: an online install pass populates the cache, then the
-conformance probe runs with \texttt{-{}-network=none}. No server code has network
-access while it is being measured, which both hardens the experiment and removes
-network flakiness and server-side outbound calls as confounders.
+PyPI) with a memory cap, a single CPU, a PID limit, \texttt{no-new-privileges}, all
+Linux capabilities dropped, and no host filesystem mounts other than a package-cache
+volume. The harness supports two probe conditions. In the \textbf{two-phase}
+condition, an online install pass populates the cache and the conformance probe then
+runs with \texttt{-{}-network=none}, so no server code has network access while it is
+being measured. In the \textbf{single-phase} condition, install and probe occur
+together in one ephemeral container and the network is available throughout. The
+census reported here was measured in the single-phase condition, for the operational
+reasons given in Section~\ref{sec:method-env}; we state the consequences for validity
+in Section~\ref{sec:threats}.
 
 \subsection{Execution environment and probe condition}
 \label{sec:method-env}
@@ -91,12 +95,15 @@ The census was executed on a single disposable cloud instance (no cloud
 credentials attached, so the blast radius of running untrusted code is one
 throwaway host) using the online single-phase condition: install and probe occur
 in one ephemeral \texttt{-{}-rm} container per server, with nothing cached between
-servers so that disk usage stays bounded across the full ecosystem. In a pilot on
-an independent subset we verified that this condition and the two-phase
-network-isolated condition yield statistically indistinguishable results on every
+servers so that disk usage stays bounded across the full ecosystem. In a pilot on an
+independent subset (roughly 200 servers per arm) we compared this condition against
+the two-phase network-isolated condition and found no detectable difference on any
 metric---handshake yield ($54\%$ vs.\ $57\%$), error-as-result prevalence ($87\%$
-vs.\ $87\%$), and silent type non-enforcement ($7\%$ vs.\ $7\%$)---confirming that
-server-side protocol behavior is independent of the probe condition. A small number
+vs.\ $87\%$), and silent type non-enforcement ($7\%$ vs.\ $7\%$). We note that a
+pilot of this size can only exclude differences larger than roughly $14$ percentage
+points in handshake yield, so this is evidence of consistency rather than a
+demonstration of equivalence; the conformance metrics, being far more tightly
+clustered, are correspondingly better constrained. A small number
 of probes ($\le 0.4\%$) were interrupted by an automated disk-guard that reclaims
 space if the host approaches capacity; these are recorded conservatively as
 non-handshaking and, being a property of the harness environment rather than the

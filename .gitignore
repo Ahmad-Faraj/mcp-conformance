@@ -1,5 +1,19 @@
-data/
+# Raw census working data stays local: it carries un-redacted stderr and the
+# private disclosure log. The PUBLIC, disclosure-filtered release under
+# data/release/ is built by driver/make_release.py and IS tracked -- the paper
+# depends on it being available.
+data/*
 !data/summary.json
+!data/release/
+data/release/*
+!data/release/DATASET.md
+!data/release/LICENSE.txt
+!data/release/probe_census.jsonl
+!data/release/sdk_attribution.csv
+!data/release/summary.json
+# The registry snapshot is needed to verify the eligibility funnel (17,432 -> 6,106),
+# so it ships with the release despite its size.
+!data/release/frame_latest.jsonl
 paper/*.aux
 paper/*.log
 paper/*.out

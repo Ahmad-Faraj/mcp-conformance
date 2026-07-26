@@ -82,6 +82,15 @@ def verdicts_table(rows):
     return "\n".join(out)
 
 
+# Attribution recognizes a fixed list of SDK package names, so the residual bucket
+# means "no SDK we look for", NOT "hand-written". Sampling it shows ~2/3 depend on an
+# MCP framework outside the list. Display a label that says only what we measured.
+SDK_LABEL = {
+    "none-handrolled": "no-known-SDK",
+    "unknown": "metadata-unavailable",
+}
+
+
 def sdk_table():
     path = DATA / "sdk_attribution.csv"
     if not path.exists():
@@ -89,7 +98,8 @@ def sdk_table():
     xtab = defaultdict(Counter)
     with path.open(encoding="utf-8") as f:
         for row in csv.DictReader(f):
-            xtab[row["sdk_family"]][row["unknown_verdict"]] += 1
+            fam = SDK_LABEL.get(row["sdk_family"], row["sdk_family"])
+            xtab[fam][row["unknown_verdict"]] += 1
     out = [r"\begin{table}[t]", r"\centering",
            r"\caption{SDK family vs.\ unknown-tool response. The error-as-result divergence tracks the SDK, not the author.}",
            r"\label{tab:sdk}", r"\begin{tabular}{lrrr}", r"\toprule",

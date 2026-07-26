@@ -13,6 +13,7 @@ Usage:
 import argparse
 import json
 import random
+import re
 import subprocess
 import sys
 import threading
@@ -99,6 +100,51 @@ def _pkg_spec(pkg: dict) -> str:
     return f"{ident}=={version}" if version else ident
 
 
+# `uvx <package>` requires the package's console-script name to equal the package
+# name. When it does not, uv installs fine, refuses to launch, and names the
+# scripts it *does* provide. npm has no analogue -- `npx -y <pkg>` resolves the
+# binary from package.json -- so scoring these as server failures would bias PyPI
+# runnability downward against npm for a purely packaging-convention reason. We
+# parse uv's own hint and relaunch via `uvx --from <spec> <script>`.
+UVX_NO_EXE = re.compile(r"An executable named `([^`]+)` is not provided by package `([^`]+)`")
+UVX_AVAILABLE = re.compile(r"The following executables are available:(.*?)(?:Use `uvx|$)", re.S)
+
+
+def stderr_text(res: dict) -> str:
+    tail = res.get("stderr_tail") or []
+    return "\n".join(tail) if isinstance(tail, list) else str(tail)
+
+
+def uvx_entrypoint(text: str, identifier: str) -> str | None:
+    """Resolve the real console-script name from uv's 'not provided' error.
+
+    Returns None when the error is absent or uv named no alternative, so the
+    caller falls through to the original (correctly recorded) failure.
+    """
+    if not text or not UVX_NO_EXE.search(text):
+        return None
+    m = UVX_AVAILABLE.search(text)
+    if not m:
+        return None
+    names = [ln.strip(" \t-") for ln in m.group(1).splitlines()]
+    names = [n for n in names if n and not n.startswith("Use `")]
+    if not names:
+        return None
+    if len(names) == 1:
+        return names[0]
+    # Several scripts. Prefer an exact hyphen/underscore variant of the package
+    # name, then a uniquely MCP-looking script, then the shortest candidate --
+    # ambiguity is recorded so these can be audited rather than silently guessed.
+    norm = identifier.replace("-", "_")
+    for n in names:
+        if n.replace("-", "_") == norm:
+            return n
+    mcpish = [n for n in names if "mcp" in n.lower()]
+    if len(mcpish) == 1:
+        return mcpish[0]
+    return sorted(mcpish or names, key=len)[0]
+
+
 # Isolation applied to EVERY container (install and probe). The install phase is
 # the most dangerous moment -- npm postinstall / PyPI build scripts run arbitrary
 # code with network on -- so it gets the same caps as probing, minus the network
@@ -120,7 +166,7 @@ def prime_cmd(pkg: dict) -> list[str]:
                    "uvx", "--from", _pkg_spec(pkg), "python", "-c", "0"]
 
 
-def docker_cmd(pkg: dict, offline: bool = False) -> list[str]:
+def docker_cmd(pkg: dict, offline: bool = False, entrypoint: str | None = None) -> list[str]:
     base = ["docker", "run", "--rm", "-i", "--init"] + HARDENING
     if offline:
         base += ["--network", "none"]
@@ -133,7 +179,9 @@ def docker_cmd(pkg: dict, offline: bool = False) -> list[str]:
         run = ["npx", "-y"] + (["--offline"] if offline else []) + [_pkg_spec(pkg)]
         vol = ["-v", "mcpprobe-npm:/root/.npm"] if cache else []
         return base + vol + [NODE_IMAGE] + run
-    run = ["uvx"] + (["--offline"] if offline else []) + [_pkg_spec(pkg)]
+    spec = _pkg_spec(pkg)
+    launch = ["--from", spec, entrypoint] if entrypoint else [spec]
+    run = ["uvx"] + (["--offline"] if offline else []) + launch
     vol = ["-v", "mcpprobe-uv:/root/.cache/uv"] if cache else []
     return base + vol + [UV_IMAGE] + run
 
@@ -225,6 +273,20 @@ def main():
                 if wait_for_docker():
                     continue
                 return {"_docker_dead": True, **_tag(c, primed)}
+            # PyPI entrypoint recovery. The package installed but its console
+            # script is not named after the package, so uv never launched it.
+            # Relaunch once with the script uv itself named. Both outcomes are
+            # stamped so the analysis can report the naive-convention yield and
+            # the entrypoint-corrected yield separately.
+            if not res.get("handshake_ok") and c["pkg"]["registryType"] == "pypi":
+                ep = uvx_entrypoint(stderr_text(res), c["pkg"]["identifier"])
+                if ep:
+                    retry = probe(docker_cmd(c["pkg"], offline=args.offline_probe,
+                                             entrypoint=ep), args.timeout)
+                    retry["entrypoint_mismatch"] = True
+                    retry["entrypoint_resolved"] = ep
+                    retry["naive_handshake_ok"] = False
+                    res = retry
             res.update(_tag(c, primed))
             return res
         # Exhausted retries with the engine still misbehaving.

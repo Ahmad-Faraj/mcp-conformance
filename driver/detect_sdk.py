@@ -58,7 +58,9 @@ def npm_sdk(ident: str, version: str | None):
     for dep, fam in NPM_SDK.items():
         if dep.lower() in names:
             return fam, deps.get(dep)
-    return ("none-handrolled" if deps else "unknown"), None
+    # Not "hand-rolled": only "none of the SDKs we look for". Many such servers
+    # depend on a third-party MCP wrapper that itself builds on an official SDK.
+    return ("no-known-SDK" if deps else "unknown"), None
 
 
 def pypi_sdk(ident: str, version: str | None):
@@ -76,7 +78,7 @@ def pypi_sdk(ident: str, version: str | None):
             tok = r.split(";")[0].strip().split()[0].split("[")[0].split("==")[0].split(">")[0].split("<")[0].split("~")[0].strip().lower()
             if tok == dep:
                 return PYPI_SDK[dep], None
-    return ("none-handrolled" if reqs else "unknown"), None
+    return ("no-known-SDK" if reqs else "unknown"), None
 
 
 def unknown_verdict(r: dict) -> str:

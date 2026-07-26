@@ -5,11 +5,38 @@ the norms of responsible measurement research.
 Every server---during both installation and probing---runs inside an isolated
 container with all Linux capabilities dropped, no new privileges, bounded memory,
 CPU, and process counts, and no host filesystem access beyond a package cache
-volume. The install phase, which executes arbitrary \texttt{postinstall} and build
-scripts with network access, receives the same isolation as the probe phase; the
-probe phase additionally runs with networking disabled. We execute no server that
-declares a requirement for credentials, both because it lies outside our frame and
-because doing so could send real requests to third-party systems.
+volume. The census was executed in the single-phase condition, in which install and
+probe share one ephemeral container and the network is available throughout; the
+install phase, which executes arbitrary \texttt{postinstall} and build scripts,
+therefore receives the same isolation as the probe. We are explicit that server code
+had network access while being measured, and we mitigate the resulting risk by
+structural means rather than by network policy: every container is discarded after a
+single server, and the entire census ran on a disposable cloud instance with no
+credentials attached, so the blast radius of executing untrusted code is one
+throwaway host. The harness also supports a network-isolated probe phase
+(\texttt{-{}-network=none}), which we recommend for replications that do not need
+install and probe in a single pass. We execute no server that declares a requirement
+for credentials, both because it lies outside our frame and because doing so could
+send real requests to third-party systems.
+
+\paragraph{Observed side effects of networked measurement.}
+Because the census ran with the network available, we audited the captured output
+for evidence that server code produced effects outside its container. We report what
+we found rather than only what we intended. Roughly $1\%$ of servers attempted an
+outbound connection during startup, most of which failed. Five servers emitted live
+credential material into their own logs---session tokens they had generated---and
+one auto-provisioned an API key and account against a third-party service, which is
+precisely the class of effect our frame's exclusion of credential-requiring servers
+was meant to prevent. We have redacted every such value from the released dataset,
+notified the affected service, and requested revocation of the provisioned key. We
+draw two conclusions. First, excluding servers that \emph{declare} required
+credentials does not exclude servers that \emph{acquire} them unprompted, so
+declaration-based eligibility filtering is a weaker ethical guarantee than it
+appears. Second, a network-isolated probe phase should be the default for
+measurement at this scale, and we recommend replications use the harness's
+two-phase mode; our own use of the single-phase condition was an operational
+concession to running an entire ecosystem on one disposable host, and we state its
+cost here rather than in a footnote.
 
 \paragraph{Responsible disclosure.}
 A subset of our findings are security-relevant: a server that crashes or hangs on a
