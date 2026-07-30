@@ -1,36 +1,50 @@
-\paragraph{Non-normative language delegates the decision to SDK authors.}
-The divergence we measure is not, strictly, a violation. The specification never says
-\textsf{MUST}. It categorizes unknown-tool calls as protocol errors in prose and
-shows one example, and that editorial choice left the official SDKs to pick an
-interpretation. The interpretation they picked is now what the ecosystem does. The
-written categorization is descriptively false for most deployed servers. Where a
-specification wants uniform behavior from implementations it does not control, prose
-and examples are not enough. The requirement has to be normative.
+\paragraph{The specification is following the ecosystem, not leading it.}
+On the question our largest measurement covers, the standard is being rewritten to
+match what implementations already do. SEP-1303 moved input validation errors to tool
+execution errors, and SEP-2145 proposes the same for unknown tools, explicitly to
+align the specification with SDK behaviour~\cite{sep1303,sep2145}. The reasoning is
+sound: an error the model can read is an error the model can recover from, and a
+protocol error never reaches it. What the debate has lacked is a measurement of how
+far the ecosystem has already gone. It has gone almost all the way---\ErrAsResultRate{}
+of deployed servers---which means SEP-2145 would ratify existing behaviour rather than
+impose new behaviour, and the migration cost falls on the conforming minority instead.
+That is a different decision from the one the proposal appears to be making, and it is
+the kind of question an execution census can answer and a specification discussion
+cannot.
 
 \paragraph{The SDK is the unit of change.}
 Attributing servers to their SDK collapses thousands of independent authorship
-decisions into a handful of library defaults, and the residual category shows the
-same defaults propagating a second time through third-party wrappers. A poor default
-reaches everyone. So would a fix: changing a few SDKs, or clarifying the
-specification and updating those SDKs to match, would move conformance for the whole
-population at once. Ecosystem-scale conformance is better treated as a property of
-the SDKs than of the servers.
+decisions into a handful of library defaults, and the residual category shows those
+defaults propagating a second time through third-party wrappers. This cuts both ways.
+A poor default reaches everyone; so does a fix. Changing a few SDKs would move
+conformance for the whole population at once, which is why the SEP process treats SDK
+behaviour as a first-class input rather than an implementation detail. It also means
+ecosystem conformance should be measured at the SDK layer, where a single change is
+worth thousands of server-level ones.
+
+\paragraph{Not every deviation is a matter of interpretation.}
+The unknown-tool question is genuinely contested, and we decline to score it. The
+input-validation result is not. The specification requires servers to validate all
+tool inputs, and \NSilentExec{} servers run tools on arguments their own published
+schema rejects, returning results that carry no sign of it. No proposal is pending to
+relax that requirement, and no client-side convention recovers the information once it
+is gone. Where a specification uses \textsf{MUST} and practice ignores it, measurement
+is the only thing that surfaces the gap: nothing in the registry, the package metadata,
+or a static scan reveals which servers enforce their own schemas.
 
 \paragraph{Startup failure is invisible to the registry.}
-Two in five installable servers never serve the protocol. A fifth of PyPI servers
-cannot even be launched from registry metadata alone, because that metadata does not
-record an entry point. Registries rank servers by popularity and recency. None
-surfaces whether a server starts. Server selection is therefore an empirical
-reliability question that the available metadata cannot answer, and a pre-publish
-conformance check---the kind the community has begun to discuss, and which our
+Two in five installable servers never serve the protocol, and a fifth of PyPI servers
+cannot be launched from registry metadata alone because that metadata does not record
+an entry point. Registries rank servers by popularity and recency. None surfaces
+whether a server starts. Server selection is an empirical reliability question that
+the available metadata cannot answer, and a pre-publish conformance check---which our
 harness implements---would turn a one-time measurement into a standing signal.
 
 \paragraph{Recommendations.}
-Two findings support concrete action. For SDK authors and the specification: resolve
-the unknown-tool ambiguity, either by making the protocol-error categorization
-normative and aligning the SDK defaults with it, or by explicitly blessing both
-mechanisms so client authors know they must handle both. For agent frameworks:
-validate arguments against the declared schema before dispatch. \SilentExecRate{} of
-responding servers will execute a tool on input their own schema rejects and return a
-result that carries no sign of it. The schema needed to catch this is already
-published by the server. It is simply not enforced by it.
+For the specification: SEP-2145 should be decided with the deployment numbers in hand,
+because they change what the proposal is doing. For SDK authors: input validation is
+where the normative requirement actually bites, and a default that validates declared
+argument types before dispatch would close the one gap in this study that is
+unambiguously a violation. For agent frameworks: validate arguments against the
+declared schema client-side before dispatch, since \SilentExecRate{} of responding
+servers will not, and the failure is silent.

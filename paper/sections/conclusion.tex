@@ -3,13 +3,16 @@ running it. So we ran it. Every eligible server in the official registry was
 installed, launched in a disposable sandbox, and driven through the protocol.
 
 \HandshakeRateCorr{} complete a handshake. The rest crash, hang, or exit without
-serving anything at all. Among the servers that do respond, \ErrAsResultRate{}
-diverge from the specification's own illustrated error handling in exactly the same
-way, and that uniformity says nothing about developers: it is inherited from a
-handful of SDK defaults, propagated directly and through third-party wrappers built
-on them. A smaller group, \SilentExecRate{}, will run a tool on input their published
-schema rejects and return a well-formed answer carrying no sign that the input was
-never valid. One asked to scan an integer for unsafe imports reported it clean.
+serving anything at all. Among the servers that do respond, \ErrAsResultRate{} report
+an unknown tool the same way, and that uniformity says nothing about developers: it is
+inherited from a handful of SDK defaults, propagated directly and through third-party
+wrappers. The specification is currently being amended to match them, and our number
+is what tells the people making that decision whether they are ratifying the ecosystem
+or asking most of it to change. A smaller group, \SilentExecRate{}, will run a tool on
+input their published schema rejects and return a well-formed answer carrying no sign
+the input was never valid. One asked to scan an integer for unsafe imports reported it
+clean. That group is not a matter of interpretation: the specification requires servers
+to validate their inputs, and these do not.
 
 None of this is visible to a static scanner or a registry crawl. All of it matters to
 anyone building on the layer. We release the harness and the dataset so the

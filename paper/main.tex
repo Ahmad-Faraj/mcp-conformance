@@ -45,12 +45,14 @@ inputs a real agent session produces: unknown tool names, wrong-typed arguments,
 and malformed protocol frames. We find that only \HandshakeRateCorr{} of installable
 servers start and complete a handshake; that \ErrAsResultRate{} of responding servers
 diverge from the specification's illustrated error-reporting behavior in an identical
-way we trace directly to SDK defaults; and that \SilentExecRate{} execute a tool on
-an argument their own declared schema rejects, returning a well-formed result whose
-content is unrelated to the request and which no client can distinguish from a
-correct answer. We release the harness and the disclosure-filtered dataset.
-Conformance in this ecosystem is set less by server authors than by a handful of SDK
-defaults, which makes it both a measurable property and a fixable one.
+way, which we trace to SDK defaults and which an open specification proposal is now
+moving to ratify; and that \SilentExecRate{} execute a tool on an argument their own
+declared schema rejects, returning a well-formed result that no client can distinguish
+from a correct answer, in violation of the specification's requirement that servers
+validate all tool inputs. We release the harness and the disclosure-filtered dataset.
+Conformance here is set less by server authors than by a handful of SDK defaults,
+which makes it measurable, fixable, and---on the questions still open---decidable with
+data rather than argument.
 \end{abstract}
 
 \section{Introduction}

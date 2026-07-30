@@ -72,32 +72,54 @@ by the raw verdict, and we report the smaller figure as the one that matters. We
 count a server as reporting the problem whenever its output contains any error-like
 token, so \NSilentExec{} is a lower bound.
 
-The distinction is not stylistic. A code-scanning tool asked to scan the integer
+Unlike the error-reporting question, this one is not a matter of interpretation. The
+specification's security requirements state that servers \textbf{MUST} validate all
+tool inputs~\cite{mcpspec}. A server that executes a tool on an argument contradicting
+its own published schema has not validated that input, so these \NSilentExec{} servers
+are the one population in our census that fails an explicit RFC-2119 requirement
+rather than diverging from an illustrated convention.
+
+The consequences are concrete. A code-scanning tool asked to scan the integer
 \texttt{12345} answered \texttt{CLEAN}; a prompt-scoring tool returned a complete
 rubric, including per-dimension sub-scores, for the same integer; a project registry
 confirmed that a project named \texttt{12345} had been registered. These are not
-malformed responses that a client could detect and discard. They are well-formed
-successful results whose content is unrelated to any question the client asked, and
-they are indistinguishable at the protocol level from a correct answer. An agent
-consuming one has no signal available---no error code, no \texttt{isError} flag, no
-parse failure---on which to doubt it, and the schema it would have used to validate
-the call is the schema the server declared and did not enforce.
+malformed responses a client could detect and discard. They are well-formed successful
+results whose content is unrelated to any question the client asked, and at the
+protocol level they are indistinguishable from a correct answer. An agent consuming one
+has no signal to doubt it---no error code, no \texttt{isError} flag, no parse
+failure---and the schema that would have caught the call is the one the server
+published and did not enforce.
 
 \input{tables/consequences}
 
-\subsection{RQ4: The spec--practice divergence and its cause}
-\ErrAsResultRate{} of responding servers reported a call to a non-existent tool as
-an \texttt{isError} tool-execution result rather than the JSON-RPC protocol error the
-specification illustrates. As established in Section~\ref{sec:threats}, we treat this
-as a divergence rather than a violation, because the specification uses no RFC-2119
-keyword here. To explain its near-universality, we attribute each server to its SDK
-from package metadata (Figure~\ref{fig:sdk}, Table~\ref{tab:sdk}). The behavior
-tracks the SDK: the
-official TypeScript and Python SDKs and the popular FastMCP framework all default to
-it. A small number of TypeScript-SDK servers emit the protocol error, showing the
-conforming behavior is achievable within the SDK but is not its default. We confirm
-this directly against the official reference servers, which exhibit the same
-divergence.
+\subsection{RQ4: Where practice and specification disagree, and which one moved}
+\ErrAsResultRate{} of responding servers reported a call to a non-existent tool as an
+\texttt{isError} tool-execution result rather than a JSON-RPC protocol error. The
+specification's error-handling section lists ``unknown tool'' under \emph{Protocol
+Errors} and illustrates it with a \texttt{-32602} example~\cite{mcpspec}. It attaches
+no RFC-2119 keyword, so we record which mechanism each server uses rather than scoring
+one as a violation (Section~\ref{sec:threats}).
+
+The interesting question is not who is wrong but which side is moving. The
+specification has been converging on the ecosystem, not the reverse. SEP-1303, now
+accepted and reflected in the specification, reclassified input validation errors from
+protocol errors to tool execution errors on the grounds that a model can only
+self-correct from an error it can see~\cite{sep1303}. SEP-2145, open at the time of
+writing, proposes the same move for tool resolution failures---unknown and disabled
+tools---and gives as its rationale that it ``aligns specification with existing Python
+and TypeScript SDK behavior''~\cite{sep2145}. Our census supplies the quantity that
+argument has so far been made without: the alignment it describes already covers
+\ErrAsResultRate{} of deployed servers. If SEP-2145 is adopted it ratifies the
+ecosystem's existing behaviour rather than changing it, and the residual
+\(11.6\%\)---servers emitting protocol errors---become the population that would need
+to migrate.
+
+To explain the uniformity, we attribute each server to its SDK from package metadata
+(Figure~\ref{fig:sdk}, Table~\ref{tab:sdk}). The behaviour tracks the SDK: the
+official TypeScript and Python SDKs and the FastMCP framework all default to it. A
+small number of TypeScript-SDK servers emit the protocol error, so the alternative is
+reachable within the SDK and simply is not the default. The official reference servers
+behave the same way.
 
 Our attribution recognizes a fixed list of known SDK package names, so the residual
 \textsf{no-known-SDK} category must not be read as ``hand-rolled.'' Inspecting a
