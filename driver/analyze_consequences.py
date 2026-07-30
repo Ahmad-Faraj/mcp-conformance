@@ -110,6 +110,26 @@ def main():
     rows = load_census(args.inp)
     tdir = Path(args.transcripts)
 
+    # Transcripts come either as a directory of per-server files (working layout) or
+    # as the single transcripts.jsonl shipped in the public release. Support both so
+    # the analysis reproduces from the release alone.
+    bundled = {}
+    jsonl = tdir if tdir.suffix == ".jsonl" else tdir.parent / "transcripts.jsonl"
+    if jsonl.exists():
+        with jsonl.open(encoding="utf-8") as f:
+            for line in f:
+                o = json.loads(line)
+                if o.get("server_name"):
+                    bundled[o["server_name"]] = o.get("transcript") or []
+
+    def transcript_for(name):
+        if name in bundled:
+            return bundled[name]
+        f = tdir / (name.replace("/", "__") + ".json")
+        if f.exists():
+            return json.loads(f.read_text(encoding="utf-8")).get("transcript") or []
+        return None
+
     accepted = [n for n, r in rows.items() if r.get("handshake_ok") and any(
         c["id"] == "tools-call-invalid-args" and c["verdict"] == "fail"
         for c in r.get("checks", []))]
@@ -118,11 +138,10 @@ def main():
                "no-transcript": [], "unparsed": []}
 
     for name in accepted:
-        f = tdir / (name.replace("/", "__") + ".json")
-        if not f.exists():
+        tr = transcript_for(name)
+        if tr is None:
             buckets["no-transcript"].append(name)
             continue
-        tr = json.loads(f.read_text(encoding="utf-8")).get("transcript") or []
         tool, sent, reply = find_invalid_args_exchange(tr)
         if not reply:
             buckets["unparsed"].append(name)

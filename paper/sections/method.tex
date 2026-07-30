@@ -37,7 +37,9 @@ malformed frames---the probe must not inherit any SDK-side correction or
 validation. The harness offers protocol version \texttt{2025-06-18} at
 initialization, records the version the server \emph{negotiates}, and grades all
 subsequent checks against that negotiated version rather than the latest
-specification.
+specification. This is not a formality: responding servers negotiated four distinct
+revisions, and \(109\) of them settled on something other than the version we
+offered, the oldest dating to 2024-11-05.
 
 Each server is driven through the following checks, whose identifiers align with
 the categories of the official \texttt{modelcontextprotocol/conformance} suite
