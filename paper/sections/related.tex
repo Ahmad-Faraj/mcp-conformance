@@ -32,6 +32,19 @@ surfaces~\cite{maliciousmcp,remoteauth}. Conformance is a different question:
 whether a server that is neither malicious nor vulnerable does what the
 specification says. That question is unaddressed.
 
+\subsection{The specification's own error-handling debate}
+The categorisation this paper measures is under active revision. SEP-1303, accepted
+and reflected in the current specification, moved tool input validation errors out of
+protocol errors and into tool execution errors, reasoning that a language model can
+self-correct only from an error that reaches its context~\cite{sep1303}. SEP-2145,
+open at the time of writing, extends the same treatment to tool resolution failures,
+including unknown tools, and states its purpose as aligning the specification with
+existing Python and TypeScript SDK behaviour~\cite{sep2145}. Both proposals argue from
+implementation practice. Neither cites a measurement of that practice, because none
+existed. Our contribution to this debate is not an opinion about which mechanism is
+correct; it is the number that tells the participants what fraction of the deployed
+ecosystem their proposed alignment already describes.
+
 \subsection{Conformance tooling and the gap we fill}
 The protocol maintainers ship a conformance suite. It exercises the official SDKs in
 continuous integration, and it has never been pointed at the deployed ecosystem. The
