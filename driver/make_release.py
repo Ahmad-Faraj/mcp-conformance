@@ -198,12 +198,37 @@ def main():
                 ep_ok += 1 if obj.get("handshake_ok") else 0
                 g.write(json.dumps(obj, ensure_ascii=False) + "\n")
 
+    # Raw JSON-RPC transcripts. The paper claims every number is regenerable from
+    # them, and the consequences analysis is computed from them, so they have to
+    # ship. Emitted as one JSON object per line rather than 6,000 files, with the
+    # same redaction and pseudonymisation applied.
+    tr_n = 0
+    src_tr = DATA / "data" / "transcripts"
+    if not src_tr.exists():
+        src_tr = DATA / "transcripts"
+    if src_tr.exists():
+        with (out / "transcripts.jsonl").open("w", encoding="utf-8") as g:
+            for p in sorted(src_tr.glob("*.json")):
+                try:
+                    obj = json.loads(p.read_text(encoding="utf-8"))
+                except Exception:  # noqa: BLE001 - skip an unreadable capture
+                    continue
+                name = p.stem.replace("__", "/")
+                obj["server_name"] = name
+                obj, _ = redact_any(obj)
+                if name in withheld:
+                    obj["server_name"] = withheld[name]
+                    obj["identity_withheld"] = True
+                    obj.pop("cmd", None)
+                g.write(json.dumps(obj, ensure_ascii=False) + "\n")
+                tr_n += 1
+
     # DATASET.md and LICENSE.txt are GENERATED, not hand-maintained: this directory
     # is rebuilt from scratch on every run, so anything hand-placed here is lost.
     hs = sum(1 for r in released if r.get("handshake_ok"))
     (out / "DATASET.md").write_text(_dataset_doc(
         len(released), hs, len(withheld), redactions + frame_redactions,
-        ep_released, ep_ok), encoding="utf-8")
+        ep_released, ep_ok, tr_n), encoding="utf-8")
     (out / "LICENSE.txt").write_text(_license_text(), encoding="utf-8")
 
     print(f"wrote {out}")
@@ -211,9 +236,10 @@ def main():
     print(f"  identities withheld   : {len(withheld)}")
     print(f"  credential redactions : {redactions} (probe) + {frame_redactions} (frame)")
     print(f"  entry-point re-probe  : {ep_released} rows ({ep_ok} recovered)")
+    print(f"  transcripts           : {tr_n} rows")
 
 
-def _dataset_doc(n, hs, withheld, redactions, ep_n, ep_ok):
+def _dataset_doc(n, hs, withheld, redactions, ep_n, ep_ok, tr_n=0):
     corr = hs + ep_ok
     return f"""# Dataset: execution-based conformance census of the MCP server ecosystem
 
@@ -227,6 +253,7 @@ rebuilt from scratch on each run.
 |---|---|---|
 | `probe_census.jsonl` | {n:,} | One record per eligible server: verdicts for all 8 conformance checks, negotiated protocol version, timing, failure classification. |
 | `entrypoint_reprobe.jsonl` | {ep_n:,} | Re-probe of PyPI servers the census never launched because `uvx <pkg>` requires the console script to match the package name. {ep_ok} recovered. Needed to reproduce the corrected runnability figure. |
+| `transcripts.jsonl` | {tr_n:,} | Raw JSON-RPC exchange for each probed server, one object per line: every frame sent and received, with timings. The consequences analysis is computed from these. |
 | `sdk_attribution.csv` | — | SDK family per responding server, from npm/PyPI dependency metadata. |
 | `frame_latest.jsonl` | — | Registry snapshot defining the sampling frame; lets you re-derive the eligibility funnel. |
 | `summary.json` | — | Aggregate counts. |

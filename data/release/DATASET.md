@@ -10,6 +10,7 @@ rebuilt from scratch on each run.
 |---|---|---|
 | `probe_census.jsonl` | 6,106 | One record per eligible server: verdicts for all 8 conformance checks, negotiated protocol version, timing, failure classification. |
 | `entrypoint_reprobe.jsonl` | 462 | Re-probe of PyPI servers the census never launched because `uvx <pkg>` requires the console script to match the package name. 44 recovered. Needed to reproduce the corrected runnability figure. |
+| `transcripts.jsonl` | 6,088 | Raw JSON-RPC exchange for each probed server, one object per line: every frame sent and received, with timings. The consequences analysis is computed from these. |
 | `sdk_attribution.csv` | — | SDK family per responding server, from npm/PyPI dependency metadata. |
 | `frame_latest.jsonl` | — | Registry snapshot defining the sampling frame; lets you re-derive the eligibility funnel. |
 | `summary.json` | — | Aggregate counts. |
