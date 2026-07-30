@@ -261,6 +261,48 @@ def fig_by_registry(rows, reprobe):
     finish(fig, "by_registry.pdf")
 
 
+# ------------------------------------------------------------ consequences ----
+def fig_consequences():
+    """Decompose 'fails to reject a wrong-typed argument' by what the client gets.
+
+    A single stacked bar: the coarse verdict splits roughly in half, and only one
+    half is a hazard the client cannot detect. The point is the split, so the split
+    is the whole chart.
+    """
+    path = DATA / "consequences.json"
+    if not path.exists():
+        return
+    cons = json.loads(path.read_text(encoding="utf-8"))
+    silent = len(cons.get("silent-execution", []))
+    inband = len(cons.get("in-band-error", []))
+    unclass = len(cons.get("unparsed", [])) + len(cons.get("no-transcript", []))
+    total = silent + inband + unclass + len(cons.get("empty-result", []))
+
+    fig, ax = plt.subplots(figsize=(6.6, 1.5))
+    segs = [
+        (silent, BLUE, "executed the tool,\nno error signalled"),
+        (inband, ORANGE, "problem reported\nin result text"),
+        (unclass, "#cbd5e0", "not classifiable"),
+    ]
+    left = 0
+    for v, color, label in segs:
+        ax.barh(0, v, left=left, height=0.5, color=color)
+        if v / total > 0.06:
+            ax.text(left + v / 2, 0, f"{v}", ha="center", va="center",
+                    fontsize=9, color="white" if color != "#cbd5e0" else INK,
+                    weight="bold")
+        ax.text(left + v / 2, -0.45, label, ha="center", va="top",
+                fontsize=7.6, color=MUTED)
+        left += v
+
+    ax.set_xlim(0, total)
+    ax.set_ylim(-1.05, 0.45)
+    ax.axis("off")
+    ax.text(0, 0.42, f"{total} servers fail to reject an argument their own schema rejects",
+            fontsize=8.6, color=INK, va="bottom")
+    finish(fig, "consequences.pdf")
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--in", dest="inp", default=str(DATA / "probe_final.jsonl"))
@@ -277,7 +319,8 @@ def main():
     fig_failures(rows)
     fig_sdk()
     fig_by_registry(rows, reprobe)
-    print(f"wrote 4 figures to {FIG} from {len(rows):,} servers")
+    fig_consequences()
+    print(f"wrote 5 figures to {FIG} from {len(rows):,} servers")
 
 
 if __name__ == "__main__":

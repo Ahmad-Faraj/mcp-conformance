@@ -1,0 +1,30 @@
+\begin{table}[t]
+\centering
+\caption{Servers that executed a tool on an argument their own declared schema
+rejects, and returned ordinary-looking output. Inputs are the harness's type-poisoned
+values; outputs are verbatim, truncated. None carries an error indication a client
+could act on.}
+\label{tab:consequences}
+\small
+\begin{tabular}{p{0.30\linewidth}p{0.20\linewidth}p{0.42\linewidth}}
+\toprule
+Tool & Argument sent & Result returned to the client \\
+\midrule
+\texttt{scan\_code\_imports} & \texttt{code: 12345} &
+``CLEAN --- No npm package imports found in the provided code'' \\
+\addlinespace
+\texttt{register\_project} & \texttt{name: 12345} &
+``Project 12345 registered successfully. Framework: generic'' \\
+\addlinespace
+\texttt{score\_prompt} & \texttt{prompt: 12345} &
+a complete scoring rubric: \texttt{score: 8}, \texttt{grade: "F"}, with per-dimension
+sub-scores \\
+\addlinespace
+\texttt{upcoming\_deadlines} & \texttt{within\_days: "not-a-number"} &
+a dated regulatory snapshot with a populated result envelope \\
+\addlinespace
+\texttt{search} & \texttt{query: 12345} &
+\texttt{\{"results":[]\}} \\
+\bottomrule
+\end{tabular}
+\end{table}

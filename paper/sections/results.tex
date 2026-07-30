@@ -34,11 +34,56 @@ Table~\ref{tab:verdicts} reports the verdict distribution for each check over th
 \Nresponders{} responding servers, with 95\% Wilson confidence intervals. Lifecycle
 and tool-listing conformance are high; the discriminating checks are error handling,
 argument type enforcement, and malformed-input survival. \NoTypecheckRate{} of
-responders silently accepted a wrong-typed required argument, and
-\MalformedDiesRate{} crashed or hung on a malformed frame---the latter an
-availability risk we treat under responsible disclosure.
+responders failed to reject a wrong-typed required argument, which
+Section~\ref{sec:consequences} decomposes into the servers that reported the problem
+anyway and the smaller class that did not. \MalformedDiesRate{} crashed or hung on a
+malformed frame, an availability risk we treat under responsible disclosure.
 
 \input{tables/verdicts}
+
+\subsection{What a failure to reject actually returns}
+\label{sec:consequences}
+The \texttt{tools-call-invalid-args} verdict records whether a server rejects an
+argument that violates its own declared schema. That is the right protocol
+judgement, but it is too coarse for the question a client faces, because two
+different behaviours produce the same verdict. A server may validate the input and
+report the problem in the result \emph{text} without setting \texttt{isError}, which
+is non-conformant but leaves the information available. Or it may execute the tool
+and return ordinary-looking output, which does not. We separate the two by
+classifying the recorded response of every server in this category
+(Figure~\ref{fig:consequences}, Table~\ref{tab:consequences}).
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\linewidth]{figures/consequences.pdf}
+  \caption{The coarse verdict splits in half. Only the left segment is undetectable
+  by the client: the tool ran on input its schema rejects and returned a well-formed
+  result carrying no error indication.}
+  \label{fig:consequences}
+\end{figure}
+
+Of \NAcceptInvalid{} such servers, \NInBandError{} (\InBandShare{}) reported the
+problem in the result text: the server noticed, and a client willing to parse prose
+could too. \NSilentExec{} (\SilentExecShare{}) executed the tool and returned a
+result with no indication that anything was wrong. For \NUnclassifiable{} the
+response could not be classified from the transcript. The hazard class is therefore
+\SilentExecRate{} of responding servers rather than the \NoTypecheckRate{} implied
+by the raw verdict, and we report the smaller figure as the one that matters. We
+count a server as reporting the problem whenever its output contains any error-like
+token, so \NSilentExec{} is a lower bound.
+
+The distinction is not stylistic. A code-scanning tool asked to scan the integer
+\texttt{12345} answered \texttt{CLEAN}; a prompt-scoring tool returned a complete
+rubric, including per-dimension sub-scores, for the same integer; a project registry
+confirmed that a project named \texttt{12345} had been registered. These are not
+malformed responses that a client could detect and discard. They are well-formed
+successful results whose content is unrelated to any question the client asked, and
+they are indistinguishable at the protocol level from a correct answer. An agent
+consuming one has no signal available---no error code, no \texttt{isError} flag, no
+parse failure---on which to doubt it, and the schema it would have used to validate
+the call is the schema the server declared and did not enforce.
+
+\input{tables/consequences}
 
 \subsection{RQ4: The spec--practice divergence and its cause}
 \ErrAsResultRate{} of responding servers reported a call to a non-existent tool as
