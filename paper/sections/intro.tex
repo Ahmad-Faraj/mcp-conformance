@@ -40,9 +40,11 @@ install errors to silent exits to hangs. Among servers that do respond,
 tool-execution error (\texttt{isError: true}) rather than the JSON-RPC protocol error
 the specification illustrates. We trace this near-universal divergence to its cause:
 it is the default behavior of the official SDKs, inherited by the servers built on
-them. A smaller share silently accept ill-typed arguments (\NoTypecheckRate{}) or die
-on a malformed frame (\MalformedDiesRate{}), the latter a denial-of-service
-primitive.
+them. Separately, \SilentExecRate{} of responding servers execute a tool on an
+argument their own declared schema rejects and return a well-formed result: a
+code-scanning tool asked to scan an integer replied \texttt{CLEAN}. No error code, no
+\texttt{isError} flag, nothing a client could act on. A further \MalformedDiesRate{}
+die on a malformed frame, which is a denial-of-service primitive.
 
 This paper makes four contributions:
 \begin{itemize}

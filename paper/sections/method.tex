@@ -57,8 +57,8 @@ where an analogue exists:
     The specification's Error Handling section categorizes ``Unknown tools'' under
     \emph{Protocol Errors} (standard JSON-RPC errors) and illustrates this with a
     \texttt{-32602} example, as opposed to \emph{Tool Execution Errors} reported as
-    a result with \texttt{isError: true}. Crucially, this categorization is prose
-    plus an example; it uses no RFC-2119 \textsf{MUST}/\textsf{SHOULD} keyword. We
+    a result with \texttt{isError: true}. This categorization is prose plus an
+    example; it uses no RFC-2119 \textsf{MUST}/\textsf{SHOULD} keyword. We
     therefore do not treat a non-conforming response as a ``violation''; instead we
     record which of the two mechanisms the server uses (see
     \textsf{error-as-result} below).

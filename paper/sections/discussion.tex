@@ -30,6 +30,8 @@ Two of our findings support concrete action. For SDK authors and the specificati
 resolve the unknown-tool ambiguity, either by making the protocol-error
 categorization normative and changing the SDK defaults to match, or by explicitly
 blessing both mechanisms so that clients can stop guessing. For agent frameworks:
-treat silent acceptance of ill-typed arguments as a client-side risk, because
-\NoTypecheckRate{} of responding servers will execute a tool on input its own
-declared schema rejects, and the result is indistinguishable from a correct one.
+validate arguments against the declared schema on the client side before dispatch,
+because \SilentExecRate{} of responding servers will execute a tool on input their
+own schema rejects and return a result that carries no indication of it. The schema
+needed to catch this is already published by the server; it is simply not enforced
+by it.
