@@ -1,37 +1,36 @@
 \paragraph{Non-normative language delegates the decision to SDK authors.}
-The divergence we measure is not, strictly, a violation: the specification never says
+The divergence we measure is not, strictly, a violation. The specification never says
 \textsf{MUST}. It categorizes unknown-tool calls as protocol errors in prose and
-shows one example. That editorial choice left the official SDKs to pick an
-interpretation, and the interpretation they picked is now what the ecosystem does.
-The written categorization is descriptively false for the large majority of deployed
-servers. Where a specification wants uniform behavior from implementations it does
-not control, prose and examples are not enough; the requirement has to be normative.
+shows one example, and that editorial choice left the official SDKs to pick an
+interpretation. The interpretation they picked is now what the ecosystem does. The
+written categorization is descriptively false for most deployed servers. Where a
+specification wants uniform behavior from implementations it does not control, prose
+and examples are not enough. The requirement has to be normative.
 
 \paragraph{The SDK is the unit of change.}
 Attributing servers to their SDK collapses thousands of independent authorship
 decisions into a handful of library defaults, and the residual category shows the
-same defaults propagating a second time through third-party wrappers. A suboptimal
-default therefore reaches everyone, but so would a fix: changing a few SDKs, or
-clarifying the specification and updating those SDKs, would move conformance for the
-whole population at once. Ecosystem-scale conformance is best treated as a property
-of the SDKs rather than of the servers.
+same defaults propagating a second time through third-party wrappers. A poor default
+reaches everyone. So would a fix: changing a few SDKs, or clarifying the
+specification and updating those SDKs to match, would move conformance for the whole
+population at once. Ecosystem-scale conformance is better treated as a property of
+the SDKs than of the servers.
 
 \paragraph{Startup failure is invisible to the registry.}
-Two in five installable servers never serve the protocol, and a fifth of PyPI servers
-cannot even be launched from registry metadata alone. Registries rank servers by
-popularity and recency; none surfaces whether a server starts. Server selection is
-therefore an empirical reliability question that the available metadata cannot
-answer. A pre-publish conformance check---the kind the community has begun to
-discuss, and which our harness implements---would turn a one-time measurement into a
-standing signal.
+Two in five installable servers never serve the protocol. A fifth of PyPI servers
+cannot even be launched from registry metadata alone, because that metadata does not
+record an entry point. Registries rank servers by popularity and recency. None
+surfaces whether a server starts. Server selection is therefore an empirical
+reliability question that the available metadata cannot answer, and a pre-publish
+conformance check---the kind the community has begun to discuss, and which our
+harness implements---would turn a one-time measurement into a standing signal.
 
 \paragraph{Recommendations.}
-Two of our findings support concrete action. For SDK authors and the specification:
-resolve the unknown-tool ambiguity, either by making the protocol-error
-categorization normative and changing the SDK defaults to match, or by explicitly
-blessing both mechanisms so that clients can stop guessing. For agent frameworks:
-validate arguments against the declared schema on the client side before dispatch,
-because \SilentExecRate{} of responding servers will execute a tool on input their
-own schema rejects and return a result that carries no indication of it. The schema
-needed to catch this is already published by the server; it is simply not enforced
-by it.
+Two findings support concrete action. For SDK authors and the specification: resolve
+the unknown-tool ambiguity, either by making the protocol-error categorization
+normative and aligning the SDK defaults with it, or by explicitly blessing both
+mechanisms so client authors know they must handle both. For agent frameworks:
+validate arguments against the declared schema before dispatch. \SilentExecRate{} of
+responding servers will execute a tool on input their own schema rejects and return a
+result that carries no sign of it. The schema needed to catch this is already
+published by the server. It is simply not enforced by it.
