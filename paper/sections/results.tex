@@ -36,8 +36,14 @@ and tool-listing conformance are high; the discriminating checks are error handl
 argument type enforcement, and malformed-input survival. \NoTypecheckRate{} of
 responders failed to reject a wrong-typed required argument, which
 Section~\ref{sec:consequences} decomposes into the servers that reported the problem
-anyway and the smaller class that did not. \MalformedDiesRate{} crashed or hung on a
-malformed frame, an availability risk we treat under responsible disclosure.
+anyway and the smaller class that did not. \MalformedDiesRate{} failed to recover from a
+malformed frame. We report this as a robustness and conformance failure rather than a
+security one. Under the stdio transport the client is the parent process and the only
+writer to the server's standard input, so a party able to deliver a malformed frame can
+already terminate the subprocess directly; the specification nonetheless requires the
+server to answer a parse error and continue serving, and these servers do not. One
+maintainer who reproduced our finding made exactly this argument, and we adopt their
+characterization over our original one (Section~\ref{sec:threats}).
 
 \input{tables/verdicts}
 

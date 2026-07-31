@@ -70,6 +70,25 @@ percentage points. We report the full-census figures as our primary result, beca
 census rather than a sample of publishers is the object of study, and the
 publisher-deduplicated figures as the robustness check.
 
+\paragraph{Severity of the malformed-frame finding, and a limitation it exposed.}
+We initially characterized failure to recover from a malformed frame as a
+denial-of-service primitive. A maintainer who reproduced the finding independently
+argued that this overstates it, and we agree. Under the stdio transport the client
+launches the server and is the sole writer to its standard input, so a party capable of
+sending a malformed frame can already terminate the subprocess; the specification also
+places the obligation not to send invalid messages on the client. The correct reading
+is a robustness and conformance failure, which is how we now report it, and we record
+the correction here rather than silently revising.
+
+The same maintainer's reproduction exposed a limitation in our instrument. They
+observed the server process staying alive while its parser absorbed subsequent frames,
+so the following \texttt{ping} timed out. Our harness records a single verdict for
+``did not answer after a malformed frame'' and does not distinguish a terminated
+process from a desynchronized one. Both are conformance failures, but they are
+different failures with different fixes, and \MalformedDiesRate{} therefore aggregates
+the two. Separating them requires per-server process-state tracking that the released
+transcripts support but the current verdict does not encode.
+
 \paragraph{Interrupted probes.}
 A small fraction ($\le 0.4\%$) of probes were interrupted by the automated disk-guard
 that reclaims host space near capacity (Section~\ref{sec:method-env}). These are
