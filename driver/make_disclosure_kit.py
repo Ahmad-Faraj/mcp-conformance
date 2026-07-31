@@ -101,10 +101,15 @@ wrong, and we will correct both it and the dataset.
 Repository: https://github.com/Ahmad-Faraj/mcp-conformance
 """
 
-SDK_REPORT = """# Systemic finding: unknown-tool responses diverge from the specification
+SDK_REPORT = """# Deployment data for the open `tools/call` failure-reporting proposal
 
-This report goes to the maintainers of the MCP specification and the official SDKs.
-It concerns a defaults question rather than a bug in any one server.
+This is a measurement, offered to a decision already in progress. SEP-1303 (accepted)
+moved input validation errors to tool execution errors, and SEP-2145 (open) proposes
+the same for tool resolution failures, giving as its rationale that the change
+"aligns specification with existing Python and TypeScript SDK behavior." That argument
+is made from implementation practice but without a measurement of it. Here is one.
+
+This report takes no position on which mechanism is correct.
 
 ## Summary
 
@@ -114,12 +119,12 @@ the {n_resp:,} servers that completed a handshake answered a call to a *non-exis
 tool* with a successful response carrying `isError: true`, rather than a JSON-RPC
 protocol error.
 
-The specification's error-handling section categorises "unknown tools" under
+The specification's error-handling section currently categorises "unknown tools" under
 *protocol errors* and illustrates the case with a `-32602` example, in contrast to
 *tool execution errors* reported as a result with `isError`. That categorisation is
-expressed in prose and an example; it uses no RFC-2119 keyword. We therefore do not
-characterise this as a violation, and this report is not a claim that anyone is out
-of compliance.
+expressed in prose and an example; it uses no RFC-2119 keyword. This is therefore not
+a claim that anyone is out of compliance, and it is the categorisation SEP-2145 is
+proposing to change.
 
 ## The behaviour tracks the SDK, not the server author
 
@@ -133,26 +138,26 @@ conforming behaviour is reachable within the SDK, it is simply not the default. 
 pattern also reproduces through third-party wrappers, which inherit the same default
 from the SDKs they build on.
 
-## Why the distinction has practical consequences
+## What this implies for the proposal
 
-A protocol error is handled by client *code*: a client library can deterministically
-detect that a call never executed and route around it. An `isError` result arrives
-through the success path and lands in the model's context as ordinary tool output,
-where interpreting it becomes the model's job. The divergence moves error handling
-from deterministic code into probabilistic interpretation, and it makes
-"this tool does not exist" indistinguishable from "the tool ran and reported a
-problem" for any client that does not special-case the message text.
+The alignment SEP-2145 describes is already close to complete in deployment. On these
+numbers, adopting it ratifies what roughly nine in ten servers already do, and the
+migration burden falls on the minority still emitting protocol errors rather than on
+the majority. That is a different cost profile from "change the ecosystem to match the
+spec," and it seemed worth stating explicitly rather than leaving implied.
 
-## What would resolve it
+Whichever direction is chosen, the behaviour is set by a handful of SDK defaults
+rather than by thousands of independent decisions, so a change at that layer moves the
+ecosystem at once.
 
-Either direction would work, and either is better than the present ambiguity:
+## A separate finding, with no ambiguity attached
 
-1. Make the categorisation normative (`MUST`/`SHOULD`) and align the SDK defaults, or
-2. State explicitly that both mechanisms are acceptable, so client authors know they
-   must handle both and can stop inferring intent from message strings.
-
-Because the behaviour is set by a handful of SDK defaults rather than by thousands of
-independent decisions, a change at that layer would move the entire ecosystem at once.
+The same census found 129 servers that execute a tool on an argument their own declared
+`inputSchema` rejects, returning an ordinary-looking result — a code-scanning tool
+asked to scan the integer `12345` replied `CLEAN`. The specification's security
+requirements state that servers **MUST** validate all tool inputs, so unlike the
+error-reporting question this is a clear-cut requirement being missed, and no proposal
+is pending to relax it. A validating default in the SDKs would close most of it.
 
 ## Data
 
