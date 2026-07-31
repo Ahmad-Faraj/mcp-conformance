@@ -101,7 +101,7 @@ def sdk_table():
             fam = SDK_LABEL.get(row["sdk_family"], row["sdk_family"])
             xtab[fam][row["unknown_verdict"]] += 1
     out = [r"\begin{table}[t]", r"\centering",
-           r"\caption{SDK family vs.\ unknown-tool response. The error-as-result divergence tracks the SDK, not the author.}",
+           r"\caption{SDK family vs.\ unknown-tool response. Which mechanism a server uses tracks the SDK it was built on, not the author.}",
            r"\label{tab:sdk}", r"\begin{tabular}{lrrr}", r"\toprule",
            r"SDK family & error-as-result & protocol error & other \\", r"\midrule"]
     for fam in sorted(xtab, key=lambda k: -sum(xtab[k].values())):

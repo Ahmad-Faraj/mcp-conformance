@@ -57,9 +57,23 @@ registry snapshot.
 | Silently accept a wrong-typed required argument | **7.4%** |
 | Crash or hang on a malformed frame | **0.5%** |
 
-The error-as-result divergence tracks the **SDK**, not the author: official TypeScript
-SDK 90% (n=2,347), official Python SDK 88% (n=645), FastMCP 100% (n=375). A handful of
-library defaults, not thousands of independent mistakes, set ecosystem behaviour.
+Which error mechanism a server uses tracks the **SDK**, not the author: official
+TypeScript SDK 90% (n=2,347), official Python SDK 88% (n=645), FastMCP 100% (n=375). A
+handful of library defaults, not thousands of independent decisions, set ecosystem
+behaviour.
+
+On the unknown-tool question the specification is moving toward the ecosystem rather
+than the reverse: [SEP-1303](https://github.com/modelcontextprotocol/modelcontextprotocol/issues/1303)
+(accepted) reclassified input validation errors as tool execution errors, and
+[SEP-2145](https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2145)
+(open) proposes the same for unknown tools, to "align specification with existing
+Python and TypeScript SDK behavior." Both argue from practice without measuring it.
+This census is that measurement.
+
+The input-validation result is different in kind. The specification requires that
+servers **MUST** validate all tool inputs, so the 129 servers that execute on
+arguments their own schema rejects are missing an explicit requirement, not a
+contested convention.
 
 Robustness: servers are not independent (6,106 servers come from 3,913 publishers;
 the largest ships 305). Recomputing one-server-per-publisher holds every finding

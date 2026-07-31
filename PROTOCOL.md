@@ -120,24 +120,44 @@ disclosure windows.
 2. Registry sampling frame + probe-result dataset (post-disclosure filtering).
 3. The paper (arXiv → MSR/FSE/DSN 2027 track).
 
-## Key finding: error-as-result is SDK-institutionalized (RQ4)
+## Key finding: which error mechanism a server uses is set by its SDK (RQ4)
 
-Spec language pinned (2025-06-18, "Tools > Error Handling"): the spec categorizes
-"Unknown tools" and "Invalid arguments" under *Protocol Errors* (JSON-RPC) and
-illustrates \texttt{-32602}, but uses **no RFC-2119 MUST/SHOULD** — it is prose plus an
-example. Therefore we report a *spec-implementation divergence*, never a "violation."
-The invalid-args case is further softened because the spec also lists "Invalid input
-data" under *Tool Execution Errors* (isError) — genuinely ambiguous — so we accept either
-a protocol error or isError, flagging only plain-success.
+Spec language pinned and re-verified against the published draft (2026-07-31): the
+"Tools > Error Handling" section still categorizes "Unknown tool" under *Protocol
+Errors* and illustrates `-32602`, with **no RFC-2119 MUST/SHOULD** — prose plus an
+example. We therefore record which mechanism each server uses and never score one as a
+violation.
 
-SDK attribution (from npm/PyPI dependency metadata, no execution) cross-tabbed against the
-unknown-tool verdict (n=217 handshaking, dev data): official-ts 119/137 error-as-result,
-official-py 30/37, fastmcp-py 24/24 (100%), hand-rolled 7/8. The divergence tracks the SDK,
-not the author. Direct confirmation from official reference servers (server-memory,
-server-everything = TS; mcp-server-time = Python/FastMCP) — all error-as-result. Framing:
-"the official SDKs institutionalized a divergence from the written spec, and the ecosystem
-inherited it." 5 official-ts servers *do* emit -32602 → achievable but not the default.
-Natural upstream contribution: a well-evidenced SDK issue, filed from Ahmed's account later.
+SDK attribution (npm/PyPI dependency metadata, no execution) cross-tabbed against the
+unknown-tool verdict, full census: official-ts 90% of 2,347, official-py 88% of 645,
+fastmcp-py 100% of 375. The behaviour tracks the SDK, not the author, and the official
+reference servers behave the same way. A minority of official-ts servers do emit
+`-32602`, so the alternative is reachable in the SDK but is not its default.
+
+**Framing correction (2026-07-31, prior-art check before publication).** The original
+framing — "the SDKs institutionalized a divergence from the written spec, and the
+ecosystem inherited it" — was incomplete and its recommendation was backwards. The
+specification is converging on the ecosystem, not the reverse:
+
+- **SEP-1303** (accepted, reflected in the spec) moved input validation errors from
+  protocol errors to tool execution errors, reasoning that a model can only
+  self-correct from an error it can see.
+- **SEP-2145** (open) proposes the same for tool resolution failures including unknown
+  tools, stating its purpose as aligning the spec with existing Python and TypeScript
+  SDK behaviour.
+
+Both proposals argue from implementation practice without measuring it. The census is
+that measurement: the alignment SEP-2145 describes already covers 88.4% of deployed
+servers, so adoption ratifies existing behaviour and the migration cost falls on the
+11.6% minority. Any upstream contribution should supply this data to the open
+discussion, **not** recommend making the current categorization normative — that
+argues against an already-accepted rationale.
+
+**The input-validation result is categorically different.** The spec's Security
+Considerations state servers **MUST** validate all tool inputs. The 129 servers that
+execute on arguments contradicting their own declared schema miss an explicit RFC-2119
+requirement, with no proposal pending to relax it. This, not the unknown-tool count, is
+the study's firmest normative claim.
 
 ## Review-driven hardening (2026-07-19, external review)
 
