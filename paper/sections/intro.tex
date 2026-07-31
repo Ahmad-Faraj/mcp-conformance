@@ -49,8 +49,9 @@ an argument their own declared schema rejects and return a well-formed result: a
 code-scanning tool asked to scan an integer replied \texttt{CLEAN}. No error code, no
 \texttt{isError} flag, nothing a client could act on---and unlike the error-reporting
 question, this one violates an explicit requirement that servers validate all tool
-inputs. A further \MalformedDiesRate{} die on a malformed frame, a denial-of-service
-primitive.
+inputs. A further \MalformedDiesRate{} fail to recover from a malformed frame,
+answering nothing further on a channel that the specification requires them to keep
+serving.
 
 This paper makes four contributions:
 \begin{itemize}

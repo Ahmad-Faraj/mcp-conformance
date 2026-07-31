@@ -39,13 +39,18 @@ concession to running an entire ecosystem on one disposable host, and we state i
 cost here rather than in a footnote.
 
 \paragraph{Responsible disclosure.}
-A subset of our findings are security-relevant: a server that crashes or hangs on a
-malformed frame is a denial-of-service primitive, and a server that emits
-non-protocol bytes on its stdio channel can desynchronize a client. We report these
+A subset of our findings concern robustness rather than function: a server that stops
+serving after a malformed frame, and a server that emits non-protocol bytes on its
+stdio channel, can each desynchronize or strand a connected client. We report these
 only in aggregate and through anonymized case studies. We do not publish a
 name-and-shame list of individual servers. Security-relevant findings are recorded
 in a private disclosure log with maintainer contacts resolved from registry
-repository metadata, and are reported to maintainers before publication; where a
+repository metadata, and were reported to maintainers before publication. Of the
+servers whose maintainers we could reach, two reproduced the behaviour independently
+within a day: one shipped a fix in a released version, and one confirmed a fix for its
+next release with a regression test. A third response corrected our severity
+assessment, which we adopted (Section~\ref{sec:threats}). We take these as evidence
+that the findings are actionable and that the reporting format was usable; where a
 finding is exploitable, per-server details are withheld until a reasonable
 disclosure window has elapsed. The released dataset is filtered accordingly.
 
