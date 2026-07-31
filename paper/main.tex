@@ -32,11 +32,11 @@ An Execution-Based Conformance Study of the\\ Model Context Protocol Ecosystem}
 \begin{abstract}
 The Model Context Protocol (MCP) has become the de-facto standard for connecting
 LLM agents to external tools, and public registries now list tens of thousands of
-servers. Yet every prior empirical study of this ecosystem is \emph{static}:
-scanning source code, mining issue trackers, or reading registry metadata. None
-has \emph{executed} the ecosystem to ask a prior question---do these
-servers actually run, and do they actually follow the protocol? We present the
-first execution-based conformance study of the MCP server ecosystem. From the
+servers. Yet the published empirical studies of this ecosystem are \emph{static}:
+they scan source code, mine issue trackers, or read registry metadata. None
+installs and runs the servers to ask a prior question: do these
+servers actually work, and do they actually follow the protocol? We answer it with an
+execution-based conformance study of MCP servers as installed and run. From the
 official registry (\Nframe{} unique servers) we execute a complete census of all
 \Nprobed{} self-contained, locally-installable servers, launching each in an isolated
 sandbox and driving it through a conformance harness that exercises the initialization

@@ -40,10 +40,20 @@ self-correct only from an error that reaches its context~\cite{sep1303}. SEP-214
 open at the time of writing, extends the same treatment to tool resolution failures,
 including unknown tools, and states its purpose as aligning the specification with
 existing Python and TypeScript SDK behaviour~\cite{sep2145}. Both proposals argue from
-implementation practice. Neither cites a measurement of that practice, because none
-existed. Our contribution to this debate is not an opinion about which mechanism is
-correct; it is the number that tells the participants what fraction of the deployed
-ecosystem their proposed alignment already describes.
+implementation practice. Our contribution to this debate is not an opinion about which
+mechanism is correct; it is the number that tells the participants what fraction of the
+deployed ecosystem their proposed alignment already describes.
+
+Concurrent with this work, a practitioner census posted to the same proposal probed
+roughly 10,500 \emph{remote} registry endpoints, harvested their tool lists, and
+reported that \(88.8\%\) of mutating tools declare no output schema at all, arguing
+that the proposal's output-validation clause is inert for most of the write
+surface~\cite{siliroid2026census}. That measurement and ours are close to disjoint.
+It probes hosted HTTP endpoints and reads declared metadata; we install and execute
+local stdio servers and test behaviour against inputs. It addresses the
+output-validation clause; we address tool resolution and input enforcement. The two
+agree on the underlying point, which is that this proposal has been debated without
+deployment data, and both supply some.
 
 \subsection{Conformance tooling and the gap we fill}
 The protocol maintainers ship a conformance suite. It exercises the official SDKs in
@@ -52,7 +62,8 @@ community has begun proposing a pre-publish conformance checklist for server aut
 which is demand for precisely this measurement. Practitioner audits circulate
 striking headline numbers---that most listed servers are unmaintained, for
 instance---without published methodology, data, or protocol-level testing. Ours is,
-to our knowledge, the first reproducible execution-based conformance measurement of
-this ecosystem, released with an open harness and dataset. It follows a long line of
+to our knowledge, the first reproducible conformance measurement of this ecosystem
+that installs and executes the servers themselves and tests their behaviour against
+adversarial inputs, released with an open harness and dataset. It follows a long line of
 empirical software-engineering studies that execute a population to find out how it
 behaves, rather than how its documentation says it should.
