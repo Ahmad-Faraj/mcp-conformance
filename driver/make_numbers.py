@@ -143,13 +143,18 @@ def main():
                 continue
             silent_fam[_row["sdk_family"]] += 1
             if _row["sdk_family"] == "official-ts":
-                _m = re.match(r"[^0-9]*(\d+)", _row.get("sdk_version") or "")
+                _v = _row.get("sdk_version") or "?"
+                _m = re.match(r"[^0-9]*(\d+)", _v)
                 silent_major[_m.group(1) if _m else "?"] += 1
-                silent_ver[_row.get("sdk_version") or "?"] += 1
+                silent_ver[_v] += 1
     silent_ts = silent_fam.get("official-ts", 0)
     silent_py = silent_fam.get("official-py", 0) + silent_fam.get("fastmcp-py", 0)
     silent_ts_v1 = silent_major.get("1", 0)
-    silent_ts_caret1 = silent_ver.get("^1.0.0", 0)
+    # Range style matters: a caret range floats to the newest 1.x at install time,
+    # so these servers ran a current SDK and would pick up a 1.x fix automatically.
+    # An exact version would not. Reporting them as "pinned" would invert that.
+    silent_ts_caret = sum(v for k, v in silent_ver.items() if k.startswith("^"))
+    silent_ts_exact = sum(v for k, v in silent_ver.items() if k and k[0].isdigit())
 
     macros = {
         "Nframe": f"{frame_n:,}",
@@ -165,7 +170,8 @@ def main():
         "SilentExecTS": str(silent_ts),
         "SilentExecPy": str(silent_py),
         "SilentExecTSvOne": str(silent_ts_v1),
-        "SilentExecTSCaretOne": str(silent_ts_caret1),
+        "SilentExecTSCaret": str(silent_ts_caret),
+        "SilentExecTSExact": str(silent_ts_exact),
         # Publisher-clustering robustness check (Threats to Validity).
         "Npublishers": f"{len(pub_counts):,}",
         "NuniqPub": f"{len(uniq):,}",
