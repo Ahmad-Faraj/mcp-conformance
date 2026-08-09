@@ -1,0 +1,10 @@
+{
+  "name": "mcp-sdk-validation-probe",
+  "private": true,
+  "type": "module",
+  "description": "Minimal servers reproducing the low-level vs high-level input-validation difference in the official TypeScript SDK (paper Section 3.7).",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "1.30.0",
+    "zod": "^4.0.0"
+  }
+}

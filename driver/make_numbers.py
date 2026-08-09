@@ -10,6 +10,7 @@ Usage:
 import argparse
 import json
 import math
+import re
 from collections import Counter
 from pathlib import Path
 
@@ -120,6 +121,36 @@ def main():
     pypi_p = 100 * pypi_hs / pypi_n if pypi_n else 0
     pypi_p_corr = 100 * (pypi_hs + ep_ok) / pypi_n if pypi_n else 0
 
+    # SDK attribution of the silent-execution population (Section 4.3). The
+    # unknown-tool divergence tracks the SDK (Table 4); this checks whether the
+    # input-validation failure does too. It does, and far more sharply: the
+    # behaviour is confined to one SDK family. Joins the classified consequences
+    # against the same package-metadata attribution used for Table 4.
+    import csv as _csv
+    _cons_p = DATA / "consequences.json"
+    _sdk_p = DATA / "sdk_attribution.csv"
+    silent_fam = Counter()
+    silent_major = Counter()
+    silent_ver = Counter()
+    if _cons_p.exists() and _sdk_p.exists():
+        _cons = json.loads(_cons_p.read_text(encoding="utf-8"))
+        _sdk = {r["server"]: r for r in
+                _csv.DictReader(_sdk_p.open(encoding="utf-8"))}
+        for _rec in _cons.get("silent-execution", []):
+            _row = _sdk.get(_rec.get("server"))
+            if not _row:
+                silent_fam["unattributed"] += 1
+                continue
+            silent_fam[_row["sdk_family"]] += 1
+            if _row["sdk_family"] == "official-ts":
+                _m = re.match(r"[^0-9]*(\d+)", _row.get("sdk_version") or "")
+                silent_major[_m.group(1) if _m else "?"] += 1
+                silent_ver[_row.get("sdk_version") or "?"] += 1
+    silent_ts = silent_fam.get("official-ts", 0)
+    silent_py = silent_fam.get("official-py", 0) + silent_fam.get("fastmcp-py", 0)
+    silent_ts_v1 = silent_major.get("1", 0)
+    silent_ts_caret1 = silent_ver.get("^1.0.0", 0)
+
     macros = {
         "Nframe": f"{frame_n:,}",
         "Nprobed": f"{n:,}",
@@ -130,6 +161,11 @@ def main():
         "ErrAsResultCount": str(err_as_result_k),
         "NoTypecheckRate": notypecheck,
         "MalformedDiesRate": malformed,
+        # SDK attribution of the silent-execution population (Section 4.3).
+        "SilentExecTS": str(silent_ts),
+        "SilentExecPy": str(silent_py),
+        "SilentExecTSvOne": str(silent_ts_v1),
+        "SilentExecTSCaretOne": str(silent_ts_caret1),
         # Publisher-clustering robustness check (Threats to Validity).
         "Npublishers": f"{len(pub_counts):,}",
         "NuniqPub": f"{len(uniq):,}",
