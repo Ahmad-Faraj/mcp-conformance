@@ -6,6 +6,8 @@
 % from the final dataset -- never hand-edit them; edit the analysis instead.
 % ---------------------------------------------------------------------------
 
+\usepackage[T1]{fontenc}   % T1: renders \_ and \{ in \texttt correctly and makes
+                           % them extractable/searchable in the PDF (OT1 does not)
 \usepackage[margin=1in]{geometry}
 \usepackage{booktabs}
 \usepackage{graphicx}
@@ -22,7 +24,8 @@
 \title{\bf Does Your MCP Server Actually Follow the Protocol?\\
 An Execution-Based Conformance Study of the\\ Model Context Protocol Ecosystem}
 
-\author{Ahmed Faraj\\ Suez Canal University\\ \texttt{ahmed.faraj.cs@gmail.com}}
+\author{Ahmed Faraj\\ Faculty of Computers and Informatics, Suez Canal University\\
+\texttt{fciugs25@ci.suez.edu.eg} \quad \texttt{ahmed.faraj.cs@gmail.com}}
 
 \date{}
 
@@ -50,9 +53,8 @@ moving to ratify; and that \SilentExecRate{} execute a tool on an argument their
 declared schema rejects, returning a well-formed result that no client can distinguish
 from a correct answer, in violation of the specification's requirement that servers
 validate all tool inputs. We release the harness and the disclosure-filtered dataset.
-Conformance here is set less by server authors than by a handful of SDK defaults,
-which makes it measurable, fixable, and---on the questions still open---decidable with
-data rather than argument.
+Conformance here is set less by server authors than by a handful of SDK defaults, so
+it can be measured and corrected at that layer.
 \end{abstract}
 
 \section{Introduction}
@@ -113,8 +115,8 @@ data rather than argument.
 The conformance harness, the analysis pipeline, and the disclosure-filtered census
 dataset are available at
 \url{https://github.com/Ahmad-Faraj/mcp-conformance}, with the harness pinned at tag
-\texttt{harness-v1.0}. The release contains one record per probed server---every
-verdict behind every number in this paper---together with the registry snapshot that
+\texttt{harness-v1.0}. The release contains one record per probed server (every
+verdict behind every number in this paper), together with the registry snapshot that
 defines the sampling frame, so the eligibility funnel and all reported rates can be
 recomputed independently. Two filters are applied and documented with the data: the
 identities of \(211\) servers carrying security-relevant findings are withheld

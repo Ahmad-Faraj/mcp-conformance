@@ -3,42 +3,43 @@ On the question our largest measurement covers, the standard is being rewritten 
 match what implementations already do. SEP-1303 moved input validation errors to tool
 execution errors, and SEP-2145 proposes the same for unknown tools, explicitly to
 align the specification with SDK behaviour~\cite{sep1303,sep2145}. The reasoning is
-sound: an error the model can read is an error the model can recover from, and a
+sound, since an error the model can read is one it can recover from, whereas a
 protocol error never reaches it. What the debate has lacked is a measurement of how
-far the ecosystem has already gone. It has gone almost all the way---\ErrAsResultRate{}
-of deployed servers---which means SEP-2145 would ratify existing behaviour rather than
-impose new behaviour, and the migration cost falls on the conforming minority instead.
-That is a different decision from the one the proposal appears to be making, and it is
-the kind of question an execution census can answer and a specification discussion
-cannot.
+far the ecosystem has already gone. It has gone almost all the way, to
+\ErrAsResultRate{} of deployed servers, which means SEP-2145 would ratify existing
+behaviour rather than impose new behaviour, and the migration cost falls on the
+conforming minority instead. That is a different decision from the one the proposal
+appears to be making, and deciding it requires deployment data rather than further
+specification discussion.
 
 \paragraph{The SDK is the unit of change.}
 Attributing servers to their SDK collapses thousands of independent authorship
 decisions into a handful of library defaults, and the residual category shows those
-defaults propagating a second time through third-party wrappers. This cuts both ways.
-A poor default reaches everyone; so does a fix. Changing a few SDKs would move
+defaults propagating a second time through third-party wrappers. The effect runs in
+both directions, since a poor default reaches everyone and so does a fix. Changing a
+few SDKs would move
 conformance for the whole population at once, which is why the SEP process treats SDK
 behaviour as a first-class input rather than an implementation detail. It also means
 ecosystem conformance should be measured at the SDK layer, where a single change is
 worth thousands of server-level ones.
 
-\paragraph{Not every deviation is a matter of interpretation.}
-The unknown-tool question is genuinely contested, and we decline to score it. The
-input-validation result is not. The specification requires servers to validate all
-tool inputs, and \NSilentExec{} servers run tools on arguments their own published
-schema rejects, returning results that carry no sign of it. No proposal is pending to
-relax that requirement, and no client-side convention recovers the information once it
-is gone. Where a specification uses \textsf{MUST} and practice ignores it, measurement
-is the only thing that surfaces the gap: nothing in the registry, the package metadata,
+\paragraph{Input validation is not a matter of interpretation.}
+The unknown-tool question is genuinely contested, and we decline to score it, but the
+input-validation result stands on different ground. The specification requires servers
+to validate all tool inputs, and \NSilentExec{} servers run tools on arguments their own
+published schema rejects, returning results that carry no sign of it. No proposal is
+pending to relax that requirement, and no client-side convention recovers the information
+once it is gone. Where a specification uses \textsf{MUST} and practice ignores it, only
+measurement surfaces the gap, because nothing in the registry, the package metadata,
 or a static scan reveals which servers enforce their own schemas.
 
 \paragraph{Startup failure is invisible to the registry.}
 Two in five installable servers never serve the protocol, and a fifth of PyPI servers
 cannot be launched from registry metadata alone because that metadata does not record
-an entry point. Registries rank servers by popularity and recency. None surfaces
-whether a server starts. Server selection is an empirical reliability question that
-the available metadata cannot answer, and a pre-publish conformance check---which our
-harness implements---would turn a one-time measurement into a standing signal.
+an entry point. Registries rank servers by popularity and recency, and none of them
+surfaces whether a server starts. Server selection is an empirical reliability question
+that the available metadata cannot answer, and a pre-publish conformance check, which
+our harness implements, would turn a one-time measurement into a standing signal.
 
 \paragraph{Recommendations.}
 For the specification: SEP-2145 should be decided with the deployment numbers in hand,
@@ -47,4 +48,4 @@ where the normative requirement actually bites, and a default that validates dec
 argument types before dispatch would close the one gap in this study that is
 unambiguously a violation. For agent frameworks: validate arguments against the
 declared schema client-side before dispatch, since \SilentExecRate{} of responding
-servers will not, and the failure is silent.
+servers will not, and their failure to do so produces no visible error.

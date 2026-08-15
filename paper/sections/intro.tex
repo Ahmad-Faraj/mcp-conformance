@@ -3,9 +3,9 @@ and the Model Context Protocol (MCP) has become the dominant standard for
 connecting them. In under two years MCP has gone from a single vendor's proposal
 to an ecosystem with public registries listing tens of thousands of servers; the
 official registry alone contains \Nframe{} unique servers at the time of our study.
-When an agent selects a tool and an MCP server mishandles the request---returns a
-malformed result, accepts ill-typed arguments, or simply fails to start---the
-agent does not merely lose a capability; it may proceed on wrong output with full
+When an agent selects a tool and an MCP server mishandles the request, by returning
+a malformed result, accepting ill-typed arguments, or failing to start, the agent
+does not merely lose a capability, and may proceed on wrong output with full
 confidence. The reliability of this server layer is therefore a reliability
 property of every agent built on top of it.
 
@@ -14,15 +14,15 @@ published empirical studies of the MCP ecosystem examine servers \emph{without
 running them}. Existing work scans source code and metadata for health and
 maintainability, crawls registries to characterize scale and supply-chain
 structure, or mines GitHub issues to taxonomize faults reported by users. These
-static lenses answer valuable questions, but they cannot answer a prior and
-strikingly basic one: \emph{if you install these servers and speak the protocol to
+static lenses answer valuable questions, but they cannot answer a prior and more
+basic one: \emph{if you install these servers and speak the protocol to
 them, do they work, and do they follow the specification?} The protocol maintainers
 ship a conformance test suite, but it exercises the handful of official SDKs in
-continuous integration; it has never been pointed at the deployed ecosystem. Put
-plainly: the official suite tests the five SDKs, and no one tests the seventeen
-thousand servers built on them.
+continuous integration and has never been pointed at the deployed ecosystem. The
+official suite therefore tests the five SDKs, while the seventeen thousand servers
+built on them are untested.
 
-We close that gap. We present an execution-based conformance study of the
+This paper addresses that gap with an execution-based conformance study of the
 MCP server ecosystem. Starting from the official registry, we execute a complete
 census of every self-contained, locally-installable server, launch each in an
 isolated sandbox, and drive it through a conformance harness that exercises the
@@ -38,20 +38,38 @@ handshake. The rest fail in ways we classify into a startup-failure taxonomy, fr
 install errors to silent exits to hangs. Among servers that do respond,
 \ErrAsResultRate{} report a call to a non-existent tool as a ``successful''
 tool-execution error (\texttt{isError: true}) rather than the JSON-RPC protocol error
-the specification illustrates. We trace this near-universal divergence to its cause:
-it is the default behavior of the official SDKs, inherited by the servers built on
-them. That result arrives in the middle of a live debate: an open proposal would
+the specification illustrates. We trace this near-universal divergence to the default
+behavior of the official SDKs, which is inherited by the servers built on
+them. The result bears on a live debate, in which an open proposal would
 reclassify unknown-tool failures to match what the SDKs already do, arguing the
 change aligns the specification with practice~\cite{sep2145}. Our census says how far
 practice has already gone, which decides whether such a change ratifies the ecosystem
 or redirects it. Separately, \SilentExecRate{} of responding servers execute a tool on
-an argument their own declared schema rejects and return a well-formed result: a
-code-scanning tool asked to scan an integer replied \texttt{CLEAN}. No error code, no
-\texttt{isError} flag, nothing a client could act on---and unlike the error-reporting
-question, this one violates an explicit requirement that servers validate all tool
-inputs. A further \MalformedDiesRate{} fail to recover from a malformed frame,
+an argument their own declared schema rejects and return a well-formed result. In one
+case a code-scanning tool asked to scan an integer replied \texttt{CLEAN}, with
+neither an error code nor an \texttt{isError} flag a client could act on. Unlike the
+error-reporting question, this behaviour violates an explicit requirement that servers
+validate all tool inputs. A further \MalformedDiesRate{} fail to recover from a malformed frame,
 answering nothing further on a channel that the specification requires them to keep
 serving.
+
+We organise the study around five research questions:
+
+\begin{itemize}
+  \item \textbf{RQ1 (Runnability).} What fraction of registry-published servers can a
+    client install and start, and when they do not start, why not?
+  \item \textbf{RQ2 (Lifecycle conformance).} Of the servers that respond, how many
+    correctly implement the initialization lifecycle, tool listing, and declared-schema
+    validity?
+  \item \textbf{RQ3 (Input enforcement).} How many servers execute a tool on an
+    argument their own declared schema rejects, and what does the client receive when
+    they do?
+  \item \textbf{RQ4 (Specification versus practice).} Where the specification and
+    deployed behaviour disagree on error reporting, how large is the divergence, what
+    causes it, and which side is moving?
+  \item \textbf{RQ5 (Correlates).} Do runnability and conformance vary with the
+    package registry a server ships on?
+\end{itemize}
 
 This paper makes four contributions:
 \begin{itemize}

@@ -26,18 +26,18 @@ launch without provisioning secrets, which both bounds the ethics of mass
 execution and defines a clean, reproducible population. We report the exclusion of
 remote-only and credential-requiring servers explicitly (Section~\ref{sec:threats})
 and treat the resulting frame as the denominator for all rates. We probe the
-\emph{entire} frame---all \Nprobed{} eligible servers---so our measurement is a
-complete census of the eligible population, not a sample.
+\emph{entire} frame (all \Nprobed{} eligible servers), so our measurement is a
+complete census of the eligible population rather than a sample.
 
 \subsection{Conformance harness}
 The harness, \texttt{mcpprobe}, is a deliberately minimal, hand-written JSON-RPC
 client speaking line-delimited messages over the server's stdio. We do \emph{not}
-use an official SDK client: to observe raw behavior---including responses to
-malformed frames---the probe must not inherit any SDK-side correction or
+use an official SDK client. To observe raw behavior, including responses to
+malformed frames, the probe must not inherit any SDK-side correction or
 validation. The harness offers protocol version \texttt{2025-06-18} at
 initialization, records the version the server \emph{negotiates}, and grades all
 subsequent checks against that negotiated version rather than the latest
-specification. This is not a formality: responding servers negotiated four distinct
+specification. This is not a formality. Responding servers negotiated four distinct
 revisions, and \(109\) of them settled on something other than the version we
 offered, the oldest dating to 2024-11-05.
 
@@ -66,8 +66,8 @@ where an analogue exists:
     \textsf{error-as-result} below).
   \item \textbf{tools-call-invalid-args}: for a tool with a typed required
     property, calling it with a wrong-typed value should be rejected. The spec is
-    itself ambiguous here---it lists ``Invalid arguments'' under Protocol Errors but
-    ``Invalid input data'' under Tool Execution Errors---so we count \emph{either} a
+    itself ambiguous here, since it lists ``Invalid arguments'' under Protocol Errors
+    but ``Invalid input data'' under Tool Execution Errors, so we count \emph{either} a
     protocol error \emph{or} an \texttt{isError} result as acceptable, and flag only
     a plain success response (the tool ran on ill-typed input) as a defect.
   \item \textbf{malformed-json}: after receiving a syntactically invalid frame, the
@@ -84,8 +84,8 @@ harness against the official reference servers (\texttt{server-memory},
 specified JSON-RPC \texttt{-32602} error but with a \emph{successful} response whose
 \texttt{result.isError} flag is set. Because this behavior originates in the
 official SDKs and is therefore ecosystem-wide, we grade it as its own category
-rather than a failure, and quantify its prevalence as a first-class result: it is
-the clearest instance of specification text diverging from universal practice.
+rather than a failure, and quantify its prevalence as a first-class result, since it
+is the clearest instance of specification text diverging from universal practice.
 
 \subsection{Sandbox}
 Executing thousands of untrusted packages demands isolation. Each server runs in a
@@ -98,8 +98,8 @@ runs with \texttt{-{}-network=none}, so no server code has network access while 
 being measured. In the \textbf{single-phase} condition, install and probe occur
 together in one ephemeral container and the network is available throughout. The
 census reported here was measured in the single-phase condition, for the operational
-reasons given in Section~\ref{sec:method-env}; we state the consequences for validity
-in Section~\ref{sec:threats}.
+reasons given in Section~\ref{sec:method-env}, and we state the consequences for
+validity in Section~\ref{sec:threats}.
 
 \subsection{Execution environment and probe condition}
 \label{sec:method-env}
@@ -110,7 +110,7 @@ in one ephemeral \texttt{-{}-rm} container per server, with nothing cached betwe
 servers so that disk usage stays bounded across the full ecosystem. In a pilot on an
 independent subset (roughly 200 servers per arm) we compared this condition against
 the two-phase network-isolated condition and found no detectable difference on any
-metric---handshake yield ($54\%$ vs.\ $57\%$), error-as-result prevalence ($87\%$
+metric: handshake yield ($54\%$ vs.\ $57\%$), error-as-result prevalence ($87\%$
 vs.\ $87\%$), and silent type non-enforcement ($7\%$ vs.\ $7\%$). We note that a
 pilot of this size can only exclude differences larger than roughly $14$ percentage
 points in handshake yield, so this is evidence of consistency rather than a
@@ -120,6 +120,20 @@ of probes ($\le 0.4\%$) were interrupted by an automated disk-guard that reclaim
 space if the host approaches capacity; these are recorded conservatively as
 non-handshaking and, being a property of the harness environment rather than the
 server, do not bias conformance rates (which are computed over responding servers).
+
+\subsection{SDK-level confirmation}
+\label{sec:sdk-probe}
+Where a conformance failure concentrates in one SDK family, the census alone cannot
+say whether the library permits the failure or the authors introduced it
+independently. For the input-validation result we settle this with a direct test
+rather than inference. We build two minimal servers exposing one tool that declares a
+single required string property, one using the low-level \texttt{Server} API and one
+using the high-level \texttt{McpServer} API, both on the same SDK release, and drive
+each with the same harness check used in the census: a \texttt{tools/call} carrying an
+integer where the declared schema requires a string. The construction is otherwise
+identical, so any difference in outcome is a property of the API path. We report the
+result in Section~\ref{sec:consequences}. The two servers and the probe script are
+released with the harness.
 
 \subsection{Funnel accounting}
 Because ``does it even run'' is itself a research question, we count every stage:

@@ -6,7 +6,7 @@ could over- or under-count. We mitigate this in three ways. First, we grade each
 server against the protocol version it \emph{negotiates}, not the latest
 specification, so a server is never penalized for a requirement that postdates its
 target revision. Second, we distinguish normative requirements from illustrative
-ones: the most prevalent divergence we report (unknown-tool responses) is graded as
+ones, and the most prevalent divergence we report (unknown-tool responses) is graded as
 a distinct \textsf{error-as-result} category rather than a failure, precisely
 because the specification expresses it in prose and an example rather than an
 RFC-2119 keyword. Third, we calibrated the harness against the official reference
@@ -43,8 +43,8 @@ servers, we argue this population is the most consequential one to characterize
 first.
 
 \paragraph{Completeness.}
-We probe the entire eligible frame---all \Nprobed{} servers (\Nresponders{}
-responding)---so the study is a complete census of the eligible population rather
+We probe the entire eligible frame, all \Nprobed{} servers (\Nresponders{}
+responding), so the study is a complete census of the eligible population rather
 than a sample. The confidence intervals we report throughout therefore reflect
 residual measurement noise (e.g.\ server-side nondeterminism) rather than sampling
 error, and should be read together with the publisher-clustering caveat below. The
@@ -57,7 +57,7 @@ namespaces, and the distribution is heavy-tailed: the largest single publisher
 accounts for \TopPublisherN{} servers (\TopPublisherPct{} of the census) and the ten
 largest for \TopTenPct{}. Servers from one publisher frequently share a template and
 behave near-identically, so they are not independent observations, and the Wilson
-intervals we report---which assume independent trials---understate the true
+intervals we report, which assume independent trials, understate the true
 uncertainty. To bound the effect, we recompute each headline rate on a
 publisher-deduplicated subset retaining one server per namespace (\NuniqPub{}
 servers). Every estimate moves by a few points and no conclusion changes: handshake
@@ -103,4 +103,10 @@ Every number in this paper is regenerable from released raw JSON-RPC transcripts
 the pinned harness commit. The sampling seed, registry snapshot, base images, and
 package versions are all recorded. Because the registry is a moving target, we
 report the crawl date and treat the snapshot, not the live registry, as the object
-of study.
+of study. A longitudinal measurement of the same registry quantifies how fast that
+target moves, reconstructing 120 observations over 88.6 days as the registry grew
+from 3,510 to 18,966 servers, and finds that the descriptive surface drifts unevenly,
+with 8.6\% of servers ever rewriting a description~\cite{registrydrift}. That work
+concerns registry text rather than server behaviour, so it does not date our
+conformance results directly, but it is the reason we fix a snapshot and report its
+date rather than describing the registry in the present tense.

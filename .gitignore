@@ -22,6 +22,9 @@ paper/*.aux
 paper/*.log
 paper/*.out
 paper/*.pdf
+# The compiled preprint is the artifact readers are pointed at, so it ships
+# with the source rather than being rebuilt by each reader.
+!paper/main.pdf
 paper/*.bbl
 paper/*.blg
 paper/*.fls
