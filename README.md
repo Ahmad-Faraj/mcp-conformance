@@ -38,10 +38,10 @@ The harness supports two execution modes, verified to produce statistically
 indistinguishable results on every metric (handshake yield, error-as-result
 prevalence, type non-enforcement):
 
-- **online single-phase** (default) — install and probe in one ephemeral
+- **online single-phase** (default): install and probe in one ephemeral
   `--rm` container. Nothing is cached between servers, so disk usage stays flat;
   used for the full-ecosystem census on a fixed-size cloud volume.
-- **two-phase offline** (`--offline-probe`) — an online install pass populates a
+- **two-phase offline** (`--offline-probe`): an online install pass populates a
   shared cache, then the probe runs with `--network=none` so no server code has
   network access during measurement. Stronger isolation; used for local runs.
 
@@ -52,7 +52,7 @@ registry snapshot.
 
 | Finding | Result |
 |---|---|
-| Complete a protocol handshake | **61.1%** (95% CI 59.8–62.3) — two in five never serve the protocol |
+| Complete a protocol handshake | **61.1%** (95% CI 59.8–62.3); two in five never serve the protocol |
 | Answer an unknown tool with an `isError` result instead of a JSON-RPC protocol error | **88.4%** (95% CI 87.3–89.4) |
 | Silently accept a wrong-typed required argument | **7.4%** |
 | Crash or hang on a malformed frame | **0.5%** |
@@ -81,7 +81,7 @@ the largest ships 305). Recomputing one-server-per-publisher holds every finding
 
 ## Dataset
 
-`data/release/` holds the public, disclosure-filtered dataset — per-server verdicts,
+`data/release/` holds the public, disclosure-filtered dataset: per-server verdicts,
 the entry-point re-probe, SDK attribution, and the registry snapshot. Identities
 behind security-relevant findings are pseudonymised pending maintainer disclosure,
 and credential material observed at runtime is redacted; aggregates are unaffected.

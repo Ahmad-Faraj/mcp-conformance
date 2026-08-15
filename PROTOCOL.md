@@ -1,4 +1,4 @@
-# Study Protocol — Execution-Based Conformance Study of the MCP Server Ecosystem
+# Study Protocol: Execution-Based Conformance Study of the MCP Server Ecosystem
 
 *Working title: "Does Your MCP Server Actually Follow the Protocol? A Large-Scale
 Execution-Based Conformance Study." Started 2026-07-19.*
@@ -27,7 +27,7 @@ registry crawling (2509.25292, 8,060 projects), or issue mining (2606.05339, 837
 threads). The official `modelcontextprotocol/conformance` suite executes only the five
 official SDKs over HTTP in CI. **One line: the official suite tests five SDKs; we test
 the seventeen-thousand-server ecosystem built on them.** The issue-mining taxonomy found
-tool faults and schema enforcement to be the top fault categories — motivation we cite:
+tool faults and schema enforcement to be the top fault categories, motivation we cite:
 they saw the smoke in issue trackers; we measure the fire.
 
 ### Novelty boundary (adversarial check, 2026-07-19)
@@ -40,10 +40,10 @@ Closest works verified and differentiated:
   not spec conformance across the registry ecosystem.
 - **Remote-server auth study (2605.22333):** remote servers, authentication security only.
 - **Practitioner blogs (non-peer-reviewed, cite as motivation):** RapidClaw "52% dead"
-  audit (1,847 servers — maintenance-liveness rubric, methodology and data not public);
+  audit (1,847 servers, maintenance-liveness rubric, methodology and data not public);
   digitalapplied 100-server stress test (task success, not protocol conformance).
 - **Community signal:** modelcontextprotocol Discussion #2682 proposes a pre-publish
-  conformance checklist — the ecosystem is asking for exactly this measurement; nobody
+  conformance checklist. The ecosystem is asking for exactly this measurement; nobody
   has done it.
 
 No academic work executes registry-published MCP servers at scale and measures protocol
@@ -63,7 +63,7 @@ execution (future work: a read-only handshake census).
 
 ## Harness
 
-- `driver/mcpprobe.py` — hand-rolled line-framed JSON-RPC over stdio (deliberately not
+- `driver/mcpprobe.py`: hand-rolled line-framed JSON-RPC over stdio (deliberately not
   the SDK: we must be able to send malformed frames and observe raw behavior, and the
   probe must not inherit SDK-side corrections).
 - Client offers protocol version 2025-06-18; the negotiated version is recorded and all
@@ -74,7 +74,7 @@ execution (future work: a read-only handshake census).
   required property), `malformed-json` (parse-error survival), `stdout-purity`
   (stdio transport forbids non-protocol stdout).
 - Verdicts: `pass` / `fail` / `warn` / `skip` / `error-as-result` (spec-practice
-  divergence category — the official reference servers themselves surface unknown-tool
+  divergence category; the official reference servers themselves surface unknown-tool
   as `isError` results rather than JSON-RPC −32602; calibrated 2026-07-19 against
   `server-memory` 0.6.3 and `server-everything` 2.0.0, which pass all other checks).
 - Full transcript-level records: negotiated version, serverInfo, capabilities, timing,
@@ -124,7 +124,7 @@ disclosure windows.
 
 Spec language pinned and re-verified against the published draft (2026-07-31): the
 "Tools > Error Handling" section still categorizes "Unknown tool" under *Protocol
-Errors* and illustrates `-32602`, with **no RFC-2119 MUST/SHOULD** — prose plus an
+Errors* and illustrates `-32602`, with **no RFC-2119 MUST/SHOULD**, only prose plus an
 example. We therefore record which mechanism each server uses and never score one as a
 violation.
 
@@ -135,8 +135,8 @@ reference servers behave the same way. A minority of official-ts servers do emit
 `-32602`, so the alternative is reachable in the SDK but is not its default.
 
 **Framing correction (2026-07-31, prior-art check before publication).** The original
-framing — "the SDKs institutionalized a divergence from the written spec, and the
-ecosystem inherited it" — was incomplete and its recommendation was backwards. The
+framing, "the SDKs institutionalized a divergence from the written spec, and the
+ecosystem inherited it", was incomplete and its recommendation was backwards. The
 specification is converging on the ecosystem, not the reverse:
 
 - **SEP-1303** (accepted, reflected in the spec) moved input validation errors from
@@ -150,7 +150,7 @@ Both proposals argue from implementation practice without measuring it. The cens
 that measurement: the alignment SEP-2145 describes already covers 88.4% of deployed
 servers, so adoption ratifies existing behaviour and the migration cost falls on the
 11.6% minority. Any upstream contribution should supply this data to the open
-discussion, **not** recommend making the current categorization normative — that
+discussion, **not** recommend making the current categorization normative, which
 argues against an already-accepted rationale.
 
 **The input-validation result is categorically different.** The spec's Security

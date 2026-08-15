@@ -1,8 +1,8 @@
 """Build the conformance violation & failure taxonomy from probe transcripts.
 
 Two dimensions:
-  (A) Startup failure taxonomy  — why servers never reach a handshake (RQ1).
-  (B) Conformance violation taxonomy — how handshaking servers deviate from the
+  (A) Startup failure taxonomy: why servers never reach a handshake (RQ1).
+  (B) Conformance violation taxonomy: how handshaking servers deviate from the
       MCP spec / robustness expectations (RQ2-RQ4).
 
 Each finding gets a stable code, a severity, and the agent-facing consequence

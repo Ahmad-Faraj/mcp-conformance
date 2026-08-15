@@ -69,7 +69,7 @@ def main():
     findings.sort(key=lambda x: order.get(x["sev"], 9))
 
     lines = [
-        "# PRIVATE — Responsible Disclosure Log (DO NOT PUBLISH)",
+        "# PRIVATE: Responsible Disclosure Log (DO NOT PUBLISH)",
         "",
         "Report each item to the maintainer BEFORE the paper is public. The paper",
         "reports only aggregates and anonymized case studies. Track disclosure dates below.",
@@ -82,7 +82,7 @@ def main():
             f"## {i}. [{f['sev'].upper()}] {f['server']}",
             f"- Package: `{f['identifier']}`",
             f"- Repository: {f['repo'] or '(none listed)'}",
-            f"- Check: `{f['check']}` — {f['desc']}",
+            f"- Check: `{f['check']}`: {f['desc']}",
             f"- Evidence: {f['detail'][:200]}",
             f"- Harness commit: `{f['commit']}`",
             "- Disclosure status: ☐ not yet contacted   ☐ reported (date: ____)   ☐ fixed",

@@ -274,7 +274,7 @@ def probe(cmd: list[str], timeout: float) -> dict:
                   f"error code {code}")
         elif (resp.get("result") or {}).get("isError"):
             # Spec text says protocol error -32602, but the official SDKs emit a
-            # tool result with isError — grade as its own category, not a fail.
+            # tool result with isError: grade as its own category, not a fail.
             check(result, "tools-call-unknown", "error-as-result",
                   str((resp["result"].get("content") or [{}])[0].get("text"))[:120])
         else:

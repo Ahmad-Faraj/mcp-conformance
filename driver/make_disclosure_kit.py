@@ -153,7 +153,7 @@ ecosystem at once.
 ## A separate finding, with no ambiguity attached
 
 The same census found 129 servers that execute a tool on an argument their own declared
-`inputSchema` rejects, returning an ordinary-looking result — a code-scanning tool
+`inputSchema` rejects, returning an ordinary-looking result. A code-scanning tool
 asked to scan the integer `12345` replied `CLEAN`. The specification's security
 requirements state that servers **MUST** validate all tool inputs, so unlike the
 error-reporting question this is a clear-cut requirement being missed, and no proposal
