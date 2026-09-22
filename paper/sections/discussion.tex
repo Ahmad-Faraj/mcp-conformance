@@ -1,4 +1,4 @@
-\paragraph{The specification is following the ecosystem, not leading it.}
+\paragraph{The specification is following the ecosystem, not leading it}
 On the question our largest measurement covers, the standard is being rewritten to
 match what implementations already do. SEP-1303 moved input validation errors to tool
 execution errors, and SEP-2145 proposes the same for unknown tools, explicitly to
@@ -12,7 +12,7 @@ conforming minority instead. That is a different decision from the one the propo
 appears to be making, and deciding it requires deployment data rather than further
 specification discussion.
 
-\paragraph{The SDK is the unit of change.}
+\paragraph{The SDK is the unit of change}
 Attributing servers to their SDK collapses thousands of independent authorship
 decisions into a handful of library defaults, and the residual category shows those
 defaults propagating a second time through third-party wrappers. The effect runs in
@@ -23,7 +23,7 @@ behaviour as a first-class input rather than an implementation detail. It also m
 ecosystem conformance should be measured at the SDK layer, where a single change is
 worth thousands of server-level ones.
 
-\paragraph{Input validation is not a matter of interpretation.}
+\paragraph{Input validation is not a matter of interpretation}
 The unknown-tool question is genuinely contested, and we decline to score it, but the
 input-validation result stands on different ground. The specification requires servers
 to validate all tool inputs, and \NSilentExec{} servers run tools on arguments their own
@@ -33,7 +33,7 @@ once it is gone. Where a specification uses \textsf{MUST} and practice ignores i
 measurement surfaces the gap, because nothing in the registry, the package metadata,
 or a static scan reveals which servers enforce their own schemas.
 
-\paragraph{Startup failure is invisible to the registry.}
+\paragraph{Startup failure is invisible to the registry}
 Two in five installable servers never serve the protocol, and a fifth of PyPI servers
 cannot be launched from registry metadata alone because that metadata does not record
 an entry point. Registries rank servers by popularity and recency, and none of them
@@ -41,7 +41,7 @@ surfaces whether a server starts. Server selection is an empirical reliability q
 that the available metadata cannot answer, and a pre-publish conformance check, which
 our harness implements, would turn a one-time measurement into a standing signal.
 
-\paragraph{Recommendations.}
+\paragraph{Recommendations}
 For the specification: SEP-2145 should be decided with the deployment numbers in hand,
 because they change what the proposal is doing. For SDK authors: input validation is
 where the normative requirement actually bites, and a default that validates declared

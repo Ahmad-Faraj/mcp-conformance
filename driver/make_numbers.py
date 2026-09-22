@@ -67,6 +67,15 @@ def main():
         lambda c: c["id"] == "tools-call-unknown" and c["verdict"] == "error-as-result")
     notypecheck_k, notypecheck = resp_rate(
         lambda c: c["id"] == "tools-call-invalid-args" and c["verdict"] == "fail")
+    # The rest of the unknown-tool responses split three ways: a protocol error with
+    # the illustrated code (pass), a protocol error with another code (warn), and a
+    # plain success that explains the failure only in prose (fail).
+    unk_pe_k, unk_pe = resp_rate(
+        lambda c: c["id"] == "tools-call-unknown" and c["verdict"] == "pass")
+    unk_wrong_k, unk_wrong = resp_rate(
+        lambda c: c["id"] == "tools-call-unknown" and c["verdict"] == "warn")
+    unk_prose_k, unk_prose = resp_rate(
+        lambda c: c["id"] == "tools-call-unknown" and c["verdict"] == "fail")
     malformed_k, malformed = resp_rate(
         lambda c: c["id"] == "malformed-json" and c["verdict"] == "fail")
 
@@ -164,6 +173,10 @@ def main():
         "HandshakeCount": str(hs),
         "ErrAsResultRate": err_as_result,
         "ErrAsResultCount": str(err_as_result_k),
+        "NotErrAsResultPct": f"{100*(n_resp-err_as_result_k)/n_resp:.1f}\\%" if n_resp else "-",
+        "UnknownProtoErrCount": str(unk_pe_k),
+        "UnknownWrongCodeCount": str(unk_wrong_k),
+        "UnknownProseCount": str(unk_prose_k),
         "NoTypecheckRate": notypecheck,
         "MalformedDiesRate": malformed,
         # SDK attribution of the silent-execution population (Section 4.3).

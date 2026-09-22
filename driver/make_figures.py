@@ -23,6 +23,8 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
 from matplotlib.patches import FancyArrow, FancyBboxPatch  # noqa: E402
 
+from failure_classes import failure_class  # noqa: E402
+
 ROOT = Path(__file__).resolve().parent.parent
 DATA = ROOT / "data"
 FIG = ROOT / "paper" / "figures"
@@ -47,13 +49,14 @@ plt.rcParams.update({
 # environment bucket covers packaging, undeclared configuration, and the few runs
 # our own harness interrupted (exit 137 = killed by the disk guard), which must not
 # be charged to the server.
-ENVIRONMENT = {"needs-auth-or-config", "install-error", "install-not-found",
+ENVIRONMENT = {"entrypoint-not-provided", "needs-auth-or-config", "install-error", "install-not-found",
                "crash-exit-137", "unclassified"}
 
 PRETTY = {
     "crash-exit-1": "crash (exit 1)",
     "crash-exit-2": "crash (exit 2)",
-    "crash-exit-127": "missing entry point (127)",
+    "entrypoint-not-provided": "uvx entry-point artifact",
+    "crash-exit-127": "command not found (exit 127)",
     "crash-exit-137": "interrupted by harness (137)",
     "crash-with-error-output": "abort with error output",
     "crash-python-exception": "uncaught Python exception",
@@ -136,7 +139,7 @@ def fig_pipeline(rows, n_frame):
 def fig_failures(rows):
     """RQ1. Ranked horizontal bars; artifact/config separated from real failures."""
     non = [r for r in rows if not r.get("handshake_ok")]
-    counts = Counter(r.get("failure_class") or "unclassified" for r in non)
+    counts = Counter(failure_class(r) for r in non)
 
     items = [(PRETTY.get(k, k), v, k) for k, v in counts.most_common() if v >= 5]
     items.reverse()

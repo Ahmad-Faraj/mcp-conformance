@@ -1,6 +1,6 @@
 \label{sec:threats}
 
-\paragraph{Construct validity.}
+\paragraph{Construct validity}
 Our verdicts operationalize ``conformance,'' and a poorly chosen operationalization
 could over- or under-count. We mitigate this in three ways. First, we grade each
 server against the protocol version it \emph{negotiates}, not the latest
@@ -13,7 +13,7 @@ RFC-2119 keyword. Third, we calibrated the harness against the official referenc
 servers before the study and confirmed it reproduces their known-good behavior on
 every check except the SDK-level divergence we set out to measure.
 
-\paragraph{Internal validity.}
+\paragraph{Internal validity}
 The census was measured in the single-phase condition, with the network available
 during both install and probe (Section~\ref{sec:method-env}). This avoids penalizing
 a server that legitimately contacts the network during initialization, but it does
@@ -31,7 +31,7 @@ language runtimes is a further
 source of noise, which we bound by pinning base images and package versions and by
 stamping every result with the harness commit that produced it.
 
-\paragraph{External validity.}
+\paragraph{External validity}
 Our population is self-contained, locally-installable servers distributed on npm and
 PyPI using the stdio transport. This excludes remote-only servers (which we cannot
 execute without provisioning hosted infrastructure) and servers requiring
@@ -42,7 +42,7 @@ is important future work. Because agent clients overwhelmingly launch local stdi
 servers, we argue this population is the most consequential one to characterize
 first.
 
-\paragraph{Completeness.}
+\paragraph{Completeness}
 We probe the entire eligible frame, all \Nprobed{} servers (\Nresponders{}
 responding), so the study is a complete census of the eligible population rather
 than a sample. The confidence intervals we report throughout therefore reflect
@@ -51,7 +51,7 @@ error, and should be read together with the publisher-clustering caveat below. T
 conformance findings (RQ2--RQ4) are near-universal, and the runnability funnel (RQ1)
 rests on the full population rather than an estimate.
 
-\paragraph{Publisher clustering.}
+\paragraph{Publisher clustering}
 The \Nprobed{} servers in our frame come from only \Npublishers{} distinct registry
 namespaces, and the distribution is heavy-tailed: the largest single publisher
 accounts for \TopPublisherN{} servers (\TopPublisherPct{} of the census) and the ten
@@ -70,7 +70,7 @@ percentage points. We report the full-census figures as our primary result, beca
 census rather than a sample of publishers is the object of study, and the
 publisher-deduplicated figures as the robustness check.
 
-\paragraph{Severity of the malformed-frame finding, and a limitation it exposed.}
+\paragraph{Severity of the malformed-frame finding, and a limitation it exposed}
 We initially characterized failure to recover from a malformed frame as a
 denial-of-service primitive. A maintainer who reproduced the finding independently
 argued that this overstates it, and we agree. Under the stdio transport the client
@@ -89,7 +89,7 @@ different failures with different fixes, and \MalformedDiesRate{} therefore aggr
 the two. Separating them requires per-server process-state tracking that the released
 transcripts support but the current verdict does not encode.
 
-\paragraph{Interrupted probes.}
+\paragraph{Interrupted probes}
 A small fraction ($\le 0.4\%$) of probes were interrupted by the automated disk-guard
 that reclaims host space near capacity (Section~\ref{sec:method-env}). These are
 recorded conservatively as non-handshaking; because the interruption is a property of
@@ -98,12 +98,12 @@ any server property, it does not bias conformance rates (computed over respondin
 servers) and can only very slightly depress the handshake yield. The released dataset
 flags these runs for audit.
 
-\paragraph{Reproducibility.}
-Every number in this paper is regenerable from released raw JSON-RPC transcripts and
-the pinned harness commit. The sampling seed, registry snapshot, base images, and
-package versions are all recorded. Because the registry is a moving target, we
-report the crawl date and treat the snapshot, not the live registry, as the object
-of study. A longitudinal measurement of the same registry quantifies how fast that
+\paragraph{Reproducibility}
+Every number in this paper is regenerable from the released raw JSON-RPC transcripts,
+census rows and analysis scripts. The registry snapshot, base images, and package
+versions are recorded; census rows do not record the harness commit, which we
+correct in the released tooling. Because the registry is a moving target, we fix the
+snapshot of 19 July 2026 and treat it, not the live registry, as the object of study. A longitudinal measurement of the same registry quantifies how fast that
 target moves, reconstructing 120 observations over 88.6 days as the registry grew
 from 3,510 to 18,966 servers, and finds that the descriptive surface drifts unevenly,
 with 8.6\% of servers ever rewriting a description~\cite{registrydrift}. That work

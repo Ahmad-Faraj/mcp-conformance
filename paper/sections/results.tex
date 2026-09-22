@@ -15,9 +15,11 @@ credentials or configuration are counted separately from servers that crash;
 conflating them would blame the ecosystem for what is a documentation gap. Second,
 most failures occur \emph{after} a successful install, when the package downloads and
 the process then crashes, hangs, or exits without speaking the protocol, which locates
-the failure in the software rather than the packaging. No prior work has measured how often
-registry-published servers fail to start, and because we census the entire eligible
-frame, these are population counts rather than estimates.
+the failure in the software, not the packaging. A concurrent random draw of 400 npm
+servers reports a 48.8\% handshake rate~\cite{randomdraw2026}, against \NpmRate{} for
+the npm servers in our census. The two differ in snapshot and harness, so we
+do not read the gap as a trend. Because we census the entire eligible frame, our
+figures are population counts, not estimates.
 
 \begin{figure}[t]
   \centering
@@ -139,9 +141,11 @@ disabled tools, and gives as its rationale that it ``aligns specification with e
 Python and TypeScript SDK behavior''~\cite{sep2145}. Our census supplies the quantity
 that argument has so far lacked, namely that the alignment it describes already covers
 \ErrAsResultRate{} of deployed servers. If SEP-2145 is adopted it ratifies the
-ecosystem's existing behaviour rather than changing it, and the residual
-\(11.6\%\), which are the servers emitting protocol errors, become the population that
-would need to migrate.
+ecosystem's existing behaviour, not changing it. The other \NotErrAsResultPct{} are
+not one population: \UnknownProtoErrCount{} servers emit a protocol error coded
+\texttt{-32602} or \texttt{-32601}, \UnknownWrongCodeCount{} use some other code, and
+\UnknownProseCount{} return a plain success that states the failure only in its text,
+a mechanism neither proposal describes.
 
 To explain the uniformity, we attribute each server to its SDK from package metadata
 (Figure~\ref{fig:sdk}, Table~\ref{tab:sdk}). The behaviour tracks the SDK: the

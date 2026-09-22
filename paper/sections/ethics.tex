@@ -1,7 +1,7 @@
 This study executes third-party code and probes servers for defects, so we adopt
 the norms of responsible measurement research.
 
-\paragraph{Safe execution.}
+\paragraph{Safe execution}
 Every server, during both installation and probing, runs inside an isolated
 container with all Linux capabilities dropped, no new privileges, bounded memory,
 CPU, and process counts, and no host filesystem access beyond a package cache
@@ -19,7 +19,7 @@ install and probe in a single pass. We execute no server that declares a require
 for credentials, both because it lies outside our frame and because doing so could
 send real requests to third-party systems.
 
-\paragraph{Observed side effects of networked measurement.}
+\paragraph{Observed side effects of networked measurement}
 Because the census ran with the network available, we audited the captured output
 for evidence that server code produced effects outside its container. We report what
 we found rather than only what we intended. Roughly $1\%$ of servers attempted an
@@ -38,7 +38,7 @@ two-phase mode. Our own use of the single-phase condition was an operational
 concession to running an entire ecosystem on one disposable host, and we state its
 cost explicitly here.
 
-\paragraph{Responsible disclosure.}
+\paragraph{Responsible disclosure}
 A subset of our findings concern robustness rather than function. A server that stops
 serving after a malformed frame, and a server that emits non-protocol bytes on its
 stdio channel, can each desynchronize or strand a connected client. We report these
@@ -54,7 +54,7 @@ that the findings are actionable and that the reporting format was usable; where
 finding is exploitable, per-server details are withheld until a reasonable
 disclosure window has elapsed. The released dataset is filtered accordingly.
 
-\paragraph{Registry and maintainer impact.}
+\paragraph{Registry and maintainer impact}
 Our crawl uses the registry's public API within its rate limits, and our installs
 draw from public package registries in the ordinary way. We cache aggressively to
 avoid redundant load. We view the released harness as a benefit to maintainers, since

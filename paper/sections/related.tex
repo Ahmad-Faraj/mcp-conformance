@@ -8,7 +8,7 @@ stdio, where stdout carries protocol traffic and nothing else. The specification
 versioned by date, and servers may negotiate down to a version they support.
 
 \subsection{Static studies of the MCP ecosystem}
-The ecosystem has been studied at scale, but never by running it.
+The ecosystem has been studied at scale, but rarely by running it.
 Health-and-maintainability work analyzes source and metadata for roughly 1,900
 servers using static scanners and code-smell detectors~\cite{mcpfirstglance}, while
 registry measurement crawls several marketplaces and characterizes scale,
@@ -49,6 +49,14 @@ resolves against. That their corpus required a repair framework at all is indepe
 corroboration of our runnability finding. Conformance remains a separate question,
 namely whether a server that is neither malicious nor vulnerable does what the
 specification says.
+
+The closest work is concurrent. Afsar draws a seeded random sample of 400 npm stdio
+servers from the same registry and probes each without repair: 48.8\% complete a
+handshake, servers that never start (37.5\%) outnumber those missing credentials
+(13.3\%), and the 195 that run show no fatal schema violations across 2,766
+tools~\cite{randomdraw2026}. That study samples one package ecosystem and checks
+declared structure. We census both npm and PyPI and test behaviour, calling tools
+with inputs the server should reject.
 
 \subsection{The specification's own error-handling debate}
 The categorisation this paper measures is under active revision. SEP-1303, accepted
