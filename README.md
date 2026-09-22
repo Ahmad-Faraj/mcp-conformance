@@ -2,9 +2,7 @@
 
 `mcpprobe` installs Model Context Protocol (MCP) servers from a registry, runs
 each in an isolated sandbox, and drives it through a suite of protocol-conformance
-and robustness checks. It is the measurement harness behind the study *"Does Your
-MCP Server Actually Follow the Protocol? A Large-Scale Execution-Based Conformance
-Study of the Model Context Protocol Ecosystem."*
+and robustness checks. It is the measurement harness behind the accompanying paper.
 
 Where the official `modelcontextprotocol/conformance` suite tests the handful of
 official SDKs in CI, `mcpprobe` extends the same categories of scenarios to
@@ -138,7 +136,6 @@ is filtered accordingly. See `PROTOCOL.md`.
 ```
 harvest/     registry crawler + sampling-frame stats
 driver/      mcpprobe harness, sandbox runner, analysis + paper-artifact generators
-paper/       LaTeX source (numbers/tables/figures auto-generated from data)
 data/        sampling frame + probe results (generated; git-ignored)
 PROTOCOL.md  full study protocol, RQs, sampling, ethics
 ```

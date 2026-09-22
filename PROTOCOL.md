@@ -1,7 +1,6 @@
 # Study Protocol: Execution-Based Conformance Study of the MCP Server Ecosystem
 
-*Working title: "Does Your MCP Server Actually Follow the Protocol? A Large-Scale
-Execution-Based Conformance Study." Started 2026-07-19.*
+*Started 2026-07-19.*
 
 ## Research questions
 
@@ -118,7 +117,7 @@ disclosure windows.
 
 1. `mcpprobe` conformance harness (open source).
 2. Registry sampling frame + probe-result dataset (post-disclosure filtering).
-3. The paper (arXiv → MSR/FSE/DSN 2027 track).
+3. The paper.
 
 ## Key finding: which error mechanism a server uses is set by its SDK (RQ4)
 

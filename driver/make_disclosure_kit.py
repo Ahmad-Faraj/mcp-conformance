@@ -76,7 +76,7 @@ Observed during the check `{check}`:
 The harness is open source. With Docker installed:
 
 ```bash
-git clone https://github.com/Ahmad-Faraj/mcp-conformance
+git clone <repository URL>
 cd mcp-conformance
 python driver/mcpprobe.py --cmd "{cmd}"
 ```
@@ -98,7 +98,7 @@ can do so first. There is no deadline attached and no follow-up is required.
 If this is a false positive, we would genuinely like to know: the harness may be
 wrong, and we will correct both it and the dataset.
 
-Repository: https://github.com/Ahmad-Faraj/mcp-conformance
+Repository: <repository URL>
 """
 
 SDK_REPORT = """# Deployment data for the open `tools/call` failure-reporting proposal
@@ -162,7 +162,7 @@ is pending to relax it. A validating default in the SDKs would close most of it.
 ## Data
 
 Harness, methodology and the full disclosure-filtered dataset:
-https://github.com/Ahmad-Faraj/mcp-conformance
+<repository URL>
 """
 
 
