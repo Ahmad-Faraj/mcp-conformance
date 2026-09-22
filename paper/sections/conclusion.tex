@@ -6,7 +6,7 @@ launched each in a disposable sandbox, and tested whether it follows the protoco
 reasons broken down in Figure~\ref{fig:failures}. Of the servers that respond,
 \ErrAsResultRate{} report an unknown tool in the same way, and the cause is the SDKs
 they are built on, used directly or through third-party wrappers. An open proposal
-would change the specification to match this behaviour, and our numbers show how much
+would change the specification to match this behavior, and our numbers show how much
 of the ecosystem it already describes. A smaller group, \SilentExecRate{}, run a tool
 on input their own schema rejects and return an answer with no sign that anything is
 wrong. One, asked to scan an integer for package imports, reported it clean. The
@@ -15,5 +15,5 @@ specification requires servers to validate their inputs, and these servers do no
 A static scan or a registry crawl shows none of this. We release the harness and the
 dataset so that others can repeat the measurement, extend it to remote and
 credentialed servers, and check their own servers before publishing. Because the
-error-reporting and input-validation behaviour comes from a few SDKs, it can be
+error-reporting and input-validation behavior comes from a few SDKs, it can be
 changed there.

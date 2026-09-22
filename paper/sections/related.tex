@@ -32,16 +32,15 @@ surfaces~\cite{maliciousmcp,remoteauth,exposedbydesign}.
 MCPZoo assembles 64,611 unique servers, of
 which more than 37,288 support dynamic analysis, and uses them to show that existing
 security scanners are unreliable, with fewer than half of sampled alerts holding up
-under manual validation~\cite{mcpzoo}. Two differences separate that corpus from ours
-and they matter for what each can measure. First, MCPZoo is built by \emph{repairing}
+under manual validation~\cite{mcpzoo}. That corpus differs from ours in two ways. First, MCPZoo is built by \emph{repairing}
 servers: a multi-agent framework infers environments and iteratively fixes deployment
 and runtime defects so that in-the-wild repositories become running services. That
 construction is the right choice for studying what a server does once it runs, and it
 necessarily removes the signal we measure, which is how often a server runs at all
 when a client installs it as published. Second, its population is collected from
 multiple public markets, whereas ours is the official registry, the surface a client actually
-resolves against. That their corpus needed a repair framework is consistent with our runnability finding. Conformance remains a separate question,
-namely whether a server that is neither malicious nor vulnerable does what the
+resolves against. That their corpus needed a repair framework fits our runnability finding.
+Conformance is a separate question: whether a server that is neither malicious nor vulnerable does what the
 specification says.
 
 Concurrently with our work, Afsar draws a seeded random sample of 400 npm stdio
@@ -49,17 +48,17 @@ servers from the same registry and probes each without repair: 48.8\% complete a
 handshake, servers that never start (37.5\%) outnumber those missing credentials
 (13.3\%), and the 195 that run show no fatal schema violations across 2,766
 tools~\cite{randomdraw2026}. That study samples one package ecosystem and checks
-declared structure. We census both npm and PyPI and test behaviour, calling tools
+declared structure. We census both npm and PyPI and test behavior, calling tools
 with inputs the server should reject.
 
 \subsection{The specification's own error-handling debate}
-The categorisation this paper measures is under active revision. SEP-1303, accepted
+The categorization this paper measures is under active revision. SEP-1303, accepted
 and reflected in the current specification, moved tool input validation errors out of
 protocol errors and into tool execution errors, reasoning that a language model can
 self-correct only from an error that reaches its context~\cite{sep1303}. SEP-2145,
 open at the time of writing, extends the same treatment to tool resolution failures,
 including unknown tools, and states its purpose as aligning the specification with
-existing Python and TypeScript SDK behaviour~\cite{sep2145}. We take no position on which mechanism is correct. We measure what
+existing Python and TypeScript SDK behavior~\cite{sep2145}. We take no position on which mechanism is correct. We measure what
 fraction of the deployed ecosystem the proposed alignment already describes.
 
 Concurrent with this work, a practitioner census posted to the same proposal probed
@@ -68,13 +67,12 @@ reported that \(88.8\%\) of mutating tools declare no output schema at all, argu
 that the proposal's output-validation clause is inert for most of the write
 surface~\cite{siliroid2026census}. That measurement and ours are close to disjoint.
 It probes hosted HTTP endpoints and reads declared metadata, whereas we install and
-execute local stdio servers and test behaviour against inputs. It addresses the
+execute local stdio servers and test behavior against inputs. It addresses the
 output-validation clause, and we address tool resolution and input enforcement.
 
 \subsection{Conformance tooling and the gap we fill}
 The protocol maintainers ship a conformance suite for testing client and server
 implementations, built for SDK maintainers to run in continuous integration; to our
-knowledge it has not been used to measure the deployed ecosystem. Ours is, to our
-knowledge, the first reproducible conformance measurement of this ecosystem
-that installs and executes the servers themselves and tests their behaviour against
+knowledge it has not been used to measure the deployed ecosystem. As far as we know, ours is the first reproducible conformance measurement of this ecosystem
+that installs and executes the servers themselves and tests their behavior against
 adversarial inputs, released with an open harness and dataset.

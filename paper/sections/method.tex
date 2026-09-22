@@ -3,14 +3,14 @@ the sampling frame, the conformance harness, the sandbox, and the grading rules
 (Figure~\ref{fig:pipeline}). The harness and the released dataset make every number
 reproducible.
 
-\begin{figure*}[t]
+\begin{figure}[t]
   \centering
-  \includegraphics[width=0.85\textwidth]{figures/pipeline.pdf}
+  \includegraphics[width=\linewidth]{figures/pipeline.pdf}
   \caption{Measurement pipeline. Every eligible server is installed and executed in
   its own disposable container, then driven through the conformance probe and graded
   against the protocol version it negotiates.}
   \label{fig:pipeline}
-\end{figure*}
+\end{figure}
 
 \subsection{Sampling frame}
 We crawl the official MCP registry (\texttt{registry.modelcontextprotocol.io})
@@ -22,14 +22,14 @@ that are (i) locally installable, (ii) use the \texttt{stdio} transport, (iii)
 distributed on npm or PyPI (the two dominant registries), and (iv)
 \emph{self-contained}: they declare no required environment variable or argument
 that lacks a default. Criterion (iv) restricts us to servers that a client could
-launch without provisioning secrets, which both bounds the ethics of mass
-execution and defines a clean, reproducible population. We report the exclusion of
+launch without provisioning secrets, which limits what mass execution can do to
+third-party systems and keeps the population reproducible. We report the exclusion of
 remote-only and credential-requiring servers explicitly (Section~\ref{sec:threats})
 and treat the resulting frame as the denominator for all rates. We probe the
 \emph{entire} frame (all \Nprobed{} eligible servers), so the measurement is a census of the eligible population.
 
 \subsection{Conformance harness}
-The harness, \texttt{mcpprobe}, is a deliberately minimal, hand-written JSON-RPC
+The harness, \texttt{mcpprobe}, is a minimal, hand-written JSON-RPC
 client speaking line-delimited messages over the server's stdio. We do \emph{not}
 use an official SDK client. To observe raw behavior, including responses to
 malformed frames, the probe must not inherit any SDK-side correction or
@@ -86,8 +86,7 @@ specified JSON-RPC \texttt{-32602} error but with a \emph{successful} response w
 official SDKs and is therefore ecosystem-wide, we grade it as its own category, not as a failure, and report its prevalence as a result.
 
 \subsection{Sandbox}
-Executing thousands of untrusted packages demands isolation. Each server runs in a
-fresh container (\texttt{node:22-slim} for npm, an \texttt{astral-sh/uv} image for
+Each server runs in a fresh container (\texttt{node:22-slim} for npm, an \texttt{astral-sh/uv} image for
 PyPI) with a memory cap, a single CPU, a PID limit, \texttt{no-new-privileges}, all
 Linux capabilities dropped, and no host filesystem mounts. The harness supports two
 probe conditions. In the \textbf{two-phase}
@@ -101,9 +100,7 @@ validity in Section~\ref{sec:threats}.
 
 \subsection{Execution environment and probe condition}
 \label{sec:method-env}
-The census was executed on a single disposable cloud instance (no cloud
-credentials attached, so the blast radius of running untrusted code is one
-throwaway host) using the online single-phase condition: install and probe occur
+The census was executed on a single disposable cloud instance (no cloud credentials attached) using the online single-phase condition: install and probe occur
 in one ephemeral \texttt{-{}-rm} container per server, with nothing cached between
 servers so that disk usage stays bounded across the full ecosystem; the recorded
 launch command of every run confirms that no volume was mounted. We did not run a
@@ -132,7 +129,7 @@ result in Section~\ref{sec:consequences}. The two servers and the probe script a
 released with the harness.
 
 \subsection{Funnel accounting}
-Because ``does it even run'' is itself a research question, we count every stage:
+Whether a server runs at all is RQ1, so we count every stage:
 declared $\rightarrow$ eligible (self-contained stdio npm/PyPI) $\rightarrow$
 container started $\rightarrow$ process launched
 $\rightarrow$ handshake completed $\rightarrow$ probed. Servers that never reach a

@@ -2,18 +2,16 @@
 SEP-1303 moved input validation errors from protocol errors to tool execution errors,
 arguing that a model can only correct an error it sees~\cite{sep1303}. SEP-2145
 proposes the same change for unknown tools, so that the specification matches what
-the SDKs already do~\cite{sep2145}. Our census shows how far that behaviour has
+the SDKs already do~\cite{sep2145}. Our census shows how far that behavior has
 spread: \ErrAsResultRate{} of responding servers. If SEP-2145 is adopted, it will
 mostly describe what servers already do, and the servers that would have to change
-are the minority that follow the current text. That is worth knowing before the
-proposal is decided.
+are the minority that follow the current text.
 
 \paragraph{Measuring at the SDK level}
 Once servers are attributed to their SDKs, what looked like thousands of separate
 decisions reduces to a few library defaults, some of them passed on again through
-third-party wrappers. A bad default spreads this way, and so would a fix: changing a
-few SDKs would change most of the population. For monitoring conformance, the SDKs
-are the place to start.
+third-party wrappers. Changing a few SDKs would change most of the
+population, so monitoring conformance should start with the SDKs.
 
 \paragraph{Input validation}
 The unknown-tool question is contested, and we do not score it. Input validation is

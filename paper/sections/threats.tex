@@ -37,9 +37,8 @@ execute without provisioning hosted infrastructure) and servers requiring
 credentials (which we exclude for both ethics and reproducibility). We report the
 size of each excluded class explicitly and confine all rates to the stated frame;
 we do not claim they generalize to remote or credentialed servers, whose conformance
-is important future work. Because agent clients overwhelmingly launch local stdio
-servers, we argue this population is the most consequential one to characterize
-first.
+is important future work. Agent clients mostly launch local stdio servers, which is why we studied this
+population first.
 
 \paragraph{Completeness}
 Because we census the eligible frame, our confidence intervals reflect residual
@@ -72,7 +71,7 @@ launches the server and is the sole writer to its standard input, so a party cap
 sending a malformed frame can already terminate the subprocess; the specification also
 places the obligation not to send invalid messages on the client. The correct reading
 is a robustness and conformance failure, which is how we now report it, and we record the correction here. The same maintainer traced the
-behaviour in their server to the official Go SDK's stdio transport, so this check,
+behavior in their server to the official Go SDK's stdio transport, so this check,
 like the unknown-tool divergence, can measure an SDK default that the server only inherits.
 
 Another maintainer's fix exposed a limitation in our instrument. In their server the

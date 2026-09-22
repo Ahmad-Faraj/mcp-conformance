@@ -30,9 +30,8 @@ credentials does not exclude servers that \emph{acquire} them unprompted, so
 declaration-based eligibility filtering is a weaker ethical guarantee than it
 appears. Second, a network-isolated probe phase should be the default for
 measurement at this scale, and we recommend replications use the harness's
-two-phase mode. Our own use of the single-phase condition was an operational
-concession to running an entire ecosystem on one disposable host, and we state its
-cost explicitly here.
+two-phase mode. We used the single-phase condition because it let one disposable host run the
+whole ecosystem, and the side effects above are what that cost.
 
 \paragraph{Responsible disclosure}
 Some of our findings concern robustness. A server that stops
@@ -45,7 +44,10 @@ repository metadata. We reported \(15\) of the \(17\) servers that stop serving 
 malformed frame to their maintainers through their issue trackers. At the time of
 writing, five have merged a fix and four have shipped it in a release, and one
 maintainer corrected our severity assessment, which we adopted
-(Section~\ref{sec:threats}). The remaining findings concern unknown-tool handling
+(Section~\ref{sec:threats}). We also reported the input-validation gap in the
+TypeScript SDK's low-level \texttt{Server} API (Section~\ref{sec:consequences}) to
+the SDK maintainers, who have labeled it for design work on both the 1.x and 2.x
+lines. The remaining findings concern unknown-tool handling
 and stdout contamination and are of lower severity; we report them only in
 aggregate. The identities of all \(211\) servers with security-relevant findings are
 withheld from the released dataset.
@@ -53,5 +55,5 @@ withheld from the released dataset.
 \paragraph{Registry and maintainer impact}
 Our crawl pages sequentially through the registry's public API, backing off on
 errors, and our installs draw each package once per probe from its public registry
-in the ordinary way. We view the released harness as a benefit to maintainers, since
-it lets any author check their own server's conformance before publishing.
+in the ordinary way. The released harness lets any author check their own server's conformance before
+publishing.

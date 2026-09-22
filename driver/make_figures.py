@@ -5,10 +5,8 @@
   figures/sdk.pdf         -- RQ4: the divergence tracks the SDK, not the author
   figures/by_registry.pdf -- RQ5: runnability differs by registry, conformance does not
 
-Palette is a two-hue categorical set validated for CVD separation, lightness band,
-chroma floor and surface contrast (blue/orange, worst-adjacent dE 22.8 protan).
-Gray is de-emphasis ink only and never carries identity on its own: every category
-that uses it is also direct-labeled.
+Layout: label column flush left, bars, value column flush right. Every category is
+direct-labeled, so colour never carries identity on its own.
 """
 
 import argparse
@@ -19,9 +17,10 @@ from collections import Counter, defaultdict
 from pathlib import Path
 
 import matplotlib
+import matplotlib.ticker  # noqa: E402
+import matplotlib.transforms  # noqa: E402
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
-from matplotlib.patches import FancyArrow, FancyBboxPatch  # noqa: E402
 
 from failure_classes import failure_class  # noqa: E402
 
@@ -29,21 +28,38 @@ ROOT = Path(__file__).resolve().parent.parent
 DATA = ROOT / "data"
 FIG = ROOT / "paper" / "figures"
 
-# Validated categorical pair + neutral ink.
-BLUE, ORANGE = "#2b6cb0", "#dd6b20"
-INK, MUTED, GRID = "#1a202c", "#718096", "#e2e8f0"
+# House palette: navy for the primary series (server faults, the hazard, npm) and
+# light blue for the secondary one (environment, PyPI). The two differ strongly in
+# lightness, so they stay separable in greyscale and for colour-blind readers.
+NAVY, SKY = "#1d3557", "#9dbde0"
+INK, MUTED, GRID, RULE, LIGHT = "#14213d", "#6b7280", "#e6e9ee", "#b9cde4", "#d5dae1"
+TINT = "#f1f6fb"
 
+# Figures are drawn at their printed size so no text is scaled: COL is one IEEE
+# column. Fonts are embedded as TrueType (42),
+# not Type 3, which PDF checkers reject.
+COL = 3.45
 plt.rcParams.update({
-    "font.size": 9,
+    "font.family": "sans-serif",
+    "font.sans-serif": ["Arial", "Helvetica", "DejaVu Sans"],
+    "font.size": 7.5,
+    "pdf.fonttype": 42,
+    "ps.fonttype": 42,
     "axes.edgecolor": MUTED,
     "axes.labelcolor": INK,
+    "axes.labelsize": 7.5,
     "text.color": INK,
     "xtick.color": MUTED,
     "ytick.color": MUTED,
+    "xtick.labelsize": 7,
+    "ytick.labelsize": 7.5,
     "axes.spines.top": False,
     "axes.spines.right": False,
+    "axes.linewidth": 0.6,
+    "xtick.major.width": 0.6,
     "figure.dpi": 200,
 })
+
 
 # Startup-failure classes. A server-side failure is the server's own fault; the
 # environment bucket covers packaging, undeclared configuration, and the few runs
@@ -61,7 +77,7 @@ PRETTY = {
     "crash-with-error-output": "abort with error output",
     "crash-python-exception": "uncaught Python exception",
     "exit-silent": "exits 0 without serving",
-    "hang-no-reply": "hangs, never answers initialize",
+    "hang-no-reply": "hangs, no initialize reply",
     "needs-auth-or-config": "needs credentials / config",
     "install-error": "install failure",
     "install-not-found": "package not found",
@@ -88,91 +104,145 @@ def load(path):
     return list(by.values())
 
 
-def finish(fig, name):
-    fig.tight_layout()
-    fig.savefig(FIG / name, bbox_inches="tight")
+# ------------------------------------------------------------------ layout ----
+def label_width(fig, texts, **kw):
+    """Widest of `texts` in figure-fraction units, measured with the real font."""
+    r = fig.canvas.get_renderer()
+    w = 0.0
+    for t in texts:
+        a = fig.text(0, 0, t, **kw)
+        w = max(w, a.get_window_extent(r).width)
+        a.remove()
+    return w / (fig.get_figwidth() * fig.dpi)
+
+
+def hbar_figure(labels, values, colors, xmax, xlabel, value_texts, height,
+                errors=None, ticks=None, headers=None, top_pad=0.10):
+    """Label column | bars | value column, the label column flush left.
+
+    `headers` maps a row index (top-down) to a bold group heading drawn in the
+    label column above that row, so groups separate without a legend.
+    """
+    headers = headers or {}
+    fig = plt.figure(figsize=(COL, height))
+    lab_w = label_width(fig, labels, fontsize=7.5)
+    val_w = label_width(fig, value_texts, fontsize=7.5)
+    left, right = lab_w + 0.035, 1 - val_w - 0.035
+    ax = fig.add_axes([left, 0.36 / height, right - left,
+                       1 - (0.36 + top_pad) / height])
+
+    ys, y = [], 0.0
+    for i in range(len(labels)):
+        if i in headers:
+            y += 1.05 if i else 0.95
+        ys.append(-y)
+        y += 1
+    for i, (v, c) in enumerate(zip(values, colors)):
+        kw = {}
+        if errors:
+            kw = dict(xerr=[[errors[i][0]], [errors[i][1]]],
+                      error_kw=dict(ecolor=NAVY, lw=0.7, capsize=1.6))
+        ax.barh(ys[i], v, color=c, height=0.62, **kw)
+
+    ax.set_xlim(0, xmax)
+    ax.set_ylim(ys[-1] - 0.6, 0.6)
+    tl = matplotlib.transforms.blended_transform_factory(fig.transFigure, ax.transData)
+    for i, text in headers.items():
+        ax.text(0.0, ys[i] + 1.0, text, transform=tl, ha="left", va="center",
+                fontsize=7.2, color=INK, weight="bold")
+    ax.set_yticks([])
+    for s in ("left", "right", "top"):
+        ax.spines[s].set_visible(False)
+    ax.spines["bottom"].set_color(RULE)
+    ax.xaxis.grid(True, color=GRID, linewidth=0.6)
+    ax.set_axisbelow(True)
+    ax.tick_params(axis="x", length=0, pad=3, labelcolor=MUTED, labelsize=7)
+    if ticks is not None:
+        ax.set_xticks(ticks)
+    ax.xaxis.set_major_formatter(matplotlib.ticker.FuncFormatter(
+        lambda v, _: f"{v:,.0f}"))
+    ax.set_xlabel(xlabel, fontsize=7, color=MUTED, labelpad=3)
+
+    for yi, lab, vt in zip(ys, labels, value_texts):
+        ax.text(0.0, yi, lab, transform=tl, ha="left", va="center",
+                fontsize=7.5, color=INK)
+        ax.text(1.0, yi, vt, transform=tl, ha="right", va="center",
+                fontsize=7.5, color=INK)
+    return fig, ax, ys
+
+
+def save(fig, name):
+    fig.savefig(FIG / name)
     plt.close(fig)
 
 
 # ---------------------------------------------------------------- pipeline ----
 def fig_pipeline(rows, n_frame):
-    """Method overview. A diagram, not a plot: the job is orientation."""
-    fig, ax = plt.subplots(figsize=(6.6, 1.9))
-    ax.set_xlim(0, 100)
-    ax.set_ylim(0, 30)
+    """Method overview as a numbered stack: one row per stage, top to bottom."""
+    stages = [
+        ("Registry snapshot", f"{n_frame:,} servers, official registry"),
+        ("Eligibility filter", f"{len(rows):,} self-contained stdio servers"),
+        ("Sandboxed execution", "one disposable container per server"),
+        ("Conformance probe", "8 checks over stdio"),
+        ("Verdicts", "graded per negotiated version"),
+    ]
+    row_h, gap = 0.235, 0.085
+    H = len(stages) * row_h + (len(stages) - 1) * gap + 0.02
+    fig = plt.figure(figsize=(COL, H))
+    ax = fig.add_axes([0, 0, 1, 1])
+    ax.set_xlim(0, COL)
+    ax.set_ylim(0, H)
     ax.axis("off")
 
-    stages = [
-        ("Registry\nsnapshot", f"{n_frame:,} servers"),
-        ("Eligibility\nfilter", f"{len(rows):,} eligible"),
-        ("Sandboxed\nexecution", "1 container\nper server"),
-        ("Conformance\nprobe", "8 checks"),
-        ("Verdicts", "per negotiated\nspec version"),
-    ]
-    w, gap = 15.5, 5.0
-    x = 1.0
-    for i, (title, sub) in enumerate(stages):
-        ax.add_patch(FancyBboxPatch(
-            (x, 9), w, 12, boxstyle="round,pad=0.6,rounding_size=1.2",
-            linewidth=1.1, edgecolor=BLUE if i < 4 else ORANGE,
-            facecolor="white"))
-        ax.text(x + w / 2, 17.2, title, ha="center", va="center",
-                fontsize=8.6, color=INK, weight="bold")
-        ax.text(x + w / 2, 12.4, sub, ha="center", va="center",
-                fontsize=7.6, color=MUTED)
+    top = H - 0.01
+    for i, (title, desc) in enumerate(stages):
+        y0 = top - row_h
+        ax.add_patch(plt.Rectangle((0.01, y0), COL - 0.02, row_h, facecolor=TINT,
+                                   edgecolor=RULE, linewidth=0.6))
+        ax.add_patch(plt.Rectangle((0.01, y0), 0.045, row_h, facecolor=NAVY,
+                                   edgecolor="none"))
+        yc = y0 + row_h / 2
+        ax.text(0.13, yc, f"{i + 1}", ha="left", va="center", fontsize=7.5,
+                color=MUTED, weight="bold")
+        ax.text(0.25, yc, title, ha="left", va="center", fontsize=7.5,
+                color=INK, weight="bold")
+        ax.text(1.45, yc, desc, ha="left", va="center", fontsize=7.2, color=INK)
         if i < len(stages) - 1:
-            ax.add_patch(FancyArrow(x + w + 0.6, 15, gap - 2.0, 0,
-                                    width=0.18, head_width=1.5, head_length=1.3,
-                                    length_includes_head=True, color=MUTED))
-        x += w + gap
-
-    ax.text(1.0 + (w + gap) + w / 2, 5.6,
-            "excludes remote-only,\ncredential-requiring",
-            ha="center", va="center", fontsize=7.0, color=MUTED, style="italic")
-    ax.text(1.0 + 2 * (w + gap) + w / 2, 5.6,
-            "cap-drop ALL, no host mounts,\ndisposable cloud host",
-            ha="center", va="center", fontsize=7.0, color=MUTED, style="italic")
-    finish(fig, "pipeline.pdf")
+            ax.annotate("", xy=(COL / 2, y0 - gap + 0.008), xytext=(COL / 2, y0 - 0.008),
+                        arrowprops=dict(arrowstyle="-|>", color=MUTED, lw=0.6,
+                                        mutation_scale=5, shrinkA=0, shrinkB=0))
+        top = y0 - gap
+    save(fig, "pipeline.pdf")
 
 
 # ---------------------------------------------------------------- failures ----
 def fig_failures(rows):
-    """RQ1. Ranked horizontal bars; artifact/config separated from real failures."""
+    """RQ1. Ranked bars; packaging/config/harness separated from real failures."""
     non = [r for r in rows if not r.get("handshake_ok")]
     counts = Counter(failure_class(r) for r in non)
-
     items = [(PRETTY.get(k, k), v, k) for k, v in counts.most_common() if v >= 5]
-    items.reverse()
-    labels = [i[0] for i in items]
-    vals = [i[1] for i in items]
-    colors = [ORANGE if i[2] in ENVIRONMENT else BLUE for i in items]
 
-    fig, ax = plt.subplots(figsize=(6.6, 3.3))
-    y = range(len(items))
-    ax.barh(list(y), vals, color=colors, height=0.62)
-    ax.set_yticks(list(y))
-    ax.set_yticklabels(labels, fontsize=8.4, color=INK)
-    ax.set_xlabel(f"servers (of {len(non):,} that never reached a handshake)")
-    ax.xaxis.grid(True, color=GRID, linewidth=0.7)
-    ax.set_axisbelow(True)
-    ax.spines["left"].set_visible(False)
-    ax.tick_params(axis="y", length=0)
-    for yi, v in zip(y, vals):
-        ax.text(v + max(vals) * 0.012, yi, f"{v:,}", va="center",
-                fontsize=8.0, color=INK)
-    ax.set_xlim(0, max(vals) * 1.12)
-
-    handles = [plt.Rectangle((0, 0), 1, 1, color=BLUE),
-               plt.Rectangle((0, 0), 1, 1, color=ORANGE)]
-    ax.legend(handles, ["server-side failure",
-                        "environment: packaging, config, or harness"],
-              frameon=False, fontsize=8, loc="lower right")
-    finish(fig, "failures.pdf")
+    fig, ax, ys = hbar_figure(
+        [i[0] for i in items], [i[1] for i in items],
+        [SKY if i[2] in ENVIRONMENT else NAVY for i in items],
+        xmax=max(i[1] for i in items) * 1.02,
+        xlabel=f"servers, of {len(non):,} with no handshake",
+        value_texts=[f"{i[1]:,}" for i in items], height=2.5,
+        ticks=[0, 100, 200, 300, 400], top_pad=0.27)
+    handles = [plt.Rectangle((0, 0), 1, 1, color=NAVY),
+               plt.Rectangle((0, 0), 1, 1, color=SKY)]
+    # Key sits above the chart, flush with the label column, so it never overlaps
+    # a bar.
+    fig.legend(handles, ["server-side failure", "packaging, config or harness"],
+               frameon=False, fontsize=7, loc="upper left", bbox_to_anchor=(0, 1),
+               ncol=2, handlelength=0.9, handleheight=0.9, columnspacing=1.4,
+               borderaxespad=0, borderpad=0.1, labelcolor=INK)
+    save(fig, "failures.pdf")
 
 
 # --------------------------------------------------------------------- sdk ----
 def fig_sdk():
-    """RQ4. The headline: the divergence tracks the SDK, not the author."""
+    """RQ4. The divergence tracks the SDK, not the author."""
     path = DATA / "sdk_attribution.csv"
     if not path.exists():
         return
@@ -185,35 +255,20 @@ def fig_sdk():
     # Families with a handful of servers carry intervals too wide to read; they are
     # reported in Table~\ref{tab:sdk} rather than plotted.
     fams = [(f, sum(c.values())) for f, c in tab.items() if sum(c.values()) >= 25]
-    fams.sort(key=lambda t: t[1])
-    names, rates, los, his, ns = [], [], [], [], []
+    fams.sort(key=lambda t: -t[1])
+    labels, rates, errs = [], [], []
     for f, tot in fams:
-        k = tab[f].get("error-as-result", 0)
-        p, lo, hi = wilson(k, tot)
-        names.append(f)
+        p, lo, hi = wilson(tab[f].get("error-as-result", 0), tot)
+        labels.append(f"{f} (n={tot:,})")
         rates.append(p)
-        los.append(p - lo)
-        his.append(hi - p)
-        ns.append(tot)
+        errs.append((p - lo, hi - p))
 
-    fig, ax = plt.subplots(figsize=(6.6, 2.9))
-    y = range(len(names))
-    ax.barh(list(y), rates, xerr=[los, his], color=BLUE, height=0.58,
-            error_kw=dict(ecolor=MUTED, lw=1.0, capsize=2.5))
-    ax.set_yticks(list(y))
-    ax.set_yticklabels([f"{n}  (n={c:,})" for n, c in zip(names, ns)],
-                       fontsize=8.4, color=INK)
-    ax.set_xlabel("servers answering an unknown tool with an isError result (%)")
-    ax.set_xlim(0, 108)
-    ax.xaxis.grid(True, color=GRID, linewidth=0.7)
-    ax.set_axisbelow(True)
-    ax.spines["left"].set_visible(False)
-    ax.tick_params(axis="y", length=0)
-    # Anchor the value label past the CI whisker, not the bar end, so the two
-    # never overlap.
-    for yi, p, hi in zip(y, rates, his):
-        ax.text(p + hi + 2.4, yi, f"{p:.0f}%", va="center", fontsize=8.0, color=INK)
-    finish(fig, "sdk.pdf")
+    fig, ax, _ = hbar_figure(
+        labels, rates, [NAVY] * len(rates), xmax=100,
+        xlabel="% answering an unknown tool with isError",
+        value_texts=[f"{p:.1f}%" for p in rates], height=1.35, errors=errs,
+        ticks=[0, 25, 50, 75, 100])
+    save(fig, "sdk.pdf")
 
 
 # ------------------------------------------------------------- by registry ----
@@ -231,37 +286,21 @@ def fig_by_registry(rows, reprobe):
 
     npm_n, npm_hs, npm_r, npm_e = reg("npm")
     py_n, py_hs, py_r, py_e = reg("pypi")
-
-    groups = [
-        ("Handshake\n(runnability)",
-         wilson(npm_hs, npm_n), wilson(py_hs + ep_ok, py_n)),
-        ("error-as-result\n(conformance)",
-         wilson(npm_e, npm_r), wilson(py_e, py_r)),
+    rows_ = [
+        ("npm", wilson(npm_hs, npm_n), npm_n, NAVY),
+        ("PyPI", wilson(py_hs + ep_ok, py_n), py_n, SKY),
+        ("npm", wilson(npm_e, npm_r), npm_r, NAVY),
+        ("PyPI", wilson(py_e, py_r), py_r, SKY),
     ]
-
-    fig, ax = plt.subplots(figsize=(5.4, 2.9))
-    width = 0.3
-    for i, (label, npm_v, py_v) in enumerate(groups):
-        for j, (v, color) in enumerate(((npm_v, BLUE), (py_v, ORANGE))):
-            p, lo, hi = v
-            xpos = i + (j - 0.5) * width
-            ax.bar(xpos, p, width * 0.88, yerr=[[p - lo], [hi - p]],
-                   color=color, capsize=3, error_kw=dict(ecolor=MUTED, lw=1.0))
-            ax.text(xpos, hi + 3.0, f"{p:.0f}%", ha="center",
-                    fontsize=8.2, color=INK)
-    ax.set_xticks(range(len(groups)))
-    ax.set_xticklabels([g[0] for g in groups], fontsize=8.6, color=INK)
-    ax.set_xlim(-0.45, len(groups) - 0.55)
-    ax.set_ylabel("% of servers")
-    ax.set_ylim(0, 118)
-    ax.yaxis.grid(True, color=GRID, linewidth=0.7)
-    ax.set_axisbelow(True)
-    # Explicit handles: bars carry error bars, so auto-legend picks the wrong artist.
-    handles = [plt.Rectangle((0, 0), 1, 1, color=BLUE),
-               plt.Rectangle((0, 0), 1, 1, color=ORANGE)]
-    ax.legend(handles, ["npm", "PyPI"], frameon=False, fontsize=8.2,
-              loc="upper center", bbox_to_anchor=(0.5, 1.16), ncol=2)
-    finish(fig, "by_registry.pdf")
+    fig, ax, _ = hbar_figure(
+        [f"{r[0]} (n={r[2]:,})" for r in rows_], [r[1][0] for r in rows_],
+        [r[3] for r in rows_], xmax=100, xlabel="% of servers",
+        value_texts=[f"{r[1][0]:.1f}%" for r in rows_], height=1.55,
+        errors=[(r[1][0] - r[1][1], r[1][2] - r[1][0]) for r in rows_],
+        ticks=[0, 25, 50, 75, 100],
+        headers={0: "completes a handshake",
+                 2: "answers an unknown tool with isError"})
+    save(fig, "by_registry.pdf")
 
 
 # ------------------------------------------------------------ consequences ----
@@ -281,37 +320,39 @@ def fig_consequences():
     unclass = len(cons.get("unparsed", [])) + len(cons.get("no-transcript", []))
     total = silent + inband + unclass + len(cons.get("empty-result", []))
 
-    fig, ax = plt.subplots(figsize=(6.6, 1.5))
+    fig = plt.figure(figsize=(COL, 0.72))
+    ax = fig.add_axes([0.005, 0, 0.99, 1])
     segs = [
-        (silent, BLUE, "executed the tool,\nno error signalled"),
-        (inband, ORANGE, "problem reported\nin result text"),
-        (unclass, "#cbd5e0", "not classifiable"),
+        (silent, NAVY, "executed the tool,\nno error signalled", "left", "white"),
+        (inband, SKY, "problem reported\nin the result text", "center", INK),
+        (unclass, LIGHT, "not\nclassifiable", "right", INK),
     ]
     left = 0
-    for v, color, label in segs:
-        ax.barh(0, v, left=left, height=0.5, color=color)
-        if v / total > 0.06:
-            ax.text(left + v / 2, 0, f"{v}", ha="center", va="center",
-                    fontsize=9, color="white" if color != "#cbd5e0" else INK,
-                    weight="bold")
-        ax.text(left + v / 2, -0.45, label, ha="center", va="top",
-                fontsize=7.6, color=MUTED)
+    for v, color, label, align, tc in segs:
+        ax.barh(0, v, left=left, height=0.5, color=color,
+                edgecolor="white", linewidth=0.8)
+        ax.text(left + v / 2, 0, f"{v}", ha="center", va="center", fontsize=7.5,
+                color=tc, weight="bold")
+        xl = {"left": left, "center": left + v / 2, "right": left + v}[align]
+        ax.text(xl, -0.36, label, ha=align, va="top", fontsize=7,
+                color=INK, linespacing=1.1)
         left += v
-
     ax.set_xlim(0, total)
-    ax.set_ylim(-1.05, 0.45)
+    ax.set_ylim(-0.95, 0.27)
     ax.axis("off")
-    ax.text(0, 0.42, f"{total} servers fail to reject an argument their own schema rejects",
-            fontsize=8.6, color=INK, va="bottom")
-    finish(fig, "consequences.pdf")
+    save(fig, "consequences.pdf")
 
 
 def main():
+    global DATA
     ap = argparse.ArgumentParser()
     ap.add_argument("--in", dest="inp", default=str(DATA / "probe_final.jsonl"))
     ap.add_argument("--frame", default=str(DATA / "frame_latest.jsonl"))
     ap.add_argument("--reprobe", default=str(DATA / "entrypoint_reprobe.jsonl"))
+    ap.add_argument("--data", default=str(DATA),
+                    help="directory holding sdk_attribution.csv and consequences.json")
     args = ap.parse_args()
+    DATA = Path(args.data)
 
     FIG.mkdir(parents=True, exist_ok=True)
     rows = load(args.inp)

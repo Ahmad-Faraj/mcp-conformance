@@ -38,28 +38,24 @@ Model Context Protocol Registry}
 \maketitle
 
 \begin{abstract}
-The Model Context Protocol (MCP) has become the de-facto standard for connecting
-LLM agents to external tools, and public registries now list tens of thousands of
-servers. Most empirical studies of this ecosystem are \emph{static}: they scan
+The Model Context Protocol (MCP) connects LLM agents to external tools, and public
+registries now list tens of thousands of MCP servers. Most empirical studies of this ecosystem are \emph{static}: they scan
 source code, mine issue trackers, or read registry metadata. None calls the tools of
-registry servers at scale to ask a prior question: do these
-servers actually work, and do they actually follow the protocol? We answer it with an
-execution-based conformance study of MCP servers as installed and run. From the
-official registry (\Nframe{} unique servers) we execute a complete census of all
-\Nprobed{} self-contained, locally-installable servers, launching each in an isolated
-sandbox and driving it through a conformance harness that exercises the initialization
-lifecycle, tool listing, declared-schema validity, and behavior under three
-inputs a real agent session produces: unknown tool names, wrong-typed arguments,
-and malformed protocol frames. We find that only \HandshakeRateCorr{} of installable
-servers start and complete a handshake; that \ErrAsResultRate{} of responding servers
-diverge from the specification's illustrated error-reporting behavior in an identical
-way, which we trace to SDK defaults and which an open specification proposal would
-ratify; and that \SilentExecRate{} execute a tool on an argument their own
-declared schema rejects, returning a well-formed result that no client can distinguish
-from a correct answer, in violation of the specification's requirement that servers
-validate all tool inputs. We release the harness and the disclosure-filtered dataset.
-Conformance here is set less by server authors than by a handful of SDK defaults, so
-it can be measured and corrected at that layer.
+registry servers at scale to check whether the servers start and follow the
+protocol. This paper does. From the official registry (\Nframe{} unique servers) we
+run a complete census of all \Nprobed{} self-contained, locally-installable servers.
+Each is launched in an isolated sandbox and driven through a conformance harness that
+checks the initialization lifecycle, tool listing and declared-schema validity, and
+how the server handles an unknown tool name, a wrong-typed argument and a malformed
+protocol frame. Only \HandshakeRateCorr{} of installable servers start and complete a
+handshake. \ErrAsResultRate{} of responding servers report an unknown tool the same
+way, which differs from the error reporting the specification illustrates. We trace
+this to SDK defaults, and an open specification proposal would make it the specified
+behavior. \SilentExecRate{} execute a tool on an argument their own declared schema
+rejects and return a well-formed result that a client cannot tell apart from a correct
+answer, although the specification requires servers to validate all tool inputs. Both
+behaviors trace back to the SDKs, so they can be measured and fixed there. We release
+the harness and the disclosure-filtered dataset.
 \end{abstract}
 
 \section{Introduction}
