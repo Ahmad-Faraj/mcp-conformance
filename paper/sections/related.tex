@@ -12,23 +12,22 @@ The ecosystem has been studied at scale, but rarely by running it.
 Health-and-maintainability work analyzes source and metadata for roughly 1,900
 servers using static scanners and code-smell detectors~\cite{mcpfirstglance}, while
 registry measurement crawls several marketplaces and characterizes scale,
-maintenance and supply-chain concentration across some 8,000 servers, all of it
-derived from listing metadata rather than from anything the servers
-do~\cite{mcpcrawler}. A companion dataset effort catalogues 3,238 candidate MCP
+maintenance and supply-chain concentration across some 8,000 servers from
+marketplace data rather than by running them~\cite{mcpcrawler}. A companion dataset effort catalogues 3,238 candidate MCP
 repositories on GitHub and classifies them by operational role, again from repository
 evidence rather than behaviour~\cite{mcpgithubdataset}, and a parallel line studies
-the \emph{application} side, characterizing how 1,723 MCP clients configure and
+the \emph{application} side, characterizing how 1,723 MCP applications configure and
 supervise the servers they consume~\cite{mcpapps}. Fault taxonomies take a third
-route and mine GitHub issues~\cite{runtimefaults,realfaults}. They find that tool
-faults and schema-enforcement problems dominate what users actually hit, which is the
+route and mine GitHub issues~\cite{runtimefaults,realfaults}. One finds tool faults
+and data-schema faults the two most frequent categories~\cite{runtimefaults}, the
 same pair our harness measures directly rather than through bug reports. None of this
 work executes a server.
 
 \subsection{Execution-based work is security-focused}
 Some prior work does execute MCP servers, but it targets security rather than
-conformance. Sandboxed behavioral scanners and taint-style analyzers hunt
-vulnerabilities in curated or deliberately vulnerable server
-sets~\cite{sandboxscan,viper}, a security-invariants benchmark avoids live
+conformance. Sandboxed behavioral scanners hunt vulnerabilities in curated
+corpora~\cite{sandboxscan}, taint-style analyzers confirm exploitable flaws across
+tens of thousands of repositories~\cite{viper}, a security-invariants benchmark avoids live
 third-party execution altogether in favor of fixtures and a 40-repository metadata
 sample~\cite{securityinvariants}, and malicious-server detection, authentication
 studies, and dynamic assessment of internet-facing endpoints scope to security
@@ -43,8 +42,8 @@ servers: a multi-agent framework infers environments and iteratively fixes deplo
 and runtime defects so that in-the-wild repositories become running services. That
 construction is the right choice for studying what a server does once it runs, and it
 necessarily removes the signal we measure, which is how often a server runs at all
-when a client installs it as published. Second, its population is mined from GitHub
-repositories, whereas ours is the official registry, the surface a client actually
+when a client installs it as published. Second, its population is collected from
+multiple public markets, whereas ours is the official registry, the surface a client actually
 resolves against. That their corpus required a repair framework at all is independent
 corroboration of our runnability finding. Conformance remains a separate question,
 namely whether a server that is neither malicious nor vulnerable does what the
