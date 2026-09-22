@@ -23,6 +23,7 @@ Usage:
 import argparse
 import json
 import re
+import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -106,6 +107,7 @@ def main():
     ap.add_argument("--transcripts", default=str(DATA / "data" / "transcripts"))
     ap.add_argument("--out", default=str(DATA / "consequences.json"))
     args = ap.parse_args()
+    sys.stdout.reconfigure(errors="replace")
 
     rows = load_census(args.inp)
     tdir = Path(args.transcripts)
@@ -138,6 +140,13 @@ def main():
                "no-transcript": [], "unparsed": []}
 
     for name in accepted:
+        # The public release withholds the transcript of a server with a
+        # security-relevant finding and records its bucket on the census row.
+        withheld = rows[name].get("consequence")
+        if withheld in buckets:
+            buckets[withheld].append({"server": name, "tool": None, "sent": None,
+                                      "text": None, "identity_withheld": True})
+            continue
         tr = transcript_for(name)
         if tr is None:
             buckets["no-transcript"].append(name)

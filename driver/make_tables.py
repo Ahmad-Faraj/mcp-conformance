@@ -11,6 +11,8 @@ import math
 from collections import Counter, defaultdict
 from pathlib import Path
 
+from failure_classes import failure_class
+
 ROOT = Path(__file__).resolve().parent.parent
 DATA = ROOT / "data"
 TABLES = ROOT / "paper" / "tables"
@@ -46,7 +48,7 @@ def esc(s):
 
 def startup_table(rows):
     non = [r for r in rows if not r.get("handshake_ok")]
-    c = Counter(r.get("failure_class", "unknown") for r in non)
+    c = Counter(failure_class(r) for r in non)
     total = len(non)
     out = [r"\begin{table}[t]", r"\centering",
            r"\caption{Startup-failure taxonomy: causes for servers that never reach a handshake.}",
