@@ -118,8 +118,26 @@ python driver/mcpprobe.py --cmd "npx -y @modelcontextprotocol/server-everything"
 
 ## Reproducibility
 
-Every reported number regenerates from the released census rows with the analysis
-scripts in this repository; the code that produced the census is tagged `census-v1`.
+Every reported number, table and figure regenerates from `data/release/` with the
+analysis scripts in this repository. The census rows were produced by the code
+tagged `census-v1`; later commits change only the analysis. From the repository root:
+
+```bash
+R=data/release
+python driver/analyze_consequences.py --in $R/probe_census.jsonl \
+    --transcripts $R/transcripts.jsonl --out data/consequences.json
+cp $R/sdk_attribution.csv data/
+python driver/make_numbers.py --in $R/probe_census.jsonl \
+    --frame $R/frame_latest.jsonl --reprobe $R/entrypoint_reprobe.jsonl
+python driver/make_tables.py  --in $R/probe_census.jsonl
+python driver/make_figures.py --in $R/probe_census.jsonl \
+    --frame $R/frame_latest.jsonl --reprobe $R/entrypoint_reprobe.jsonl
+```
+
+Output goes to `paper/numbers.tex`, `paper/tables/` and `paper/figures/`. The
+withheld servers have no published transcript; their consequence class is recorded
+on their census row, so the split still comes out exact.
+
 The registry snapshot date, launch commands (including base-image tags), and
 package versions are all recorded. Because the registry is
 a moving target, the snapshot---not the live registry---is the object of study.

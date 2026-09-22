@@ -196,9 +196,20 @@ def harness_commit() -> str:
         dirty = subprocess.run(["git", "status", "--porcelain"],
                               cwd=Path(__file__).resolve().parent, capture_output=True,
                               text=True, timeout=10).stdout.strip()
-        return h + ("-dirty" if dirty else "") if h else "unknown"
+        if h:
+            return h + ("-dirty" if dirty else "")
     except Exception:  # noqa: BLE001
-        return "unknown"
+        pass
+    # The census ran from a copy of the harness with no .git, which stamped every row
+    # "unknown". Fall back to a content hash of the harness sources so a row can still
+    # be matched to the exact code that produced it.
+    import hashlib
+    here = Path(__file__).resolve().parent
+    digest = hashlib.sha256()
+    for src in sorted(here.glob("*.py")):
+        digest.update(src.name.encode())
+        digest.update(src.read_bytes())
+    return "sha256:" + digest.hexdigest()[:16]
 
 
 def main():
