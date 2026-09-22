@@ -34,9 +34,7 @@ unknown-tool→protocol-error behavior in prose and an example (no RFC-2119
 
 ## Probe modes
 
-The harness supports two execution modes, verified to produce statistically
-indistinguishable results on every metric (handshake yield, error-as-result
-prevalence, type non-enforcement):
+The harness supports two execution modes (the census used the first):
 
 - **online single-phase** (default): install and probe in one ephemeral
   `--rm` container. Nothing is cached between servers, so disk usage stays flat;
@@ -54,7 +52,7 @@ registry snapshot.
 |---|---|
 | Complete a protocol handshake | **61.1%** (95% CI 59.8–62.3); two in five never serve the protocol |
 | Answer an unknown tool with an `isError` result instead of a JSON-RPC protocol error | **88.4%** (95% CI 87.3–89.4) |
-| Silently accept a wrong-typed required argument | **7.4%** |
+| Fail to reject a wrong-typed required argument | **7.4%** (95% CI 6.6–8.3), of which **3.5%** of responders (95% CI 3.0–4.1) run the tool and return a result with no error signal |
 | Crash or hang on a malformed frame | **0.5%** |
 
 Which error mechanism a server uses tracks the **SDK**, not the author: official
@@ -122,9 +120,10 @@ python driver/mcpprobe.py --cmd "npx -y @modelcontextprotocol/server-everything"
 
 ## Reproducibility
 
-Every reported number regenerates from the released raw transcripts and the
-pinned harness commit (tag `harness-v1.0`). The registry snapshot date, sampling
-seed, base images, and package versions are all recorded. Because the registry is
+Every reported number regenerates from the released census rows with the analysis
+scripts in this repository; the code that produced the census is tagged `census-v1`.
+The registry snapshot date, launch commands (including base-image tags), and
+package versions are all recorded. Because the registry is
 a moving target, the snapshot---not the live registry---is the object of study.
 
 ## Responsible disclosure
