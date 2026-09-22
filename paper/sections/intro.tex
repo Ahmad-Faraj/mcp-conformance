@@ -5,8 +5,7 @@ to an ecosystem with public registries listing tens of thousands of servers; the
 official registry alone contains \Nframe{} unique servers at the time of our study.
 When an agent selects a tool and an MCP server mishandles the request, by returning
 a malformed result, accepting ill-typed arguments, or failing to start, the agent
-does not merely lose a capability, and may proceed on wrong output with full
-confidence. The reliability of this server layer is therefore a reliability
+can lose more than a capability: it can act on wrong output with full confidence. The reliability of this server layer is therefore a reliability
 property of every agent built on top of it.
 
 Yet we know remarkably little about how these servers actually behave, because most
@@ -42,9 +41,7 @@ the specification illustrates. We trace this near-universal divergence to the de
 behavior of the official SDKs, which is inherited by the servers built on
 them. The result bears on a live debate, in which an open proposal would
 reclassify unknown-tool failures to match what the SDKs already do, arguing the
-change aligns the specification with practice~\cite{sep2145}. Our census says how far
-practice has already gone, which decides whether such a change ratifies the ecosystem
-or redirects it. Separately, \SilentExecRate{} of responding servers execute a tool on
+change aligns the specification with practice~\cite{sep2145}. Our census measures how far practice has already moved. Separately, \SilentExecRate{} of responding servers execute a tool on
 an argument their own declared schema rejects and return a well-formed result. In one
 case a code-scanning tool asked to scan an integer replied \texttt{CLEAN}, with
 neither an error code nor an \texttt{isError} flag a client could act on. Unlike the
@@ -74,14 +71,12 @@ This paper makes four contributions:
 \begin{itemize}
   \item \textbf{A protocol-level conformance measurement of the MCP ecosystem by
     execution} (C1): where prior ecosystem studies read code and metadata, we install
-    and speak the protocol to a complete census of the eligible registry, testing
-    behaviour against inputs rather than inspecting declarations, and releasing an
+    and speak the protocol to a complete census of the eligible registry, testing how each server responds to inputs, and releasing an
     open harness and dataset so the measurement is fully reproducible.
   \item \textbf{A two-dimensional taxonomy} (C2) of startup-failure classes and
     conformance-violation classes, each tied to a concrete agent-facing consequence.
   \item \textbf{A root-cause account of the spec--practice divergence} (C3): by
-    attributing each server to its SDK, we show the dominant divergence is
-    institutionalized in the official SDKs rather than independently reinvented.
+    attributing each server to its SDK, we show that the dominant divergence comes from defaults in the official SDKs.
   \item \textbf{Open infrastructure} (C4): a conformance harness that extends the
     official suite's scenarios to arbitrary deployed servers, plus the released
     measurement dataset, enabling the ecosystem to monitor its own conformance.

@@ -7,9 +7,7 @@ server against the protocol version it \emph{negotiates}, not the latest
 specification, so a server is never penalized for a requirement that postdates its
 target revision. Second, we distinguish normative requirements from illustrative
 ones, and the most prevalent divergence we report (unknown-tool responses) is graded as
-a distinct \textsf{error-as-result} category rather than a failure, precisely
-because the specification expresses it in prose and an example rather than an
-RFC-2119 keyword. Third, we calibrated the harness against the official reference
+a distinct \textsf{error-as-result} category, not as a failure, because the specification expresses it only in prose and an example, without an RFC-2119 keyword. Third, we calibrated the harness against the official reference
 servers before the study and confirmed it reproduces their known-good behavior on
 every check except the SDK-level divergence we set out to measure.
 
@@ -63,8 +61,7 @@ error-as-result \ErrAsResultRatePub{} (against \ErrAsResultRate{}), and silent t
 non-enforcement \NoTypecheckRatePub{} (against \NoTypecheckRate{}). The
 single largest publisher is atypical in runnability (a \(26.2\%\) handshake yield
 against \(60.4\%\) overall), and alone depresses the census figure by \(1.8\)
-percentage points. We report the full-census figures as our primary result, because the
-census rather than a sample of publishers is the object of study, and the
+percentage points. We report the full-census figures as our primary result, because the census is the object of study, and the
 publisher-deduplicated figures as the robustness check.
 
 \paragraph{Severity of the malformed-frame finding, and a limitation it exposed}
@@ -74,10 +71,9 @@ argued that this overstates it, and we agree. Under the stdio transport the clie
 launches the server and is the sole writer to its standard input, so a party capable of
 sending a malformed frame can already terminate the subprocess; the specification also
 places the obligation not to send invalid messages on the client. The correct reading
-is a robustness and conformance failure, which is how we now report it, and we record
-the correction here rather than silently revising. The same maintainer traced the
+is a robustness and conformance failure, which is how we now report it, and we record the correction here. The same maintainer traced the
 behaviour in their server to the official Go SDK's stdio transport, so this check,
-like the unknown-tool divergence, can measure an SDK default rather than server code.
+like the unknown-tool divergence, can measure an SDK default that the server only inherits.
 
 Another maintainer's fix exposed a limitation in our instrument. In their server the
 process stayed alive while its parser absorbed the frames that followed, so the next

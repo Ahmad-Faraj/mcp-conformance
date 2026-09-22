@@ -1,23 +1,19 @@
-The MCP server ecosystem has been measured statically many times, and run mostly to
-look for vulnerabilities. In this study every eligible server in the official registry
-was installed, launched in a disposable sandbox, and driven through the protocol to
-see whether it follows it.
+Earlier studies measured the MCP server ecosystem statically, or ran servers to look
+for vulnerabilities. We installed every eligible server in the official registry,
+launched each in a disposable sandbox, and tested whether it follows the protocol.
 
-\HandshakeRateCorr{} complete a handshake. The rest crash, hang, or exit without
-serving anything at all. Among the servers that do respond, \ErrAsResultRate{} report
-an unknown tool the same way, and that uniformity reflects the SDKs rather than the
-developers, since it is inherited from a handful of SDK defaults propagated directly
-and through third-party wrappers. An open proposal would amend the specification to
-match them, and our number tells the people deciding it whether they would be
-ratifying the ecosystem or asking most of it to change. A smaller group, \SilentExecRate{}, will
-run a tool on input their published schema rejects and return a well-formed answer
-carrying no sign the input was never valid. One asked to scan an integer for package
-imports reported it clean. For this group the specification is unambiguous, since it
-requires servers to validate their inputs, and these servers do not.
+\HandshakeRateCorr{} complete a handshake; the rest never serve the protocol, for the
+reasons broken down in Figure~\ref{fig:failures}. Of the servers that respond,
+\ErrAsResultRate{} report an unknown tool in the same way, and the cause is the SDKs
+they are built on, used directly or through third-party wrappers. An open proposal
+would change the specification to match this behaviour, and our numbers show how much
+of the ecosystem it already describes. A smaller group, \SilentExecRate{}, run a tool
+on input their own schema rejects and return an answer with no sign that anything is
+wrong. One, asked to scan an integer for package imports, reported it clean. The
+specification requires servers to validate their inputs, and these servers do not.
 
-None of this is visible to a static scanner or a registry crawl, and all of it matters
-to anyone building on this layer. We release the harness and the dataset so the
-measurement can be repeated, extended to remote and credentialed servers, and run by
-authors against their own servers before they publish. The behaviour is set at the
-SDK layer rather than by thousands of independent choices, which means it can also be
-corrected there.
+A static scan or a registry crawl shows none of this. We release the harness and the
+dataset so that others can repeat the measurement, extend it to remote and
+credentialed servers, and check their own servers before publishing. Because the
+error-reporting and input-validation behaviour comes from a few SDKs, it can be
+changed there.

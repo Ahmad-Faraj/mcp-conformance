@@ -1,7 +1,6 @@
 \label{sec:results}
 
-We probed \Nprobed{} servers, the complete eligible frame, which makes this study a
-census rather than a sample.
+We probed all \Nprobed{} servers in the eligible frame.
 
 \subsection{RQ1: Runnability and the startup funnel}
 \HandshakeCountCorr{} of \Nprobed{} servers (\HandshakeRateCorr{}) complete the MCP
@@ -17,9 +16,7 @@ most failures occur \emph{after} a successful install, when the package download
 the process then crashes, hangs, or exits without speaking the protocol, which locates
 the failure in the software, not the packaging. A concurrent random draw of 400 npm
 servers reports a 48.8\% handshake rate~\cite{randomdraw2026}, against \NpmRate{} for
-the npm servers in our census. The two differ in snapshot and harness, so we
-do not read the gap as a trend. Because we census the entire eligible frame, our
-figures are population counts, not estimates.
+the npm servers in our census. The two differ in snapshot and harness, so we do not read the gap as a trend.
 
 \begin{figure}[t]
   \centering
@@ -75,9 +72,7 @@ Of \NAcceptInvalid{} such servers, \NInBandError{} (\InBandShare{}) reported the
 problem in the result text, so the server noticed and a client willing to parse prose
 could too. \NSilentExec{} (\SilentExecShare{}) executed the tool and returned a
 result with no indication that anything was wrong. For \NUnclassifiable{} the
-response could not be classified from the transcript. The hazard class is therefore
-\SilentExecRate{} of responding servers rather than the \NoTypecheckRate{} implied
-by the raw verdict, and we report the smaller figure as the one that matters. We
+response could not be classified from the transcript. The hazard class is therefore \SilentExecRate{} of responding servers, smaller than the \NoTypecheckRate{} of the raw verdict, and it is the figure we report. We
 count a server as reporting the problem whenever its output contains any error-like
 token, so \NSilentExec{} is a lower bound.
 
@@ -85,15 +80,13 @@ Unlike the error-reporting question, this one is not a matter of interpretation.
 specification's security requirements state that servers \textbf{MUST} validate all
 tool inputs~\cite{mcpspec}. A server that executes a tool on an argument contradicting
 its own published schema has not validated that input, so these \NSilentExec{} servers
-are the one population in our census that fails an explicit RFC-2119 requirement
-rather than diverging from an illustrated convention.
+fail an explicit RFC-2119 requirement, as do the servers that write non-protocol output to stdout, which the stdio transport forbids with a \textsf{MUST NOT}.
 
 Attributing these servers to their SDK localises the cause more sharply than the
 error-reporting divergence does. \SilentExecTS{} of the \NSilentExec{} are built on
 the official TypeScript SDK and \SilentExecPy{} on either Python SDK, against
 responding populations of 2,347 and 1,020 respectively. A behaviour absent from one
-language ecosystem and concentrated in another is a library property rather than an
-authoring one, so we tested the SDKs directly (Section~\ref{sec:sdk-probe}). On
+language ecosystem and concentrated in another points to the library, so we tested the SDKs directly (Section~\ref{sec:sdk-probe}). On
 \texttt{@modelcontextprotocol/sdk} 1.30.0, the current release at the time of writing,
 a server built with the low-level \texttt{Server} API publishes an
 \texttt{inputSchema} in \texttt{tools/list} and the SDK then does not check
@@ -101,22 +94,18 @@ a server built with the low-level \texttt{Server} API publishes an
 with an integer, runs and returns a well-formed result. The same tool built with the
 high-level \texttt{McpServer} API, whose schemas carry type information the SDK
 already validates, rejects the identical call with an \texttt{isError} result. We did
-not test the Python SDKs under the same conditions, so we report their absence from
-this population as an observation rather than attributing a mechanism to it. Within
+not test the Python SDKs under the same conditions, so we report their absence from this population as an observation only. Within
 the TypeScript SDK the gap is that one supported construction path publishes a
 contract the library never enforces, so the servers on it have not declined a check
 the SDK offered them. Of the \SilentExecTS{} TypeScript-SDK servers,
 \SilentExecTSCaret{} declare a caret range and none declares an exact version.
-Because each server was installed fresh, those ranges resolve to the newest 1.x, so
-this is current behaviour rather than a legacy artifact, and a fix on the 1.x line
+Because each server was installed fresh, those ranges resolve to the newest 1.x, so this is current behaviour, and a fix on the 1.x line
 would reach almost all of them at their next install.
 
 The recorded responses show what this means in practice. A code-scanning tool asked to
 scan the integer \texttt{12345} answered \texttt{CLEAN}, a prompt-scoring tool returned
 a complete rubric including per-dimension sub-scores for the same integer, and a project
-registry confirmed that a project named \texttt{12345} had been registered. These are
-well-formed successful results rather than malformed responses a client could detect and
-discard. Their content is unrelated to any question the client asked, and at the
+registry confirmed that a project named \texttt{12345} had been registered. These are well-formed successful results that a client has no reason to discard. Their content is unrelated to any question the client asked, and at the
 protocol level they are indistinguishable from a correct answer. An agent consuming one
 has no signal to doubt it, since there is neither an error code nor an \texttt{isError}
 flag to act on, and the schema that would have caught the call is the one the server
@@ -129,11 +118,9 @@ published and did not enforce.
 \texttt{isError} tool-execution result rather than a JSON-RPC protocol error. The
 specification's error-handling section lists ``unknown tool'' under \emph{Protocol
 Errors} and illustrates it with a \texttt{-32602} example~\cite{mcpspec}. It attaches
-no RFC-2119 keyword, so we record which mechanism each server uses rather than scoring
-one as a violation (Section~\ref{sec:threats}).
+no RFC-2119 keyword, so we record which mechanism each server uses and score neither as a violation (Section~\ref{sec:threats}).
 
-The relevant question here is which side is moving. The
-specification has been converging on the ecosystem, not the reverse. SEP-1303, now
+The specification has been converging on the ecosystem, not the reverse. SEP-1303, now
 accepted and reflected in the specification, reclassified input validation errors from
 protocol errors to tool execution errors on the grounds that a model can only
 self-correct from an error it can see~\cite{sep1303}. SEP-2145, open at the time of
@@ -142,8 +129,7 @@ disabled tools, and gives as its rationale that it ``aligns specification with e
 Python and TypeScript SDK behavior''~\cite{sep2145}. Our census measures how much of
 the deployed ecosystem that alignment already describes: \ErrAsResultRate{} of
 responding servers. (Aggregate figures from this census were posted to the
-proposal's discussion thread while it was open.) If SEP-2145 is adopted it ratifies the
-ecosystem's existing behaviour, not changing it. The other \NotErrAsResultPct{} are
+proposal's discussion thread while it was open.) The other \NotErrAsResultPct{} are
 not one population: \UnknownProtoErrCount{} servers emit a protocol error coded
 \texttt{-32602} or \texttt{-32601}, \UnknownWrongCodeCount{} use some other code, and
 \UnknownProseCount{} return a plain success that states the failure only in its text,
@@ -164,15 +150,12 @@ dozens of servers by a single publisher, and most of them themselves build on an
 official SDK. That category therefore supplies no independent evidence and we do not
 treat it as such. What it does indicate is that the monoculture extends \emph{beyond}
 the official SDKs, into a layer of third-party wrappers that inherit their defaults.
-The finding is that a handful of SDK defaults, propagated both directly and through
-wrappers, set ecosystem behavior, rather than thousands of authors independently erring.
+A few SDK defaults, used directly or through wrappers, account for this behaviour across the ecosystem.
 
 \begin{figure}[t]
   \centering
   \includegraphics[width=\linewidth]{figures/sdk.pdf}
-  \caption{Which mechanism a server uses tracks its SDK, not its author. Every SDK
-  family answers an unknown-tool call with an \texttt{isError} result rather than a
-  protocol error in the large majority of cases. Bars show 95\% Wilson intervals;
+  \caption{Unknown-tool responses by SDK family. In every family, most servers answer with an \texttt{isError} result. Bars show 95\% Wilson intervals;
   families with fewer than 25 servers appear in Table~\ref{tab:sdk} only.}
   \label{fig:sdk}
 \end{figure}
@@ -182,7 +165,7 @@ wrappers, set ecosystem behavior, rather than thousands of authors independently
 \subsection{RQ5: Correlates}
 \label{sec:rq5}
 We test whether runnability and conformance correlate with the package registry
-(Figure~\ref{fig:byregistry}). Runnability differs sharply. npm servers complete a
+(Figure~\ref{fig:byregistry}). Runnability differs: npm servers complete a
 handshake far more often than PyPI servers (\NpmRate{} of \NpmN{} vs.\ \PypiRateRaw{}
 of \PypiN{}; two-proportion $z=12.1$, $p<10^{-3}$). Conformance does not differ, with
 the error-as-result divergence appearing in $87.7\%$ of responding npm servers and
@@ -191,8 +174,7 @@ divergence is inherited from the SDKs, and both language ecosystems' SDKs share 
 same default, the registry a server ships on changes whether it \emph{starts} but not
 whether it \emph{conforms}.
 
-Part of this gap is an artifact of our own launcher, and we corrected it rather than
-reporting it. We launch PyPI servers as \texttt{uvx <package>}, which resolves only
+Part of this gap came from our own launcher, and we corrected for it. We launch PyPI servers as \texttt{uvx <package>}, which resolves only
 if the package's console script is named after the package; npm's \texttt{npx}
 resolves the entry point from \texttt{package.json} and has no such requirement.
 \NEntrypointBlocked{} PyPI servers (\EntrypointBlockedPct{} of the PyPI population)
@@ -203,8 +185,7 @@ handshake; the rest failed for reasons unrelated to naming (Python exceptions, h
 undeclared configuration). Correcting for this raises PyPI runnability from
 \PypiRateRaw{} to \PypiRateCorr{} and the overall census figure to
 \HandshakeRateCorr{}, which we report as the headline throughout. The npm--PyPI gap
-narrows from \GapRaw{} to \GapCorr{} percentage points but remains large, so it
-reflects a real difference rather than a measurement artifact.
+narrows from \GapRaw{} to \GapCorr{} percentage points but remains large, so the difference is real.
 
 The entry-point problem is itself an ecosystem finding. Registry metadata does not
 record a server's entry point, so a client following the registry alone cannot launch

@@ -26,8 +26,7 @@ launch without provisioning secrets, which both bounds the ethics of mass
 execution and defines a clean, reproducible population. We report the exclusion of
 remote-only and credential-requiring servers explicitly (Section~\ref{sec:threats})
 and treat the resulting frame as the denominator for all rates. We probe the
-\emph{entire} frame (all \Nprobed{} eligible servers), so our measurement is a
-complete census of the eligible population rather than a sample.
+\emph{entire} frame (all \Nprobed{} eligible servers), so the measurement is a census of the eligible population.
 
 \subsection{Conformance harness}
 The harness, \texttt{mcpprobe}, is a deliberately minimal, hand-written JSON-RPC
@@ -36,10 +35,9 @@ use an official SDK client. To observe raw behavior, including responses to
 malformed frames, the probe must not inherit any SDK-side correction or
 validation. The harness offers protocol version \texttt{2025-06-18} at
 initialization (the then-current revision was \texttt{2025-11-25}), records the
-version the server \emph{negotiates}, and grades all subsequent checks against that
-negotiated version rather than the latest specification. A server that supports the
+version the server \emph{negotiates}, and grades all later checks against that version. A server that supports the
 offered version must answer with it, and \(3{,}576\) of \Nresponders{} responders did,
-so almost all grading is against \texttt{2025-06-18}. This is not a formality. Responding servers negotiated four distinct
+so almost all grading is against \texttt{2025-06-18}. Responding servers negotiated four distinct
 revisions, and \(109\) of them settled on something other than the version we
 offered, the oldest dating to 2024-11-05.
 
@@ -85,9 +83,7 @@ harness against the official reference servers (\texttt{server-memory},
 \texttt{server-everything}), we found they answer an unknown-tool call not with the
 specified JSON-RPC \texttt{-32602} error but with a \emph{successful} response whose
 \texttt{result.isError} flag is set. Because this behavior originates in the
-official SDKs and is therefore ecosystem-wide, we grade it as its own category
-rather than a failure, and quantify its prevalence as a first-class result, since it
-is the clearest instance of specification text diverging from universal practice.
+official SDKs and is therefore ecosystem-wide, we grade it as its own category, not as a failure, and report its prevalence as a result.
 
 \subsection{Sandbox}
 Executing thousands of untrusted packages demands isolation. Each server runs in a
@@ -126,8 +122,7 @@ yield; the exception was killed after completing its handshake.
 \label{sec:sdk-probe}
 Where a conformance failure concentrates in one SDK family, the census alone cannot
 say whether the library permits the failure or the authors introduced it
-independently. For the input-validation result we settle this with a direct test
-rather than inference. We build two minimal servers exposing one tool that declares a
+independently. For the input-validation result we tested the SDK directly. We build two minimal servers exposing one tool that declares a
 single required string property, one using the low-level \texttt{Server} API and one
 using the high-level \texttt{McpServer} API, both on the same SDK release, and drive
 each with the same harness check used in the census: a \texttt{tools/call} carrying an
@@ -142,5 +137,4 @@ declared $\rightarrow$ eligible (self-contained stdio npm/PyPI) $\rightarrow$
 container started $\rightarrow$ process launched
 $\rightarrow$ handshake completed $\rightarrow$ probed. Servers that never reach a
 handshake are classified into startup-failure categories
-(Section~\ref{sec:results}) from their exit code and stderr, so that the yield loss
-is characterized rather than merely reported.
+(Section~\ref{sec:results}) from their exit code and stderr, so that the lost yield can be explained.

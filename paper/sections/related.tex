@@ -12,20 +12,16 @@ The ecosystem has been studied at scale, but rarely by running it.
 Health-and-maintainability work analyzes source and metadata for roughly 1,900
 servers using static scanners and code-smell detectors~\cite{mcpfirstglance}, while
 registry measurement crawls several marketplaces and characterizes scale,
-maintenance and supply-chain concentration across some 8,000 servers from
-marketplace data rather than by running them~\cite{mcpcrawler}. A companion dataset effort catalogues 3,238 candidate MCP
-repositories on GitHub and classifies them by operational role, again from repository
-evidence rather than behaviour~\cite{mcpgithubdataset}, and a parallel line studies
+maintenance and supply-chain concentration across some 8,000 servers from marketplace data, without running them~\cite{mcpcrawler}. A companion dataset effort catalogues 3,238 candidate MCP
+repositories on GitHub and classifies them by operational role, again from repository evidence~\cite{mcpgithubdataset}, and a parallel line studies
 the \emph{application} side, characterizing how 1,723 MCP applications configure and
 supervise the servers they consume~\cite{mcpapps}. Fault taxonomies take a third
 route and mine GitHub issues~\cite{runtimefaults,realfaults}. One finds tool faults
-and data-schema faults the two most frequent categories~\cite{runtimefaults}, the
-same pair our harness measures directly rather than through bug reports. None of this
+and data-schema faults the two most frequent categories~\cite{runtimefaults}, the same two areas our harness tests directly. None of this
 work executes a server.
 
 \subsection{Execution-based work is security-focused}
-Some prior work does execute MCP servers, but it targets security rather than
-conformance. Sandboxed behavioral scanners hunt vulnerabilities in curated
+Some prior work does execute MCP servers, to find security problems. Sandboxed behavioral scanners hunt vulnerabilities in curated
 corpora~\cite{sandboxscan}, taint-style analyzers confirm exploitable flaws across
 tens of thousands of repositories~\cite{viper}, a security-invariants benchmark avoids live
 third-party execution altogether in favor of fixtures and a 40-repository metadata
@@ -33,7 +29,7 @@ sample~\cite{securityinvariants}, and malicious-server detection, authentication
 studies, and dynamic assessment of internet-facing endpoints scope to security
 surfaces~\cite{maliciousmcp,remoteauth,exposedbydesign}.
 
-Execution at scale is no longer rare. MCPZoo assembles 64,611 unique servers, of
+MCPZoo assembles 64,611 unique servers, of
 which more than 37,288 support dynamic analysis, and uses them to show that existing
 security scanners are unreliable, with fewer than half of sampled alerts holding up
 under manual validation~\cite{mcpzoo}. Two differences separate that corpus from ours
@@ -44,12 +40,11 @@ construction is the right choice for studying what a server does once it runs, a
 necessarily removes the signal we measure, which is how often a server runs at all
 when a client installs it as published. Second, its population is collected from
 multiple public markets, whereas ours is the official registry, the surface a client actually
-resolves against. That their corpus required a repair framework at all is independent
-corroboration of our runnability finding. Conformance remains a separate question,
+resolves against. That their corpus needed a repair framework is consistent with our runnability finding. Conformance remains a separate question,
 namely whether a server that is neither malicious nor vulnerable does what the
 specification says.
 
-The closest work is concurrent. Afsar draws a seeded random sample of 400 npm stdio
+Concurrently with our work, Afsar draws a seeded random sample of 400 npm stdio
 servers from the same registry and probes each without repair: 48.8\% complete a
 handshake, servers that never start (37.5\%) outnumber those missing credentials
 (13.3\%), and the 195 that run show no fatal schema violations across 2,766
@@ -64,8 +59,7 @@ protocol errors and into tool execution errors, reasoning that a language model 
 self-correct only from an error that reaches its context~\cite{sep1303}. SEP-2145,
 open at the time of writing, extends the same treatment to tool resolution failures,
 including unknown tools, and states its purpose as aligning the specification with
-existing Python and TypeScript SDK behaviour~\cite{sep2145}. Both proposals argue from
-implementation practice. Rather than argue which mechanism is correct, we measure what
+existing Python and TypeScript SDK behaviour~\cite{sep2145}. We take no position on which mechanism is correct. We measure what
 fraction of the deployed ecosystem the proposed alignment already describes.
 
 Concurrent with this work, a practitioner census posted to the same proposal probed
@@ -83,6 +77,4 @@ implementations, built for SDK maintainers to run in continuous integration; to 
 knowledge it has not been used to measure the deployed ecosystem. Ours is, to our
 knowledge, the first reproducible conformance measurement of this ecosystem
 that installs and executes the servers themselves and tests their behaviour against
-adversarial inputs, released with an open harness and dataset. It follows a long line of
-empirical software-engineering studies that execute a population to find out how it
-behaves, rather than how its documentation says it should.
+adversarial inputs, released with an open harness and dataset.
