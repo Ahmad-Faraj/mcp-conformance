@@ -25,9 +25,15 @@ rebuilt from scratch on each run.
 1. **Identity withheld** (211 servers). A server with a security-relevant
    verdict (crash/hang on a malformed frame, stdout-channel corruption, unsafe
    handling of an unknown tool) keeps every measurement but loses its name, package
-   identifier and launch command, replaced by a stable `withheld-<hash>` pseudonym.
-   This is a responsible-disclosure hold, not a data gap: all aggregates are
-   computed over the full set and are unaffected.
+   identifier, version and launch command, replaced by a stable `withheld-<hash>`
+   pseudonym. The hash is keyed with a secret that is not published, so it cannot
+   be reversed by hashing the names in the frame. Its raw transcript is withheld too
+   (the server's self-reported name and tool descriptions would identify it); its
+   consequences bucket is recorded on the census row as `consequence` instead. This
+   is a responsible-disclosure hold, not a data gap: all aggregates are computed
+   over the full set and are unaffected.
+   A further 1 server(s) are withheld the same way, including in the frame,
+   at their maintainers' request.
 2. **Credential redaction** (16 values). The census ran with network
    access, and a small number of servers printed live credential material; the
    registry snapshot also contains tokens that publishers pasted into header fields

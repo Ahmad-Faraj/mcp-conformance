@@ -23,9 +23,9 @@ CHECK_ORDER = [
 ]
 
 
-def load() -> list[dict]:
+def load(path: Path = RESULTS) -> list[dict]:
     by_name: dict[str, dict] = {}
-    with RESULTS.open(encoding="utf-8") as f:
+    with Path(path).open(encoding="utf-8") as f:
         for line in f:
             r = json.loads(line)
             name = r.get("server_name") or json.dumps(r.get("cmd"))
@@ -39,10 +39,11 @@ def pct(a: int, b: int) -> str:
 
 def main():
     ap = argparse.ArgumentParser()
+    ap.add_argument("--in", dest="inp", default=str(RESULTS))
     ap.add_argument("--json", help="also write summary JSON to this path")
     args = ap.parse_args()
 
-    rows = load()
+    rows = load(args.inp)
     n = len(rows)
     started = [r for r in rows if r.get("started")]
     hs = [r for r in rows if r.get("handshake_ok")]

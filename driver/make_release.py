@@ -28,13 +28,27 @@ Usage:
 import argparse
 import csv
 import hashlib
+import hmac
 import json
 import re
+import secrets
 import shutil
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 DATA = ROOT / "data"
+
+# Pseudonyms are keyed with a secret that is never published. An unkeyed hash of the
+# name is reversible: the release ships the registry frame, so anyone can hash every
+# name in it and match the aliases. Keep this file: losing it changes every alias.
+KEY_FILE = ROOT / "private" / "release_key"
+
+# Servers whose maintainers asked to be left out of the release. They keep every
+# measurement (so no count changes) but are pseudonymised everywhere, including the
+# frame, regardless of verdict.
+OPT_OUT = {
+    "com.hauntapi/haunt": "maintainer request, issue #1: registry entry deleted, package sunset",
+}
 
 # Verdicts that make a server's identity sensitive until disclosure completes.
 # Kept in sync with make_disclosure.py.
@@ -101,8 +115,69 @@ def is_sensitive(row: dict) -> bool:
                for c in row.get("checks", []))
 
 
-def pseudonym(name: str) -> str:
-    return "withheld-" + hashlib.sha256((name or "").encode()).hexdigest()[:12]
+def release_key() -> bytes:
+    if not KEY_FILE.exists():
+        KEY_FILE.parent.mkdir(parents=True, exist_ok=True)
+        KEY_FILE.write_text(secrets.token_hex(32), encoding="utf-8")
+    return bytes.fromhex(KEY_FILE.read_text(encoding="utf-8").strip())
+
+
+def keyed(text: str, key: bytes) -> str:
+    return hmac.new(key, (text or "").encode(), hashlib.sha256).hexdigest()[:12]
+
+
+def pseudonym(name: str, key: bytes) -> str:
+    return "withheld-" + keyed(name, key)
+
+
+# Check details the harness writes itself, which describe behaviour without naming
+# anything. A withheld server keeps these; anything quoting the server is dropped.
+HARNESS_DETAIL = re.compile(
+    r"^(|None|survived|\{\}|\{(\"\w+\": (true|false)(, )?)+\}|\d+ tools"
+    r"|\d+ non-JSON stdout lines|unresponsive after malformed input \(\w+\)"
+    r"|process died on malformed input|no tool with a typed required property"
+    r"|error code -?\d+|(rejected|accepted wrong-typed args) on <tool>)$")
+
+
+def scrub_detail(detail) -> str:
+    text = re.sub(r"\bon \S+$", "on <tool>", str(detail))
+    return text if HARNESS_DETAIL.match(text) else "withheld"
+
+
+FREE_TEXT = {"name", "description", "value", "default", "valueHint", "url",
+             "registryBaseUrl", "placeholder"}
+
+
+def _scrub_text(obj):
+    """Blank free-text fields (env var names, descriptions, defaults) that can name
+    the product, leaving flags and enums like isRequired, isSecret and type."""
+    if isinstance(obj, list):
+        for v in obj:
+            _scrub_text(v)
+    elif isinstance(obj, dict):
+        for k, v in obj.items():
+            if k in FREE_TEXT and isinstance(v, str):
+                obj[k] = "withheld"
+            else:
+                _scrub_text(v)
+
+
+def withhold_frame_entry(obj: dict, alias: str) -> dict:
+    """Strip identifying strings from a registry entry, keeping the fields the
+    eligibility funnel reads (package registry type, transport, remotes)."""
+    s = obj.get("server", {})
+    s["name"] = alias
+    s.pop("description", None)
+    s.pop("repository", None)
+    s.pop("websiteUrl", None)
+    for p in s.get("packages") or []:
+        p["identifier"] = alias
+        _scrub_text(p)
+    for r in s.get("remotes") or []:
+        r.pop("url", None)
+        _scrub_text(r)
+    obj["identity_withheld"] = True
+    return obj
 
 
 def main():
@@ -117,8 +192,23 @@ def main():
     out.mkdir(parents=True)
 
     rows = [json.loads(l) for l in Path(args.inp).open(encoding="utf-8")]
+    key = release_key()
 
-    withheld, redactions = {}, 0
+    # A withheld server's transcript cannot ship: its initialize reply carries the
+    # server's self-reported name and its tools/list carries product-specific tool
+    # descriptions, either of which re-identifies it. Its consequences bucket is
+    # attached to the census row instead, so the consequences counts still add up.
+    consequence = {}
+    src_cons = DATA / "consequences.json"
+    if src_cons.exists():
+        cons = json.loads(src_cons.read_text(encoding="utf-8"))
+        for bucket, recs in cons.get("buckets", cons).items():
+            if isinstance(recs, list):
+                for rec in recs:
+                    if isinstance(rec, dict) and rec.get("server"):
+                        consequence[rec["server"]] = bucket
+
+    withheld, redactions, n_sensitive = {}, 0, 0
     released = []
     for r in rows:
         r, n = redact_any(r)
@@ -126,18 +216,28 @@ def main():
         # Stable, non-identifying publisher key, derived BEFORE pseudonymisation.
         # Without it the publisher-clustering robustness check cannot be reproduced
         # from the release: a pseudonym has no "namespace/" prefix, so each withheld
-        # server would count as its own publisher.
+        # server would count as its own publisher. Keyed, or a one-server publisher
+        # would re-identify its server.
         pub = (r.get("server_name") or "").split("/")[0]
-        r["publisher_id"] = hashlib.sha256(pub.encode()).hexdigest()[:12]
-        if is_sensitive(r):
+        r["publisher_id"] = keyed(pub, key)
+        sensitive = is_sensitive(r)
+        n_sensitive += sensitive
+        if sensitive or r.get("server_name") in OPT_OUT:
             real = r.get("server_name")
-            alias = pseudonym(real)
+            alias = pseudonym(real, key)
             withheld[real] = alias
             r["server_name"] = alias
             r["identifier"] = alias
             r["identity_withheld"] = True
+            if real in consequence:
+                r["consequence"] = consequence[real]
+            # Check details quote tool names and the server's own error text.
+            for c in r.get("checks", []):
+                if "detail" in c:
+                    c["detail"] = scrub_detail(c["detail"])
             r.pop("cmd", None)
             r.pop("server_info", None)
+            r.pop("server_version", None)  # matchable against the frame's versions
             r.pop("stderr_tail", None)
             r.pop("stdout_noise", None)
         released.append(r)
@@ -174,6 +274,9 @@ def main():
             for line in f:
                 obj, n = redact_any(json.loads(line))
                 frame_redactions += n
+                name = obj.get("server", {}).get("name")
+                if name in OPT_OUT:
+                    obj = withhold_frame_entry(obj, pseudonym(name, key))
                 g.write(json.dumps(obj, ensure_ascii=False) + "\n")
 
     if (DATA / "summary.json").exists():
@@ -217,29 +320,31 @@ def main():
                 obj["server_name"] = name
                 obj, _ = redact_any(obj)
                 if name in withheld:
-                    obj["server_name"] = withheld[name]
-                    obj["identity_withheld"] = True
-                    obj.pop("cmd", None)
+                    obj = {"server_name": withheld[name],
+                           "harness_commit": obj.get("harness_commit"),
+                           "identity_withheld": True,
+                           "transcript": None}
                 g.write(json.dumps(obj, ensure_ascii=False) + "\n")
                 tr_n += 1
 
     # DATASET.md and LICENSE.txt are GENERATED, not hand-maintained: this directory
     # is rebuilt from scratch on every run, so anything hand-placed here is lost.
     hs = sum(1 for r in released if r.get("handshake_ok"))
+    n_opt_out = len(withheld) - n_sensitive
     (out / "DATASET.md").write_text(_dataset_doc(
-        len(released), hs, len(withheld), redactions + frame_redactions,
-        ep_released, ep_ok, tr_n), encoding="utf-8")
+        len(released), hs, n_sensitive, redactions + frame_redactions,
+        ep_released, ep_ok, tr_n, n_opt_out), encoding="utf-8")
     (out / "LICENSE.txt").write_text(_license_text(), encoding="utf-8")
 
     print(f"wrote {out}")
     print(f"  servers released      : {len(released)}")
-    print(f"  identities withheld   : {len(withheld)}")
+    print(f"  identities withheld   : {n_sensitive} (disclosure) + {n_opt_out} (opt-out)")
     print(f"  credential redactions : {redactions} (probe) + {frame_redactions} (frame)")
     print(f"  entry-point re-probe  : {ep_released} rows ({ep_ok} recovered)")
     print(f"  transcripts           : {tr_n} rows")
 
 
-def _dataset_doc(n, hs, withheld, redactions, ep_n, ep_ok, tr_n=0):
+def _dataset_doc(n, hs, withheld, redactions, ep_n, ep_ok, tr_n=0, opt_out=0):
     corr = hs + ep_ok
     return f"""# Dataset: execution-based conformance census of the MCP server ecosystem
 
@@ -268,9 +373,15 @@ rebuilt from scratch on each run.
 1. **Identity withheld** ({withheld} servers). A server with a security-relevant
    verdict (crash/hang on a malformed frame, stdout-channel corruption, unsafe
    handling of an unknown tool) keeps every measurement but loses its name, package
-   identifier and launch command, replaced by a stable `withheld-<hash>` pseudonym.
-   This is a responsible-disclosure hold, not a data gap: all aggregates are
-   computed over the full set and are unaffected.
+   identifier, version and launch command, replaced by a stable `withheld-<hash>`
+   pseudonym. The hash is keyed with a secret that is not published, so it cannot
+   be reversed by hashing the names in the frame. Its raw transcript is withheld too
+   (the server's self-reported name and tool descriptions would identify it); its
+   consequences bucket is recorded on the census row as `consequence` instead. This
+   is a responsible-disclosure hold, not a data gap: all aggregates are computed
+   over the full set and are unaffected.
+   A further {opt_out} server(s) are withheld the same way, including in the frame,
+   at their maintainers' request.
 2. **Credential redaction** ({redactions} values). The census ran with network
    access, and a small number of servers printed live credential material; the
    registry snapshot also contains tokens that publishers pasted into header fields
