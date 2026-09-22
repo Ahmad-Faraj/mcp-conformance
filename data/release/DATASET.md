@@ -49,5 +49,5 @@ python driver/analyze.py   --in data/release/probe_census.jsonl
 python driver/make_numbers.py --in data/release/probe_census.jsonl
 ```
 
-Every number in the paper regenerates from this directory plus the harness at tag
-`harness-v1.0`.
+Every number in the paper regenerates from this directory plus the code at tag
+`census-v1`, which produced the census.
