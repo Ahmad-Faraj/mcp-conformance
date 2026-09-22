@@ -9,18 +9,18 @@ does not merely lose a capability, and may proceed on wrong output with full
 confidence. The reliability of this server layer is therefore a reliability
 property of every agent built on top of it.
 
-Yet we know remarkably little about how these servers actually behave, because the
+Yet we know remarkably little about how these servers actually behave, because most
 published empirical studies of the MCP ecosystem examine servers \emph{without
-running them}. Existing work scans source code and metadata for health and
+running them}, and those that do run them look for vulnerabilities. Existing work scans source code and metadata for health and
 maintainability, crawls registries to characterize scale and supply-chain
 structure, or mines GitHub issues to taxonomize faults reported by users. These
 static lenses answer valuable questions, but they cannot answer a prior and more
 basic one: \emph{if you install these servers and speak the protocol to
 them, do they work, and do they follow the specification?} The protocol maintainers
-ship a conformance test suite, but it exercises the handful of official SDKs in
-continuous integration and has never been pointed at the deployed ecosystem. The
-official suite therefore tests the five SDKs, while the seventeen thousand servers
-built on them are untested.
+ship a conformance test suite, but it is built for SDK maintainers to run in
+continuous integration, and to our knowledge it has not been used to measure the
+deployed ecosystem. The SDKs are tested; the seventeen thousand servers built on them
+are not.
 
 This paper addresses that gap with an execution-based conformance study of the
 MCP server ecosystem. Starting from the official registry, we execute a complete
@@ -49,9 +49,8 @@ an argument their own declared schema rejects and return a well-formed result. I
 case a code-scanning tool asked to scan an integer replied \texttt{CLEAN}, with
 neither an error code nor an \texttt{isError} flag a client could act on. Unlike the
 error-reporting question, this behaviour violates an explicit requirement that servers
-validate all tool inputs. A further \MalformedDiesRate{} fail to recover from a malformed frame,
-answering nothing further on a channel that the specification requires them to keep
-serving.
+validate all tool inputs. A further \MalformedDiesRate{} fail to recover from a malformed frame and
+answer nothing further, although JSON-RPC 2.0 requires a reply to every request.
 
 We organise the study around five research questions:
 

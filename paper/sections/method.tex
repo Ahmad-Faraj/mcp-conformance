@@ -35,9 +35,11 @@ client speaking line-delimited messages over the server's stdio. We do \emph{not
 use an official SDK client. To observe raw behavior, including responses to
 malformed frames, the probe must not inherit any SDK-side correction or
 validation. The harness offers protocol version \texttt{2025-06-18} at
-initialization, records the version the server \emph{negotiates}, and grades all
-subsequent checks against that negotiated version rather than the latest
-specification. This is not a formality. Responding servers negotiated four distinct
+initialization (the then-current revision was \texttt{2025-11-25}), records the
+version the server \emph{negotiates}, and grades all subsequent checks against that
+negotiated version rather than the latest specification. A server that supports the
+offered version must answer with it, and \(3{,}576\) of \Nresponders{} responders did,
+so almost all grading is against \texttt{2025-06-18}. This is not a formality. Responding servers negotiated four distinct
 revisions, and \(109\) of them settled on something other than the version we
 offered, the oldest dating to 2024-11-05.
 
@@ -91,8 +93,8 @@ is the clearest instance of specification text diverging from universal practice
 Executing thousands of untrusted packages demands isolation. Each server runs in a
 fresh container (\texttt{node:22-slim} for npm, an \texttt{astral-sh/uv} image for
 PyPI) with a memory cap, a single CPU, a PID limit, \texttt{no-new-privileges}, all
-Linux capabilities dropped, and no host filesystem mounts other than a package-cache
-volume. The harness supports two probe conditions. In the \textbf{two-phase}
+Linux capabilities dropped, and no host filesystem mounts. The harness supports two
+probe conditions. In the \textbf{two-phase}
 condition, an online install pass populates the cache and the conformance probe then
 runs with \texttt{-{}-network=none}, so no server code has network access while it is
 being measured. In the \textbf{single-phase} condition, install and probe occur
@@ -107,19 +109,18 @@ The census was executed on a single disposable cloud instance (no cloud
 credentials attached, so the blast radius of running untrusted code is one
 throwaway host) using the online single-phase condition: install and probe occur
 in one ephemeral \texttt{-{}-rm} container per server, with nothing cached between
-servers so that disk usage stays bounded across the full ecosystem. In a pilot on an
-independent subset (roughly 200 servers per arm) we compared this condition against
-the two-phase network-isolated condition and found no detectable difference on any
-metric: handshake yield ($54\%$ vs.\ $57\%$), error-as-result prevalence ($87\%$
-vs.\ $87\%$), and silent type non-enforcement ($7\%$ vs.\ $7\%$). We note that a
-pilot of this size can only exclude differences larger than roughly $14$ percentage
-points in handshake yield, so this is evidence of consistency rather than a
-demonstration of equivalence; the conformance metrics, being far more tightly
-clustered, are correspondingly better constrained. A small number
-of probes ($\le 0.4\%$) were interrupted by an automated disk-guard that reclaims
-space if the host approaches capacity; these are recorded conservatively as
-non-handshaking and, being a property of the harness environment rather than the
-server, do not bias conformance rates (which are computed over responding servers).
+servers so that disk usage stays bounded across the full ecosystem; the recorded
+launch command of every run confirms that no volume was mounted. We did not run a
+controlled comparison of the two conditions. In development runs on smaller subsets,
+error-as-result prevalence (\(87\%\)) and silent type non-enforcement (\(7\%\)) among
+responding servers were the same under both conditions; handshake yields from those
+runs are not comparable, because the subsets differed. Two groups of runs ended for
+reasons outside the server's control or of uncertain cause: \(32\) probes
+(\(0.5\%\)) were killed (exit 137) by either the memory cap or an automated guard
+that reclaims host disk space, and the census does not record which; \(17\) probes
+(\(0.3\%\)) aborted on a harness-side error before any check ran. All but one of
+these \(49\) are counted as non-handshaking, so they can only lower the handshake
+yield; the exception was killed after completing its handshake.
 
 \subsection{SDK-level confirmation}
 \label{sec:sdk-probe}
@@ -138,7 +139,7 @@ released with the harness.
 \subsection{Funnel accounting}
 Because ``does it even run'' is itself a research question, we count every stage:
 declared $\rightarrow$ eligible (self-contained stdio npm/PyPI) $\rightarrow$
-sampled $\rightarrow$ container started $\rightarrow$ process launched
+container started $\rightarrow$ process launched
 $\rightarrow$ handshake completed $\rightarrow$ probed. Servers that never reach a
 handshake are classified into startup-failure categories
 (Section~\ref{sec:results}) from their exit code and stderr, so that the yield loss

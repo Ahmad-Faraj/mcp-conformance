@@ -42,8 +42,9 @@ anyway and the smaller class that did not. \MalformedDiesRate{} failed to recove
 malformed frame. We report this as a robustness and conformance failure rather than a
 security one. Under the stdio transport the client is the parent process and the only
 writer to the server's standard input, so a party able to deliver a malformed frame can
-already terminate the subprocess directly; the specification nonetheless requires the
-server to answer a parse error and continue serving, and these servers do not. One
+already terminate the subprocess directly. JSON-RPC 2.0, on which MCP is built,
+nonetheless defines a parse-error response for this case and requires a reply to
+every subsequent request~\cite{jsonrpc}, and these servers give neither. One
 maintainer who reproduced our finding made exactly this argument, and we adopt their
 characterization over our original one (Section~\ref{sec:threats}).
 
@@ -138,9 +139,10 @@ protocol errors to tool execution errors on the grounds that a model can only
 self-correct from an error it can see~\cite{sep1303}. SEP-2145, open at the time of
 writing, proposes the same move for tool resolution failures, covering unknown and
 disabled tools, and gives as its rationale that it ``aligns specification with existing
-Python and TypeScript SDK behavior''~\cite{sep2145}. Our census supplies the quantity
-that argument has so far lacked, namely that the alignment it describes already covers
-\ErrAsResultRate{} of deployed servers. If SEP-2145 is adopted it ratifies the
+Python and TypeScript SDK behavior''~\cite{sep2145}. Our census measures how much of
+the deployed ecosystem that alignment already describes: \ErrAsResultRate{} of
+responding servers. (Aggregate figures from this census were posted to the
+proposal's discussion thread while it was open.) If SEP-2145 is adopted it ratifies the
 ecosystem's existing behaviour, not changing it. The other \NotErrAsResultPct{} are
 not one population: \UnknownProtoErrCount{} servers emit a protocol error coded
 \texttt{-32602} or \texttt{-32601}, \UnknownWrongCodeCount{} use some other code, and

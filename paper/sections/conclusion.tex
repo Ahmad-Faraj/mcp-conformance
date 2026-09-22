@@ -1,16 +1,17 @@
-The MCP server ecosystem has been measured statically many times, but never by
-running it. In this study every eligible server in the official registry was
-installed, launched in a disposable sandbox, and driven through the protocol.
+The MCP server ecosystem has been measured statically many times, and run mostly to
+look for vulnerabilities. In this study every eligible server in the official registry
+was installed, launched in a disposable sandbox, and driven through the protocol to
+see whether it follows it.
 
 \HandshakeRateCorr{} complete a handshake. The rest crash, hang, or exit without
 serving anything at all. Among the servers that do respond, \ErrAsResultRate{} report
 an unknown tool the same way, and that uniformity reflects the SDKs rather than the
 developers, since it is inherited from a handful of SDK defaults propagated directly
-and through third-party wrappers. The specification is currently being amended to match
-them, and our number tells the people making that decision whether they are ratifying
-the ecosystem or asking most of it to change. A smaller group, \SilentExecRate{}, will
+and through third-party wrappers. An open proposal would amend the specification to
+match them, and our number tells the people deciding it whether they would be
+ratifying the ecosystem or asking most of it to change. A smaller group, \SilentExecRate{}, will
 run a tool on input their published schema rejects and return a well-formed answer
-carrying no sign the input was never valid. One asked to scan an integer for unsafe
+carrying no sign the input was never valid. One asked to scan an integer for package
 imports reported it clean. For this group the specification is unambiguous, since it
 requires servers to validate their inputs, and these servers do not.
 

@@ -4,13 +4,12 @@ match what implementations already do. SEP-1303 moved input validation errors to
 execution errors, and SEP-2145 proposes the same for unknown tools, explicitly to
 align the specification with SDK behaviour~\cite{sep1303,sep2145}. The reasoning is
 sound, since an error the model can read is one it can recover from, whereas a
-protocol error never reaches it. What the debate has lacked is a measurement of how
-far the ecosystem has already gone. It has gone almost all the way, to
-\ErrAsResultRate{} of deployed servers, which means SEP-2145 would ratify existing
-behaviour rather than impose new behaviour, and the migration cost falls on the
-conforming minority instead. That is a different decision from the one the proposal
-appears to be making, and deciding it requires deployment data rather than further
-specification discussion.
+protocol error never reaches it. The measurement shows how far the ecosystem has
+already gone: almost all the way, to \ErrAsResultRate{} of responding servers. SEP-2145
+would therefore ratify existing behaviour rather than impose new behaviour, and the
+migration cost would fall on the conforming minority. That is a different decision
+from the one the proposal appears to be making, and it is better made with deployment
+data in hand.
 
 \paragraph{The SDK is the unit of change}
 Attributing servers to their SDK collapses thousands of independent authorship
@@ -18,8 +17,8 @@ decisions into a handful of library defaults, and the residual category shows th
 defaults propagating a second time through third-party wrappers. The effect runs in
 both directions, since a poor default reaches everyone and so does a fix. Changing a
 few SDKs would move
-conformance for the whole population at once, which is why the SEP process treats SDK
-behaviour as a first-class input rather than an implementation detail. It also means
+conformance for the whole population at once, which is why SEP-2145 cites SDK
+behaviour as its rationale. It also means
 ecosystem conformance should be measured at the SDK layer, where a single change is
 worth thousands of server-level ones.
 
