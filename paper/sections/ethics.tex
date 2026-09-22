@@ -23,8 +23,9 @@ outbound connection that failed and logged an error; a successful connection lea
 no trace in the captured output, so this is a lower bound. Five servers emitted live
 credential material into their own logs (session tokens they had generated), and
 one auto-provisioned an API key and account against a third-party service, which is the class of effect our frame's exclusion of credential-requiring servers
-was meant to prevent. We have redacted every such value from the released dataset. We
-draw two conclusions. First, excluding servers that \emph{declare} required
+was meant to prevent. We have redacted every such value from the released dataset and
+asked the service to revoke the provisioned key and delete the account. We draw two
+conclusions. First, excluding servers that \emph{declare} required
 credentials does not exclude servers that \emph{acquire} them unprompted, so
 declaration-based eligibility filtering is a weaker ethical guarantee than it
 appears. Second, a network-isolated probe phase should be the default for
