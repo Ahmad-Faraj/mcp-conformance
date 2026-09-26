@@ -110,10 +110,11 @@ the two. Separating them requires per-server process-state tracking that the rel
 transcripts support but the current verdict does not encode.
 
 \paragraph{Interrupted probes}
-\(49\) probes (\(0.8\%\)) ended for reasons that may lie outside the server
-(Section~\ref{sec:method-env}): \(32\) killed by the memory cap or the disk guard, and
-\(17\) aborted by a harness-side error. Counting \(48\) of them as non-handshaking can
-depress the handshake yield by at most \(0.8\) percentage points and does not affect
+\NInterrupted{} probes (\NInterruptedPct{}) ended for reasons that may lie outside the
+server (Section~\ref{sec:method-env}): \NKilled{} killed by the memory cap or the disk
+guard, and \NHarnessError{} aborted by a harness-side error. Counting
+\NInterruptedNoHandshake{} of them as non-handshaking can depress the handshake yield by
+at most \NInterruptedDepressionPP{} percentage points and does not affect
 conformance rates. Each is identifiable in the released census rows by its exit code
 or its missing verdicts.
 

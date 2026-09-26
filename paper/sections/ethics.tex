@@ -42,16 +42,18 @@ that emits non-protocol bytes on its stdio channel. We report these
 only in aggregate and through anonymized case studies, and we do not publish a
 name-and-shame list of individual servers. Security-relevant findings are recorded
 in a private disclosure log with maintainer contacts resolved from registry
-repository metadata. We reported \(15\) of the \(17\) servers that stop serving after a
-malformed frame to their maintainers through their issue trackers. At the time of
-writing, five have merged a fix and four have shipped it in a release. One
+repository metadata. We reported \NMalformedReported{} of the \NMalformedDies{} servers that stop serving
+after a malformed frame to their maintainers through their issue trackers; the
+remaining \NMalformedUnreachable{} list no repository we could reach. At the time of
+writing \NMalformedFixed{} of those reports are closed as resolved, and
+\NMalformedReleased{} of the projects have published a release since closing them. One
 maintainer corrected our severity assessment, and the paper follows that correction
 (Section~\ref{sec:threats}). We also reported the input-validation gap in the
 TypeScript SDK's low-level \texttt{Server} API (Section~\ref{sec:consequences}) to
 the SDK maintainers, who have labeled it for design work on both the 1.x and 2.x
 lines. Notices for the servers that run a tool on an argument their own schema
-rejects are prepared and going out in batches; those findings are the second
-high-severity class, \NDisclosureHigh{} in total with the malformed-frame set. The
+rejects are prepared and going out in batches: \NSilentNotices{} notices, which with
+the malformed-frame set make \NDisclosureHigh{} high-severity findings in total. The
 remaining findings concern unknown-tool handling and stdout contamination, and they
 are of lower severity and appear only in aggregate.
 

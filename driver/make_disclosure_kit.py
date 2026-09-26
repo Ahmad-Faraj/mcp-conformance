@@ -215,6 +215,18 @@ def main():
         silent = {r["server"] for r in cons.get("silent-execution", [])
                   if isinstance(r, dict) and r.get("server")}
 
+    # The status and date columns are the record of what has actually been sent, and
+    # the ethics section's counts are read back out of them. Regenerating the kit must
+    # therefore carry them forward: a fresh "not_yet_contacted" for a server already
+    # reported would silently make the paper's disclosure claim false.
+    prior = {}
+    csv_path = out / "CONTACTS.csv"
+    if csv_path.exists():
+        with csv_path.open(encoding="utf-8") as f:
+            for row in csv.DictReader(f):
+                prior[(row["server"], row["check"])] = (
+                    row.get("status", ""), row.get("date_reported", ""))
+
     contacts, tiers = [], Counter()
     for name, r in rows.items():
         if not r.get("handshake_ok"):
@@ -233,14 +245,20 @@ def main():
                 severity=sev.upper(), impact=impact, check=c["id"],
                 evidence=(c.get("detail") or "(no additional detail captured)")[:400],
                 cmd=cmd, fix=fix)
+            status, date = prior.get((name, c["id"]), ("not_yet_contacted", ""))
             fn = f"{sev}__{slug(name)}__{c['id']}.md"
             (out / "notices" / fn).write_text(body, encoding="utf-8")
             contacts.append({
                 "server": name, "identifier": r.get("identifier", ""),
                 "severity": sev, "check": c["id"],
                 "repository": repos.get(name, ""), "notice_file": fn,
-                "status": "not_yet_contacted", "date_reported": "",
+                "status": status, "date_reported": date,
             })
+
+    keep = {c["notice_file"] for c in contacts}
+    for f in (out / "notices").glob("*.md"):
+        if f.name not in keep:
+            f.unlink()
 
     with (out / "CONTACTS.csv").open("w", newline="", encoding="utf-8") as f:
         w = csv.DictWriter(f, fieldnames=list(contacts[0].keys()))
@@ -312,6 +330,8 @@ humane pace.
     print(f"  findings   : {len(contacts)}  (high {tiers['high']}, medium {tiers['medium']})")
     print(f"  notices    : {len(list((out / 'notices').glob('*.md')))}")
     print(f"  contactable: {sum(1 for c in contacts if c['repository'])}/{len(contacts)}")
+    print(f"  carried    : {sum(1 for c in contacts if c['status'] != 'not_yet_contacted')}"
+          f" already-actioned rows preserved")
 
 
 if __name__ == "__main__":

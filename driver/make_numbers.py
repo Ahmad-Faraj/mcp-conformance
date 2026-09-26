@@ -52,6 +52,13 @@ def main():
     n_attempted = len(attempted)
     # Runs the host stopped: the memory cap or the disk guard sends SIGKILL (137).
     killed = sum(1 for r in attempted if r.get("exit_code") == 137)
+    # Probes that ended for a reason that may lie outside the server: killed by a
+    # resource cap, or aborted by the harness. The two sets are disjoint here, but
+    # we take the union so they stay disjoint if that ever changes.
+    interrupted = [r for r in attempted
+                   if harness_error(r) or r.get("exit_code") == 137]
+    n_interrupted = len(interrupted)
+    n_interrupted_nohs = sum(1 for r in interrupted if not r.get("handshake_ok"))
 
     # Identities withheld from the release: the security-relevant check failures plus
     # the servers that ran a tool on an argument their own schema rejects.
@@ -241,7 +248,10 @@ def main():
         "NDisclosureHigh": f"{disclosure_high:,}",
         "NKilled": f"{killed:,}",
         "NKilledPct": f"{100*killed/n_attempted:.1f}\\%",
-        "NInterrupted": f"{killed + len(harness_rows):,}",
+        "NInterrupted": f"{n_interrupted:,}",
+        "NInterruptedPct": f"{100*n_interrupted/n_attempted:.1f}\\%",
+        "NInterruptedNoHandshake": f"{n_interrupted_nohs:,}",
+        "NInterruptedDepressionPP": f"{100*n_interrupted_nohs/n_attempted:.1f}",
         "Nprobed": f"{n:,}",
         "NEntrypointSeen": f"{ep_seen:,}",
         "NEntrypointUnreprobed": f"{ep_missing:,}",
