@@ -41,9 +41,7 @@ behaves that way. Separately, \SilentExecRate{} of responding servers run a tool
 violates the schema they publish, and return a well-formed result. In one
 case a tool that scans code for package imports was handed an integer and replied
 \texttt{CLEAN}, with neither an error code nor an \texttt{isError} flag a client could
-act on, and this
-behavior violates the specification's requirement that servers validate all tool
-inputs. A further \MalformedDiesRate{} fail to recover from a malformed frame and
+act on. The specification requires servers to validate all tool inputs. A further \MalformedDiesRate{} fail to recover from a malformed frame and
 answer nothing further, although JSON-RPC 2.0 requires a reply to every request.
 
 We organize the study around five research questions:
