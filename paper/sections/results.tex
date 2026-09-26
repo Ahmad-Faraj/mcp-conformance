@@ -88,7 +88,7 @@ fail an explicit RFC-2119 requirement, as do the servers that write non-protocol
 Here SDK attribution narrows the cause further than it does for the
 error-reporting divergence. \SilentExecTS{} of the \NSilentExec{} are built on
 the official TypeScript SDK and \SilentExecPy{} on either Python SDK, against
-responding populations of 2,347 and 1,020 respectively. A behavior absent from one
+responding populations of \SDKPopTS{} and \SDKPopPy{} respectively. A behavior absent from one
 language ecosystem and concentrated in another points to the library, so we tested the SDKs directly (Section~\ref{sec:sdk-probe}). On
 \texttt{@modelcontextprotocol/sdk} 1.30.0, the current release at the time of writing,
 a server built with the low-level \texttt{Server} API publishes an
@@ -156,22 +156,28 @@ not one population: \UnknownProtoErrCount{} servers emit a protocol error coded
 \UnknownProseCount{} return a plain success that states the failure only in its text,
 a mechanism neither proposal describes.
 
-To explain the uniformity, we attribute each server to its SDK from package metadata
-(Figure~\ref{fig:sdk}, Table~\ref{tab:sdk}). The behavior tracks the SDK: the
+To explain the uniformity, we attribute each server to its SDK from its resolved
+dependency graph (Figure~\ref{fig:sdk}, Table~\ref{tab:sdk}). We take the exact
+package version the probe launched and resolve its runtime dependencies through
+deps.dev, so a server that reaches an SDK through a third-party wrapper is credited
+to that SDK and not to the residual. \SDKDirect{} servers depend on an SDK directly
+and \SDKIndirect{} reach one only through a wrapper. For \SDKUnattributed{} we have
+no graph: the package or the probed version has since been withdrawn from its
+registry. The behavior tracks the SDK: the
 official TypeScript and Python SDKs and the FastMCP framework all default to it. A
 small number of TypeScript-SDK servers emit the protocol error, so the alternative is
 reachable within the SDK and simply is not the default. The official reference servers
 behave the same way.
 
 Our attribution recognizes a fixed list of known SDK package names, so the residual
-\textsf{no-known-SDK} category must not be read as ``hand-rolled.'' Inspecting a
-random sample of that category, we find roughly two thirds in fact depend on an MCP
-framework outside our list. These are several third-party wrappers, each used across
-dozens of servers by a single publisher, and most of them themselves build on an
-official SDK. That category therefore supplies no independent evidence and we do not
-treat it as such. It does show that the same default reaches past the official SDKs, into
-third-party wrappers that inherit it.
-A few SDK defaults, used directly or through wrappers, account for this behavior across the ecosystem.
+\textsf{no-known-SDK} category holds servers with none of those names anywhere in
+their runtime graph. Such a server may still have vendored an SDK at build time.
+Resolving the graph transitively moves servers that inherit an SDK through a wrapper
+into that SDK's family. That leaves the residual as the sharpest contrast in the
+table: \SDKNoSDKRate{} of its \SDKNoSDK{} servers answer an unknown tool with an
+\texttt{isError} result, against about nine in ten in every official-SDK family.
+A few SDK defaults, used directly or through wrappers, account for this behavior
+across the ecosystem. Where they are absent, so is the behavior.
 
 \begin{figure}[t]
   \centering

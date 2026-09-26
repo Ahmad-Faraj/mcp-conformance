@@ -167,10 +167,20 @@ def main():
     silent_fam = Counter()
     silent_major = Counter()
     silent_ver = Counter()
+    # Denominators and edge types for the SDK attribution, so the prose never
+    # retypes a count that the attribution run can change.
+    fam_tot = Counter()
+    fam_ear = Counter()
+    edge_tot = Counter()
     if _cons_p.exists() and _sdk_p.exists():
         _cons = json.loads(_cons_p.read_text(encoding="utf-8"))
         _sdk = {r["server"]: r for r in
                 _csv.DictReader(_sdk_p.open(encoding="utf-8"))}
+        for _row in _sdk.values():
+            fam_tot[_row["sdk_family"]] += 1
+            edge_tot[_row.get("sdk_edge") or "unattributed"] += 1
+            if _row["unknown_verdict"] == "error-as-result":
+                fam_ear[_row["sdk_family"]] += 1
         for _rec in _cons.get("silent-execution", []):
             _row = _sdk.get(_rec.get("server"))
             if not _row:
@@ -190,6 +200,10 @@ def main():
     # An exact version would not. Reporting them as "pinned" would invert that.
     silent_ts_caret = sum(v for k, v in silent_ver.items() if k.startswith("^"))
     silent_ts_exact = sum(v for k, v in silent_ver.items() if k and k[0].isdigit())
+    sdk_ts_pop = fam_tot.get("official-ts", 0)
+    sdk_py_pop = fam_tot.get("official-py", 0) + fam_tot.get("fastmcp-py", 0)
+    sdk_nosdk_pop = fam_tot.get("none-handrolled", 0)
+    sdk_nosdk_ear = fam_ear.get("none-handrolled", 0)
 
     # Entry-point re-probe coverage: the census classifier finds this many uvx
     # entry-point rows, and the completed re-probe covers this many of them.
@@ -242,6 +256,15 @@ def main():
         "SilentExecTSvOne": str(silent_ts_v1),
         "SilentExecTSCaret": str(silent_ts_caret),
         "SilentExecTSExact": str(silent_ts_exact),
+        # Attribution denominators and edge types (Section 4.2, Table 4).
+        "SDKPopTS": f"{sdk_ts_pop:,}",
+        "SDKPopPy": f"{sdk_py_pop:,}",
+        "SDKIndirect": f"{edge_tot.get('indirect', 0):,}",
+        "SDKDirect": f"{edge_tot.get('direct', 0):,}",
+        "SDKUnattributed": f"{edge_tot.get('unattributed', 0):,}",
+        "SDKNoSDK": f"{sdk_nosdk_pop:,}",
+        "SDKNoSDKRate": (f"{100*sdk_nosdk_ear/sdk_nosdk_pop:.0f}\\%"
+                         if sdk_nosdk_pop else "-"),
         # Publisher-clustering robustness check (Threats to Validity).
         "Npublishers": f"{len(pub_counts):,}",
         "NuniqPub": f"{len(uniq):,}",

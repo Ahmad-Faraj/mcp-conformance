@@ -259,6 +259,9 @@ def main():
                 if alias:
                     row["server"] = alias
                     row["identifier"] = alias
+                    # The exact package version is matchable against the frame,
+                    # so it would undo the pseudonym. The SDK columns are not.
+                    row["package_version"] = ""
                 w.writerow(row)
 
     # The registry snapshot is third-party data: publishers sometimes paste a live

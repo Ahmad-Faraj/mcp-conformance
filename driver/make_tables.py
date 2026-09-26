@@ -87,8 +87,9 @@ def verdicts_table(rows):
 
 
 # Attribution recognizes a fixed list of SDK package names, so the residual bucket
-# means "no SDK we look for", NOT "hand-written". Sampling it shows ~2/3 depend on an
-# MCP framework outside the list. Display a label that says only what we measured.
+# means "no SDK we look for anywhere in the resolved runtime graph", NOT
+# "hand-written": a server could still vendor one. Display a label that says only
+# what we measured.
 SDK_LABEL = {
     "none-handrolled": "no-known-SDK",
     "unknown": "metadata-unavailable",
