@@ -12,6 +12,7 @@ direct-labeled, so colour never carries identity on its own.
 import argparse
 import csv
 import json
+import os
 import math
 from collections import Counter, defaultdict
 from pathlib import Path
@@ -27,7 +28,11 @@ from stats import cluster_ci  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 DATA = ROOT / "data"
-FIG = ROOT / "paper" / "figures"
+# Both the target width and the output directory are set by the build, because
+# the paper has two of them: IEEEtran's narrow column and Springer's wider
+# single column. A figure drawn for one and scaled into the other prints its
+# labels at the wrong size, which is the whole reason we draw at final size.
+FIG = Path(os.environ.get("MCP_FIG_DIR") or (ROOT / "paper" / "figures"))
 
 # House palette: navy for the primary series (server faults, the hazard, npm) and
 # light blue for the secondary one (environment, PyPI). The two differ strongly in
@@ -36,27 +41,30 @@ NAVY, SKY = "#1d3557", "#9dbde0"
 INK, MUTED, GRID, RULE, LIGHT = "#14213d", "#6b7280", "#e6e9ee", "#b9cde4", "#d5dae1"
 TINT = "#f1f6fb"
 
-# Figures are drawn at their printed size so no text is scaled: COL is one IEEE
-# column. Fonts are embedded as TrueType (42),
-# not Type 3, which PDF checkers reject.
-COL = 3.45
+# Figures are drawn at their printed size so no text is scaled. COL defaults to
+# one IEEEtran column; MCP_FIG_WIDTH_IN overrides it for the Springer build.
+# Fonts are embedded as TrueType (42), not Type 3, which PDF checkers reject.
+COL = float(os.environ.get("MCP_FIG_WIDTH_IN") or 3.45)
+# Type scales with the drawing, so a figure widened for Springer keeps the same
+# proportion of label to plot that it has in the IEEEtran column.
+FS = float(os.environ.get("MCP_FIG_FONT_SCALE") or 1.0)
 plt.rcParams.update({
     # Serif to match the IEEEtran body text. A sans-serif figure beside Times body
     # copy reads as a slide pasted into a paper, and the figure standard forbids it.
     "font.family": "serif",
     "font.serif": ["Times New Roman", "Nimbus Roman", "STIX Two Text", "DejaVu Serif"],
     "mathtext.fontset": "stix",
-    "font.size": 7.5,
+    "font.size": 7.5 * FS,
     "pdf.fonttype": 42,
     "ps.fonttype": 42,
     "axes.edgecolor": MUTED,
     "axes.labelcolor": INK,
-    "axes.labelsize": 7.5,
+    "axes.labelsize": 7.5 * FS,
     "text.color": INK,
     "xtick.color": MUTED,
     "ytick.color": MUTED,
-    "xtick.labelsize": 7,
-    "ytick.labelsize": 7.5,
+    "xtick.labelsize": 7 * FS,
+    "ytick.labelsize": 7.5 * FS,
     "axes.spines.top": False,
     "axes.spines.right": False,
     "axes.linewidth": 0.6,
@@ -129,8 +137,8 @@ def hbar_figure(labels, values, colors, xmax, xlabel, value_texts, height,
     """
     headers = headers or {}
     fig = plt.figure(figsize=(COL, height))
-    lab_w = label_width(fig, labels, fontsize=7.5)
-    val_w = label_width(fig, value_texts, fontsize=7.5)
+    lab_w = label_width(fig, labels, fontsize=7.5 * FS)
+    val_w = label_width(fig, value_texts, fontsize=7.5 * FS)
     left, right = lab_w + 0.035, 1 - val_w - 0.035
     ax = fig.add_axes([left, 0.36 / height, right - left,
                        1 - (0.36 + top_pad) / height])
@@ -153,7 +161,7 @@ def hbar_figure(labels, values, colors, xmax, xlabel, value_texts, height,
     tl = matplotlib.transforms.blended_transform_factory(fig.transFigure, ax.transData)
     for i, text in headers.items():
         ax.text(0.0, ys[i] + 1.0, text, transform=tl, ha="left", va="center",
-                fontsize=7.2, color=INK, weight="bold")
+                fontsize=7.2 * FS, color=INK, weight="bold")
     ax.set_yticks([])
     for s in ("left", "right", "top"):
         ax.spines[s].set_visible(False)
@@ -165,17 +173,18 @@ def hbar_figure(labels, values, colors, xmax, xlabel, value_texts, height,
         ax.set_xticks(ticks)
     ax.xaxis.set_major_formatter(matplotlib.ticker.FuncFormatter(
         lambda v, _: f"{v:,.0f}"))
-    ax.set_xlabel(xlabel, fontsize=7, color=MUTED, labelpad=3)
+    ax.set_xlabel(xlabel, fontsize=7 * FS, color=MUTED, labelpad=3)
 
     for yi, lab, vt in zip(ys, labels, value_texts):
         ax.text(0.0, yi, lab, transform=tl, ha="left", va="center",
-                fontsize=7.5, color=INK)
+                fontsize=7.5 * FS, color=INK)
         ax.text(1.0, yi, vt, transform=tl, ha="right", va="center",
-                fontsize=7.5, color=INK)
+                fontsize=7.5 * FS, color=INK)
     return fig, ax, ys
 
 
 def save(fig, name):
+    FIG.mkdir(parents=True, exist_ok=True)
     fig.savefig(FIG / name)
     plt.close(fig)
 
@@ -206,11 +215,11 @@ def fig_pipeline(rows, n_frame):
         ax.add_patch(plt.Rectangle((0.01, y0), 0.045, row_h, facecolor=NAVY,
                                    edgecolor="none"))
         yc = y0 + row_h / 2
-        ax.text(0.13, yc, f"{i + 1}", ha="left", va="center", fontsize=7.5,
+        ax.text(0.13, yc, f"{i + 1}", ha="left", va="center", fontsize=7.5 * FS,
                 color=MUTED, weight="bold")
-        ax.text(0.25, yc, title, ha="left", va="center", fontsize=7.5,
+        ax.text(0.25, yc, title, ha="left", va="center", fontsize=7.5 * FS,
                 color=INK, weight="bold")
-        ax.text(1.45, yc, desc, ha="left", va="center", fontsize=7.2, color=INK)
+        ax.text(1.45, yc, desc, ha="left", va="center", fontsize=7.2 * FS, color=INK)
         if i < len(stages) - 1:
             ax.annotate("", xy=(COL / 2, y0 - gap + 0.008), xytext=(COL / 2, y0 - 0.008),
                         arrowprops=dict(arrowstyle="-|>", color=MUTED, lw=0.6,
@@ -238,7 +247,7 @@ def fig_failures(rows):
     # Key sits above the chart, flush with the label column, so it never overlaps
     # a bar.
     fig.legend(handles, ["server-side failure", "packaging, config or harness"],
-               frameon=False, fontsize=7, loc="upper left", bbox_to_anchor=(0, 1),
+               frameon=False, fontsize=7 * FS, loc="upper left", bbox_to_anchor=(0, 1),
                ncol=2, handlelength=0.9, handleheight=0.9, columnspacing=1.4,
                borderaxespad=0, borderpad=0.1, labelcolor=INK)
     save(fig, "failures.pdf")
@@ -348,10 +357,10 @@ def fig_consequences():
     for v, color, label, align, tc in segs:
         ax.barh(0, v, left=left, height=0.5, color=color,
                 edgecolor="white", linewidth=0.8)
-        ax.text(left + v / 2, 0, f"{v}", ha="center", va="center", fontsize=7.5,
+        ax.text(left + v / 2, 0, f"{v}", ha="center", va="center", fontsize=7.5 * FS,
                 color=tc, weight="bold")
         xl = {"left": left, "center": left + v / 2, "right": left + v}[align]
-        ax.text(xl, -0.36, label, ha=align, va="top", fontsize=7,
+        ax.text(xl, -0.36, label, ha=align, va="top", fontsize=7 * FS,
                 color=INK, linespacing=1.1)
         left += v
     ax.set_xlim(0, total)

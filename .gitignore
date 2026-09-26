@@ -29,6 +29,17 @@ paper/*.bbl
 paper/*.blg
 paper/*.fls
 paper/*.fdb_latexmk
+# Springer (EMSE) build. The class and .bst are Springer's, redistributed with the
+# template, and the PDF is tracked so a reader can see the submitted form.
+paper/emse/*.aux
+paper/emse/*.log
+paper/emse/*.out
+paper/emse/*.bbl
+paper/emse/*.blg
+paper/emse/*.fls
+paper/emse/*.fdb_latexmk
+paper/emse/*.spl
+paper/emse/build*.log
 __pycache__/
 *.pyc
 

@@ -10,6 +10,7 @@ matches the released data.
 
 import argparse
 import filecmp
+import os
 import shutil
 import subprocess
 import sys
@@ -50,13 +51,27 @@ def regenerate(numbers_out=None):
          "--reprobe", REPROBE], stdout=subprocess.DEVNULL)
 
 
-def build_pdf():
+# Springer's text block is 372pt against IEEEtran's 252pt column. The figures are
+# redrawn at that width rather than scaled up, which would print their labels half
+# again too large. Same data, same code, different target size.
+EMSE_FIG_ENV = {"MCP_FIG_DIR": str(ROOT / "paper" / "emse" / "figures"),
+                "MCP_FIG_WIDTH_IN": "5.147",
+                "MCP_FIG_FONT_SCALE": "1.1"}
+
+
+def regenerate_emse_figures():
+    env = dict(os.environ, **EMSE_FIG_ENV)
+    run(["python", "driver/make_figures.py", "--in", CENSUS, "--frame", FRAME,
+         "--reprobe", REPROBE], stdout=subprocess.DEVNULL, env=env)
+
+
+def build_pdf(where="paper"):
     if not shutil.which("latexmk"):
         print("latexmk not found, skipping the PDF build")
         return
-    subprocess.run(["latexmk", "-pdf", "-interaction=nonstopmode", "main.tex"],
-                   cwd=ROOT / "paper", check=False, stdout=subprocess.DEVNULL)
-    log = (ROOT / "paper" / "main.log").read_text(encoding="utf-8", errors="replace")
+    subprocess.run(["latexmk", "-pdf", "-bibtex", "-interaction=nonstopmode", "main.tex"],
+                   cwd=ROOT / where, check=False, stdout=subprocess.DEVNULL)
+    log = (ROOT / where / "main.log").read_text(encoding="utf-8", errors="replace")
     if "There were undefined references" in log:
         print("WARNING: the build has undefined references")
     for line in log.splitlines():
@@ -68,6 +83,8 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--verify", action="store_true",
                     help="regenerate to a temporary file and compare, without writing")
+    ap.add_argument("--emse", action="store_true",
+                    help="also build the Springer single-column version for EMSE")
     args = ap.parse_args()
     check_inputs()
 
@@ -85,6 +102,11 @@ def main():
     regenerate()
     print("building the PDF")
     build_pdf()
+    if args.emse:
+        print("redrawing the figures at Springer's width")
+        regenerate_emse_figures()
+        print("building the EMSE PDF")
+        build_pdf("paper/emse")
     print("done")
 
 

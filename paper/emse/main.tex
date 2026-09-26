@@ -1,0 +1,151 @@
+\documentclass[pdflatex,sn-basic]{sn-jnl}
+
+% ---------------------------------------------------------------------------
+% Empirical Software Engineering (Springer) build.
+%
+% Same sections, same generated numbers, same analysis as the IEEEtran build in
+% ../main.tex. Only the frame differs: Springer's single column, EMSE's
+% single-blind review (so the authors are named), and the declarations the
+% journal requires.
+%
+% Figures are redrawn at Springer's 372pt text width rather than scaled up from
+% the IEEE column:
+%   MCP_FIG_DIR=paper/emse/figures MCP_FIG_WIDTH_IN=5.147 \
+%   MCP_FIG_FONT_SCALE=1.1 python driver/make_figures.py
+%
+% Numeric macros are AUTO-GENERATED -- never hand-edit them; edit the analysis.
+% ---------------------------------------------------------------------------
+
+\usepackage{newtxtext,newtxmath}  % Times body, so the figures and the text
+                                 % share a typeface
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{amsmath}
+\usepackage{url}
+
+\graphicspath{{figures/}}
+% The shared sections input tables by a path relative to ../, so let LaTeX
+% look there as well as here.
+\makeatletter\def\input@path{{../}{./}}\makeatother
+
+\input{../numbers}              % \Nframe, \Neligible, \Nprobed, ... (generated)
+\input{../validation_numbers}   % \ValKappa, \ValPrecision, ... (generated)
+\input{../disclosure_numbers}   % \NMalformedFixed, ... (generated)
+
+% EMSE reviews single-blind, so this build carries the real artifact location.
+\newcommand{\ArtifactURL}{\url{https://github.com/Ahmad-Faraj/mcp-conformance}}
+
+\begin{document}
+
+\title[An Execution-Based Conformance Census of the MCP Registry]{Installed,
+Launched, Probed: An Execution-Based Conformance Census of the Model Context
+Protocol Registry}
+
+% TODO(author): fill in before submission. EMSE is single-blind, so these are
+% printed. Left as placeholders rather than guessed.
+\author[1]{\fnm{FIRST}\sur{LAST}}\email{EMAIL}
+
+\affil[1]{\orgname{AFFILIATION}, \city{CITY}, \country{COUNTRY}}
+
+\abstract{The Model Context Protocol (MCP) connects LLM agents to external tools,
+and public registries now list tens of thousands of MCP servers. Most empirical
+studies of this ecosystem are \emph{static}: they scan source code, mine issue
+trackers, or read registry metadata. None calls the tools of registry servers at
+scale to check whether the servers start and follow the protocol. This paper does.
+From the official registry (\Nframe{} unique servers) we run a complete census of
+all \Nprobed{} self-contained, locally-installable servers, each launched in an
+isolated sandbox and driven through a conformance harness. The harness checks the
+initialization lifecycle and declared-schema validity across every tool a server
+lists, then sends an unknown tool name, an argument of the wrong type and a
+malformed protocol frame. Only \HandshakeRateCorr{} of installable servers start
+and complete a handshake, and \ErrAsResultRate{} of those that respond report an
+unknown tool the same way, which differs from the error reporting the
+specification illustrates. We trace this to SDK defaults, and an open
+specification proposal would make it the specified behavior. \SilentExecRate{}
+execute a tool on an argument their own declared schema rejects, although the
+specification requires servers to validate all tool inputs. The result is
+well-formed, and a client cannot tell it apart from a correct answer. Both
+behaviors come from the SDKs and can be measured and fixed there. We release the
+harness with the disclosure-filtered dataset.}
+
+\keywords{Model Context Protocol, conformance testing, mining software
+repositories, ecosystem measurement, LLM agents, responsible disclosure}
+
+\maketitle
+
+\section{Introduction}\label{sec:intro}
+\input{../sections/intro}
+
+\section{Background and Related Work}\label{sec:related}
+\input{../sections/related}
+
+\section{Methodology}\label{sec:method}
+\input{../sections/method}
+
+\section{Results}
+\input{../sections/results}
+
+\section{Discussion}\label{sec:discussion}
+\input{../sections/discussion}
+
+\section{Threats to Validity}
+\input{../sections/threats}
+
+\section{Ethics and Responsible Disclosure}\label{sec:ethics}
+\input{../sections/ethics}
+
+\section{Conclusion}\label{sec:conclusion}
+\input{../sections/conclusion}
+
+\backmatter
+
+\bmhead{Acknowledgements}
+Claude (Anthropic) is a generative AI system, and it was used extensively in this
+work, generating the text of every section of this paper. It wrote the measurement
+harness and the analysis code, including the code behind every figure, table and
+reported number. It also assisted with literature search, running the census and
+statistical analysis. Every reference and every claim attributed to a cited source
+was verified against that source, and every number is regenerated from the
+released data by the released scripts. No AI system is an author, and the authors
+take full responsibility for the content.
+
+\section*{Declarations}
+
+\bmhead{Funding}
+No funding was received for conducting this study.
+
+\bmhead{Competing interests}
+The authors declare no competing interests.
+
+\bmhead{Ethics approval}
+This study executes and measures publicly published software packages. It involves
+no human subjects and required no ethics board approval. Section~\ref{sec:ethics} states the
+measures taken to limit harm to the maintainers whose servers were executed and to
+the third-party services some of them contacted.
+
+\bmhead{Data and code availability}
+The conformance harness is available at \ArtifactURL{} with the analysis pipeline
+and the disclosure-filtered census dataset, and the code that produced the census
+is tagged \texttt{census-v1}. The release contains one record per probed server
+(every verdict behind every number in this paper). It also carries the raw JSON-RPC
+transcripts and the registry snapshot that defines the sampling frame, which is
+everything needed to recompute the eligibility funnel and the reported rates. Two
+filters are applied and documented with the data. The identities of \NWithheld{}
+servers with security-relevant findings are withheld pending disclosure, as is one
+server whose maintainer asked to be removed. These servers keep every measurement,
+but we publish neither their names nor their transcripts, and credential material
+that servers emitted at runtime is redacted. Neither filter alters any verdict or
+count, and the paper's figures regenerate from the release unchanged. The release
+is archived at
+% TODO(author): insert the Zenodo DOI once the record is minted.
+\texttt{[Zenodo DOI]}.
+
+\bmhead{Author contribution}
+% TODO(author): single-author statement, or per-author if that changes.
+All work was carried out by the author.
+
+\bibliography{../refs}
+
+\end{document}
