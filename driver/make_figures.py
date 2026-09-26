@@ -41,8 +41,11 @@ TINT = "#f1f6fb"
 # not Type 3, which PDF checkers reject.
 COL = 3.45
 plt.rcParams.update({
-    "font.family": "sans-serif",
-    "font.sans-serif": ["Arial", "Helvetica", "DejaVu Sans"],
+    # Serif to match the IEEEtran body text. A sans-serif figure beside Times body
+    # copy reads as a slide pasted into a paper, and the figure standard forbids it.
+    "font.family": "serif",
+    "font.serif": ["Times New Roman", "Nimbus Roman", "STIX Two Text", "DejaVu Serif"],
+    "mathtext.fontset": "stix",
     "font.size": 7.5,
     "pdf.fonttype": 42,
     "ps.fonttype": 42,
