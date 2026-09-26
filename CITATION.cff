@@ -1,0 +1,23 @@
+cff-version: 1.2.0
+message: "If you use this dataset or harness, please cite it."
+title: "MCP conformance census: harness, dataset and analysis pipeline"
+abstract: >-
+  An execution-based conformance census of the Model Context Protocol server
+  ecosystem. Every self-contained, locally installable stdio server in the
+  official registry snapshot was executed in an isolated container and driven
+  through a conformance harness covering the initialization lifecycle, tool
+  listing, declared-schema validity, and behaviour under an unknown tool name, a
+  wrong-typed argument and a malformed JSON-RPC frame. The release carries the
+  census rows, the raw protocol transcripts, the registry snapshot and the
+  analysis scripts.
+authors:
+  - family-names: Faraj
+    given-names: Ahmed
+type: dataset
+license: CC-BY-4.0
+keywords:
+  - Model Context Protocol
+  - conformance testing
+  - software ecosystems
+  - mining software repositories
+repository-code: "https://github.com/Ahmad-Faraj/mcp-conformance"

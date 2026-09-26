@@ -392,13 +392,23 @@ count, or timing value is changed.
 
 ## Verifying
 
+From a fresh clone, with this directory in place:
+
 ```bash
-python driver/analyze.py   --in data/release/probe_census.jsonl
-python driver/make_numbers.py --in data/release/probe_census.jsonl
+python reproduce.py --verify   # regenerates the macros and diffs them, writing nothing
+python reproduce.py            # regenerates numbers, tables and figures, then the PDF
 ```
+
+`--verify` exits non-zero if the released data no longer produces the paper's
+numbers. A GNU make equivalent is in the Makefile.
 
 Every number in the paper regenerates from this directory plus the code at tag
 `census-v1`, which produced the census.
+
+Known limitation of this release: the census logged each protocol frame up to
+2,000 characters, so long `tools/list` replies are cut and cannot be parsed from
+`transcripts.jsonl`. The cap is removed in the harness; a re-run replaces these
+transcripts with complete ones.
 """
 
 
