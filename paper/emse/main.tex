@@ -27,6 +27,10 @@
 \usepackage{hyperref}
 
 \graphicspath{{figures/}}
+% The sections were written against a numeric style, so every \\cite sits
+% where a bracketed reference would. Under author-year it has to read as a
+% parenthetical rather than as the subject of the sentence.
+\let\cite\citep
 % The shared sections input tables by a path relative to ../, so let LaTeX
 % look there as well as here.
 \makeatletter\def\input@path{{../}{./}}\makeatother

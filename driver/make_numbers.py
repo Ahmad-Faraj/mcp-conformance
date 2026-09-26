@@ -55,6 +55,11 @@ def main():
     # Probes that ended for a reason that may lie outside the server: killed by a
     # resource cap, or aborted by the harness. The two sets are disjoint here, but
     # we take the union so they stay disjoint if that ever changes.
+    # Servers whose only barrier is an undeclared setting. The registry records no
+    # required configuration, so a client reading the listing cannot know in advance.
+    n_needs_config = sum(1 for r in attempted
+                         if r.get("failure_class") == "needs-auth-or-config")
+
     interrupted = [r for r in attempted
                    if harness_error(r) or r.get("exit_code") == 137]
     n_interrupted = len(interrupted)
@@ -271,6 +276,7 @@ def main():
         "NInterruptedNoHandshake": f"{n_interrupted_nohs:,}",
         "NInterruptedDepressionPP": f"{100*n_interrupted_nohs/n_attempted:.1f}",
         "Nprobed": f"{n:,}",
+        "NNeedsConfig": f"{n_needs_config:,}",
         "NEntrypointSeen": f"{ep_seen:,}",
         "NEntrypointUnreprobed": f"{ep_missing:,}",
         # Publisher-cluster bootstrap intervals. These are the intervals the paper
@@ -298,7 +304,7 @@ def main():
         "HandshakeRate": pctci(hs, n),
         "HandshakeCount": str(hs),
         "ErrAsResultRate": err_as_result,
-        "ErrAsResultCount": str(err_as_result_k),
+        "ErrAsResultCount": f"{err_as_result_k:,}",
         "NotErrAsResultPct": f"{100*(n_resp-err_as_result_k)/n_resp:.1f}\\%" if n_resp else "-",
         "UnknownProtoErrCount": str(unk_pe_k),
         "UnknownWrongCodeCount": str(unk_wrong_k),
