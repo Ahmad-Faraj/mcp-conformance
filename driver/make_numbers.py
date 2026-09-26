@@ -262,6 +262,20 @@ def main():
                   if any(UVX_RE.search(x or "") for x in (r.get("stderr_tail") or [])))
     ep_missing = ep_seen - ep_n
 
+    # How many malformed-frame failures sit in a language our SDK attribution cannot
+    # resolve. detect_sdk.py reads npm and PyPI dependency graphs, so a server
+    # compiled from Go, Rust, Swift or Dart and shipped as a binary declares no MCP
+    # dependency and lands in the no-known-SDK residual whatever it is built on. A
+    # maintainer demonstrated exactly this for the official Go SDK.
+    n_opaque = n_go = 0
+    _lang_p = _beside(args.inp, "repo_languages.csv")
+    if _lang_p.exists():
+        with _lang_p.open(encoding="utf-8") as _f:
+            _langs = list(_csv.DictReader(_f))
+        n_opaque = sum(1 for r in _langs
+                       if r["attributable"] == "false" and r["language"])
+        n_go = sum(1 for r in _langs if r["language"] == "Go")
+
     macros = {
         "Nframe": f"{frame_n:,}",
         "Nattempted": f"{n_attempted:,}",
@@ -277,6 +291,8 @@ def main():
         "NInterruptedDepressionPP": f"{100*n_interrupted_nohs/n_attempted:.1f}",
         "Nprobed": f"{n:,}",
         "NNeedsConfig": f"{n_needs_config:,}",
+        "NMalformedOpaque": f"{n_opaque:,}",
+        "NMalformedGo": f"{n_go:,}",
         "NEntrypointSeen": f"{ep_seen:,}",
         "NEntrypointUnreprobed": f"{ep_missing:,}",
         # Publisher-cluster bootstrap intervals. These are the intervals the paper

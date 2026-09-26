@@ -21,6 +21,9 @@ data/release/*
 # The classified consequences, keyed by the same pseudonyms the census rows use,
 # so the silent-execution split is recomputable from the release alone.
 !data/release/consequences.json
+# Repository language per malformed-frame failure, which sizes the blind spot in
+# the dependency-graph SDK attribution.
+!data/release/repo_languages.csv
 # The blinded rating pass: labels, the training pass kept separate, and the
 # codebook, so the agreement statistic can be recomputed rather than trusted.
 !data/release/validation/

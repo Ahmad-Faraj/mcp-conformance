@@ -96,10 +96,23 @@ argued that this overstates it, and the argument holds. Under the stdio transpor
 only the launching client writes to that standard input, and anyone able to
 send it a malformed frame can already kill the subprocess. The specification also
 places the obligation not to send invalid messages on the client. This paper
-classifies the behavior as a robustness and conformance failure. The same maintainer
-traced it in their own server to the official Go SDK's stdio transport. Like the
-unknown-tool divergence, this check can measure an SDK default that the server only
-inherits.
+classifies the behavior as a robustness and conformance failure.
+
+The same maintainer traced the behavior in their own server to the official Go SDK,
+and their report changes what this check measures. Their server contains no framing
+or decoding code: its stdio path is two lines, and the read loop, the JSON decoding
+and the decision to end the session on a decode error all sit inside the SDK. They
+report the behavior unchanged from v1.4.1 to v1.7.0, and they ran the same input
+against the other widely used Go library, \texttt{mark3labs/mcp-go}, which answers a
+malformed frame with a \texttt{-32700} parse error and keeps serving. On identical
+input the verdict is decided by which library the server links. They have filed an
+upstream fix~\cite{gosdkpr1210}, open at the time of writing, which would resolve it
+for every server built on that transport.
+
+Their conclusion is that a per-server dataset that does not separate these is
+measuring the SDK rather than the server, and on this check we accept it. Like the
+unknown-tool divergence, \textsf{malformed-json} records a transport default that a
+server inherits.
 Another maintainer's fix exposed a limitation in our instrument. In their server the
 process stayed alive while its parser absorbed the frames that followed, and the next
 \texttt{ping} timed out. Our harness records a single verdict for
@@ -108,6 +121,17 @@ process from a desynchronized one. Both are conformance failures, but they are
 different failures with different fixes, and \MalformedDiesRate{} aggregates
 the two. Separating them requires per-server process-state tracking that the released
 transcripts support but the current verdict does not encode.
+
+That exchange also exposed a blind spot in our SDK attribution, which the same
+evidence lets us size. Attribution resolves npm and PyPI dependency graphs, so a
+server compiled from another language and shipped as a binary declares no MCP
+dependency and falls into the \textsf{no-known-SDK} residual whatever it is built on.
+Of the \NMalformedDies{} servers that fail this check, \NMalformedOpaque{} are written
+in a language that attribution cannot resolve and \NMalformedGo{} of those are Go. The
+residual therefore means ``no SDK our method can see,'' not ``no SDK,'' and its
+contrast with the official-SDK families in Section~\ref{sec:rq5} should be read that
+way. We resolve each repository's language from registry metadata and release the
+table.
 
 \paragraph{Interrupted probes}
 \NInterrupted{} probes (\NInterruptedPct{}) ended for reasons that may lie outside the
