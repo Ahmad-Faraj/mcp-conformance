@@ -51,4 +51,24 @@ optional otherwise.
 
 ## Change log
 
-(none)
+**2026-09-26.** The rating set was cut from 100 items to 40 at the rater's request,
+after 16 items had been labeled. The 16 existing labels were kept and the remaining
+24 were drawn from the original 100 by stratified sample on the classifier's label,
+seeded, so the mix of EXECUTED, REJECTED, ENV-ERROR and UNCLEAR is preserved. The
+discarded items are kept in `private/rating/human_100.csv.bak`. The effect is a wider
+confidence interval on the agreement statistic; no item was dropped because of what
+it said or how it was labeled.
+
+**2026-09-26.** The labeling tool now shows the classifier's label after the rater
+has chosen, never before, with a running agreement count. The rating itself stays
+blind.
+
+**2026-09-26, second entry.** The first 40 labels are treated as a training pass and
+are not the reported validation. The rater worked at speed and, because the tool
+revealed the classifier's label after each choice, those items are no longer blind.
+They are kept at `private/rating/human_pass1_training.csv` together with the
+disagreement analysis, which is what the training was for. The reported validation
+comes from a fresh sample of 40 items the rater has not seen, drawn from the 147
+remaining by stratified sample on the classifier's label, seeded, with the reveal
+switched off. Nothing about the first pass shaped which items the second pass
+contains.

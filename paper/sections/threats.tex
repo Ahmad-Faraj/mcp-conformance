@@ -22,8 +22,16 @@ in one check: for \textsf{tools-call-invalid-args} we accept an \texttt{isError}
 result as evidence that the server rejected the ill-typed argument. An
 \texttt{isError} produced instead by an unrelated runtime or network failure is
 indistinguishable to the harness, and would be counted as argument checking that did
-not in fact occur. That makes the reported rate of silent type non-enforcement a
-\emph{lower bound}. The lifecycle, tool-listing, error-handling, malformed-input and
+not in fact occur. The rating pass below puts a number on that: a quarter of the
+responses the classifier read as argument checking were, to a human reader, tools
+that had run anyway.
+
+A second artifact affects the same check. Where a tool declares several required
+properties, the harness poisons one and fills the rest with placeholder values, so a
+server may reject a placeholder and never examine the argument under test. We find
+one such response in the \NAcceptInvalid{} we classified, which bounds the effect at
+well under a percentage point, and a re-run records which property was poisoned so
+the case can be excluded directly. The lifecycle, tool-listing, error-handling, malformed-input and
 stdout-purity checks are local protocol behaviors and are not exposed to this
 confound. A network-isolated replication would tighten the argument-checking result,
 and the harness already supports that condition. Sandbox heterogeneity across
@@ -61,6 +69,25 @@ check we recompute each rate on a subset holding one server per namespace
 conclusion changes under either treatment. The largest publisher is atypical in
 runnability at a \TopPublisherHandshake{} handshake yield, and its presence moves the
 census figure by \TopPublisherDepressionPP{} percentage points.
+
+\paragraph{Validating the response classifier}
+The split between silent execution and an in-band report rests on a keyword rule, and
+an unvalidated rule behind a headline number is exactly the weakness that recent work
+found in MCP security scanners~\cite{mcpzoo}. We therefore fixed a codebook, drew a
+stratified sample of \ValN{} responses, and had a human rater label each one with the
+classifier's answer hidden. Agreement was \ValAgree{} of \ValN{}, Cohen's
+\(\kappa = \ValKappa{}\). Precision is \ValPrecision{} and recall \ValRecall{}, so the
+rule seldom invents a silent execution and regularly misses one. Reweighting by
+stratum size puts the true count near \NSilentExecCorrected{}
+(\NSilentExecCorrectedLo{} to \NSilentExecCorrectedHi{}) against the
+\NSilentExec{} the rule finds, and we keep the smaller figure as the headline.
+
+Two limits on that exercise. One rater labeled the sample, so the agreement measures
+the rule against a single reader and not the reliability of two independent readers.
+An earlier pass by the same rater, used for training and released alongside the
+labels, is not part of this result: it was taken at speed and the tool revealed the
+classifier's answer after each item, so those items were no longer blind. The sample
+reported here is drawn from responses that rater had not seen.
 
 \paragraph{Severity of the malformed-frame finding, and a limitation it exposed}
 We initially characterized failure to recover from a malformed frame as a

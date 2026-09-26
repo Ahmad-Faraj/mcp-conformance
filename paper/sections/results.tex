@@ -80,13 +80,20 @@ response could not be classified from the transcript. The hazard class is
 raw verdict, and we report the smaller figure.
 
 Splitting the two takes a classifier, and ours is a keyword rule over an English
-error vocabulary that errs in both directions. A server reporting the problem in
-another language, or in a field name our list does not cover, is counted as silent.
-A returned document containing an error-like token is counted as reporting.
-% TODO(validation): once the blinded second-rater labels are in, report the
-% agreement statistic here and in Threats. Until then this paragraph must not
-% promise a validation the paper does not contain.
-Section~\ref{sec:threats} states what that leaves unresolved.
+error vocabulary. To measure what it gets wrong, a human rater labeled a stratified
+sample of \ValN{} responses against a codebook fixed before any item was read, with
+the classifier's answer hidden. The two agreed on \ValAgree{} of \ValN{}
+(Cohen's \(\kappa = \ValKappa{}\)).
+
+The errors are asymmetric. Of the responses the classifier calls silent execution,
+the rater agreed on \ValSilExecPct{} (\ValSilN{} items), giving a precision of
+\ValPrecision{}. Of those it files as reporting the problem in prose, the rater found
+\ValInbExecPct{} were tools that had run anyway (\ValInbN{} items), giving a recall of
+\ValRecall{}. Reweighting each stratum by its size in the census puts the true count
+near \NSilentExecCorrected{} rather than \NSilentExec{}, in a range of
+\NSilentExecCorrectedLo{} to \NSilentExecCorrectedHi{}. The keyword rule
+under-counts, and \NSilentExec{} is the conservative figure. We report it as the
+headline and treat the corrected range as the better estimate of the true rate.
 
 The
 specification's security requirements state that servers \textbf{MUST} validate all

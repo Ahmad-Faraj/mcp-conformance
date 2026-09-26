@@ -13,7 +13,9 @@ import os
 import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-SHEET = os.path.join(os.path.dirname(HERE), "private", "rating", "human.csv")
+RATING = os.path.join(os.path.dirname(HERE), "private", "rating")
+SHEET = os.path.join(RATING, "human.csv")
+CLASSIFIER = os.path.join(RATING, "llm_labels.csv")
 
 KEYS = {"e": "EXECUTED", "r": "REJECTED", "v": "ENV-ERROR", "u": "UNCLEAR"}
 
@@ -44,10 +46,29 @@ def save(path, rows, fields):
     os.replace(tmp, path)
 
 
+def load_classifier():
+    """The automated labels, revealed only after the rater has chosen.
+
+    Showing them first would anchor the rating and destroy the independence the
+    agreement statistic depends on.
+    """
+    if not os.path.exists(CLASSIFIER):
+        return {}
+    with open(CLASSIFIER, encoding="utf-8-sig", newline="") as f:
+        return {r["item_id"]: (r.get("label") or "").strip()
+                for r in csv.DictReader(f)}
+
+
 def main():
+    # The classifier's label is hidden unless --reveal is passed. Feedback while
+    # rating is for a training pass; the pass that produces the reported agreement
+    # has to stay blind.
+    reveal = "--reveal" in sys.argv
     if not os.path.exists(SHEET):
         sys.exit(f"sheet not found: {SHEET}")
     rows, fields = load(SHEET)
+    auto = load_classifier() if reveal else {}
+    agreed = disagreed = 0
     total = len(rows)
     i = 0
     while i < total:
@@ -81,6 +102,18 @@ def main():
         if choice == "u":
             row["note"] = input("  one line on why it is unclear> ").strip()
         save(SHEET, rows, fields)
+
+        mine = auto.get(row["item_id"])
+        if mine:
+            if mine == row["label"]:
+                agreed += 1
+                print(f"  you: {row['label']}   classifier: {mine}   [agree]")
+            else:
+                disagreed += 1
+                print(f"  you: {row['label']}   classifier: {mine}   [DISAGREE]")
+            seen = agreed + disagreed
+            print(f"  running agreement: {agreed}/{seen} "
+                  f"({100*agreed/seen:.0f}%)")
         i += 1
 
     done = sum(1 for r in rows if (r.get("label") or "").strip())
