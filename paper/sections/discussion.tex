@@ -1,79 +1,65 @@
 \paragraph{The specification and the SDKs}
-SEP-2145 is close to settled before anyone votes on it. SEP-1303 already
-reclassified input validation failures as tool execution errors, arguing that a model
-can only correct an error it sees~\cite{sep1303}, and SEP-2145 proposes the same for
-unknown tools~\cite{sep2145}. Adopting it would not change how servers behave. It
-would change the document to describe what \ErrAsResultRate{} of responding servers
-already do. Rejecting it would make \ErrAsResultCount{} servers wrong
-overnight, and nobody is going to fix them. Nor is there a coherent minority to
-protect: of the servers that do not answer with \texttt{isError},
-\UnknownProtoErrCount{} emit the protocol error the specification illustrates,
-\UnknownWrongCodeCount{} emit a different code, and \UnknownProseCount{} report the
-failure only in prose.
+For whoever decides SEP-2145, accepting it would mostly document practice that
+already exists. SEP-1303 reclassified input validation failures as tool execution
+errors, arguing that a model can only correct an error it sees~\cite{sep1303}, and
+SEP-2145 proposes the same for unknown tools~\cite{sep2145}. \ErrAsResultRate{} of
+responding servers already return \texttt{isError} for an unknown tool. Rejecting the
+proposal would leave nine in ten responding servers non-conformant by example, and we
+do not expect \ErrAsResultCount{} servers to be changed by hand. The remaining
+servers do not form one alternative either: \UnknownProtoErrCount{} emit a protocol
+error, \UnknownWrongCodeCount{} emit a different code, and \UnknownProseCount{} report
+the failure only in the text of a successful result.
 
-The second point matters more than the first. This behavior was not chosen. Server
-authors did not weigh the two mechanisms and pick one; they inherited a default that
-is the same across the official TypeScript and Python SDKs and the third-party
-wrappers built on them. So \ErrAsResultRate{} is not a vote, and it should not be
-read as community consensus about the right design. It is a count of who used an SDK.
-The same fact cuts the other way, and more usefully: one change at the library layer
-moves thousands of servers at once, in whichever direction the specification chooses.
-The limit of that lever is visible here too. The unknown-tool fix recorded on the
-TypeScript SDK's tracker in March 2026 shipped four months before our census, and the
-rate did not move.
+The behavior tracks the SDK rather than the author. The official TypeScript and
+Python SDKs and the third-party wrappers built on them all default to
+\texttt{isError}. So \ErrAsResultRate{} should not be read as consensus among server
+authors. It measures SDK adoption. The practical consequence is that the lever is a
+small number of libraries, and a change there reaches thousands of servers at once.
+The limit of that lever is visible here too: the unknown-tool fix recorded on the
+TypeScript SDK's tracker in March 2026 did not move the rate, and the error still
+arrives inside a successful response.
 
 \paragraph{Silent execution is a different kind of finding}
-The unknown-tool divergence is a disagreement about which channel carries an error.
-Either way the client is told that something failed. Silent execution tells the
-client nothing failed. The specification obliges every server to validate the inputs
-it is given, no pending proposal would relax that obligation, and so there is no
-argument that the specification will catch up.
+The unknown-tool case is a disagreement about the error channel, and the client is
+still told the call failed. Here the client is told nothing. Input validation is an
+explicit \textsc{must} in the specification with no pending proposal to relax it, so
+this cannot be framed as the specification lagging practice. \SilentExecTS{} of the
+\NSilentExec{} are built on the official TypeScript SDK, whose low-level
+\texttt{Server} API publishes a tool's \texttt{inputSchema} and does not enforce it
+(Section~\ref{sec:consequences}). That looks like a library gap rather than
+\NSilentExec{} separate author mistakes.
 
-A client that receives one of these answers cannot tell it from a correct one. There
-is no error code, no \texttt{isError}, nothing to branch on. A tool that scans code
-for package imports, handed the integer \texttt{12345}, replied \texttt{CLEAN}, which
-is what a real clean scan looks like. The agent cannot retry, cannot repair the
-argument, and cannot warn the user. It carries the wrong result forward. And
-\NSilentExec{} is a lower bound, because we credited any error-like wording in a reply
-as a report. This is also not \NSilentExec{} careless authors. \SilentExecTS{} of them
-are built on the official TypeScript SDK, whose low-level \texttt{Server} API
-publishes a tool's \texttt{inputSchema} and then never checks an incoming call against
-it (Section~\ref{sec:consequences}). The default does the publishing and leaves out
-the checking.
+The client can no longer tell the result apart from a correct one. There is no error
+code, no \texttt{isError} flag, nothing to branch on. \texttt{CLEAN}, returned for a
+scan of the integer \texttt{12345}, is indistinguishable from a real clean scan, so
+there is no retry, no argument repair, and no warning to the user. \NSilentExec{} is a
+lower bound: we counted any error-like token in a reply as a report.
 
 \paragraph{Startup failure and what a registry could do about it}
-Two in five installable servers never serve the protocol, and nothing in a registry
-listing says so. A registry could try a handshake once before listing an entry and
-show the outcome. It need not delist anything; it need only tell people. The check is
-cheap, and we ran it across the whole ecosystem.
-
-Two further gaps in the registry record are ours to report because we hit them. The
-registry does not record an entry point, which left \NEntrypointBlocked{} PyPI servers
-impossible to launch from registry data alone, and cost our own measurement about two
-percentage points of apparent PyPI yield until we corrected for it
-(\PypiRateRaw{} uncorrected against \PypiRateCorr{} after). And required configuration is not recorded either: \NNeedsConfig{}
-servers failed for no reason other than a setting that nothing told us to supply.
-Neither is a defect in the server. Both are things a client cannot learn without
-running the software.
+Being published does not mean it runs, and the registry carries no signal for it.
+Pimentel et al. report the same for notebooks~\cite{notebookreproducibility}, as do
+Ibrahim et al. for images that share a name on Docker Hub~\cite{dockerhubimages}. The
+registry should attempt a handshake at publish time and show the outcome: flag it,
+not delist it. It should also record the entry point and the required configuration.
+\NEntrypointBlocked{} PyPI servers could not be launched from registry data alone,
+and \NNeedsConfig{} failed for no reason other than undeclared configuration. We ran
+this check across \Nprobed{} servers, so it is feasible at registry scale.
 
 \paragraph{What running the servers shows that reading them cannot}
-None of the above is visible to a study that reads code or metadata. The static
-ecosystem studies~\cite{mcpfirstglance,mcplandscape} cannot see a server that does not
-start, and they cannot see one that answers a poisoned call as though it were
-ordinary. The artifact's presence in a registry says almost nothing about the
-artifact. The same lesson is reported for Jupyter notebooks, where publishing one and
-running it turned out to be different
-questions~\cite{notebookreproducibility}, and for Docker Hub images that share a
-name~\cite{dockerhubimages}. It is also a caution about registries as a research
-source~\cite{huggingfacehub}: our own entry-point problem was exactly that, a
-launcher reading registry fields and getting them wrong.
+Studies that analyze MCP servers from source or
+metadata~\cite{mcpfirstglance,mcplandscape} cannot observe any of these failures.
+Observing them needs execution. In line with Ait et al. on Hugging Face
+Hub~\cite{huggingfacehub}, the registry as a data source is also less reliable than it
+looks: our own launcher undercounted PyPI by about two percentage points until we
+corrected the entry-point problem (\PypiRateRaw{} uncorrected against \PypiRateCorr{}
+after).
 
-One contrast in our data sharpens the point. Runnability differs sharply between the
-two package registries, \NpmRate{} against \PypiRateCorr{}, while conformance among
-the servers that do run does not. Packaging problems are per-ecosystem and
-per-package. Protocol behavior is per-SDK. Fixing conformance means changing a few
-libraries. Fixing runnability means changing thousands of packages. Those are very
-different amounts of work, and only the first has a lever short enough to pull.
+The two package registries separate the two questions. Runnability differs by
+\GapCorr{} percentage points, \NpmRate{} against \PypiRateCorr{}, while conformance
+among the servers that do run does not. Packaging is per-ecosystem. Protocol behavior
+is per-SDK. Improving conformance means fixing a few libraries and improving
+runnability means fixing thousands of packages, which are very different amounts of
+work.
 
 \paragraph{A moving specification}
 The lifecycle we measure is being retired. Revision 2026-07-28 drops the
@@ -89,19 +75,18 @@ removes the handshake reaches those servers only when their authors upgrade, whi
 version spread here suggests is slow.
 
 \paragraph{Recommendations}
-For the specification: accept SEP-2145, state it with an RFC-2119 keyword rather than
-an example, and add the unknown-tool case to the conformance suite so that it is
-tested rather than described.
+The specification should accept SEP-2145, state it with an RFC-2119 keyword instead
+of an example, and add the unknown-tool case to the conformance suite so that it is
+tested.
 
-For SDK authors: validate \texttt{tools/call} arguments against the declared
-\texttt{inputSchema} before dispatch, in the low-level \texttt{Server} API as well as
-the high-level one, and check the tool name against the declared list. Most authors
-never touch a default, so the default is the behavior.
+SDK authors should validate \texttt{tools/call} arguments against the declared
+\texttt{inputSchema} by default, in the low-level \texttt{Server} API as well, and
+check the tool name against \texttt{tools/list}. Most authors never change the
+default, so the default is the behavior.
 
-For agent framework authors: do not treat the absence of \texttt{isError} as evidence
-that a call succeeded. Validate arguments against the declared schema on the client
-side, because \SilentExecRate{} of responding servers do not, and treat a server as
-unproven until it completes a handshake.
+Agent framework authors should not treat a result without \texttt{isError} as
+correct. They should validate arguments client-side against the schema before the
+call, and treat a server as untrusted until it completes a handshake.
 
-For registry maintainers: run a handshake at publish time and show the result, and
-record the entry point and the required configuration in the listing.
+Registry maintainers should run a handshake at publish time, show the result, and
+store the entry point and the required configuration in the listing.
