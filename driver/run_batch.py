@@ -29,6 +29,8 @@ DATA = Path(__file__).resolve().parent.parent / "data"
 FRAME = DATA / "frame_latest.jsonl"
 OUT = DATA / "probe_results.jsonl"
 
+CENSUS_LABEL = "mcpcensus=1"  # stamped on every container we start, so the
+                              # reaper below can find ours and only ours
 NODE_IMAGE = "node:22-slim"
 UV_IMAGE = "ghcr.io/astral-sh/uv:python3.12-bookworm-slim"
 
@@ -160,7 +162,7 @@ HARDENING = [
 
 def prime_cmd(pkg: dict) -> list[str]:
     """Online, hardened install-only pass that populates the shared cache volume."""
-    base = ["docker", "run", "--rm"] + HARDENING
+    base = ["docker", "run", "--rm", "--label", CENSUS_LABEL] + HARDENING
     if pkg["registryType"] == "npm":
         return base + ["-v", "mcpprobe-npm:/root/.npm", NODE_IMAGE,
                        "npm", "exec", "-y", f"--package={_pkg_spec(pkg)}", "--", "true"]
@@ -169,7 +171,8 @@ def prime_cmd(pkg: dict) -> list[str]:
 
 
 def docker_cmd(pkg: dict, offline: bool = False, entrypoint: str | None = None) -> list[str]:
-    base = ["docker", "run", "--rm", "-i", "--init"] + HARDENING
+    base = (["docker", "run", "--rm", "-i", "--init", "--label", CENSUS_LABEL]
+            + HARDENING)
     if offline:
         base += ["--network", "none"]
     # The persistent package cache is only needed for the two-phase offline probe
@@ -232,6 +235,44 @@ def harness_commit() -> str:
     return "sha256:" + digest.hexdigest()[:16]
 
 
+
+def reap_orphans(max_age_s: float, stop: threading.Event, period_s: float = 60.0):
+    """Kill containers that outlived their probe.
+
+    When a step times out, subprocess kills the local `docker run` client, but the
+    container goes on running on the daemon. Each one holds its full memory
+    reservation, so across a full-ecosystem census they accumulate until the host
+    runs out of memory and the kernel starts killing probes that would otherwise
+    have succeeded -- which the analysis then reads as servers that failed to
+    start. The first census was measured with this leak in place.
+
+    The longest a container can legitimately live is the install budget plus the
+    probe timeout, so anything older than `max_age_s` is an orphan whose verdict
+    has already been written.
+    """
+    while not stop.wait(period_s):
+        try:
+            out = subprocess.run(
+                ["docker", "ps", "-q", "--filter", f"label={CENSUS_LABEL}"],
+                capture_output=True, text=True, timeout=30).stdout.split()
+        except Exception:  # noqa: BLE001 - the reaper must never end the census
+            continue
+        now = dt.datetime.now(dt.timezone.utc)
+        for cid in out:
+            try:
+                started = subprocess.run(
+                    ["docker", "inspect", "-f", "{{.State.StartedAt}}", cid],
+                    capture_output=True, text=True, timeout=30).stdout.strip()
+                age = (now - dt.datetime.fromisoformat(started)).total_seconds()
+                if age > max_age_s:
+                    subprocess.run(["docker", "kill", cid], capture_output=True,
+                                   timeout=30)
+                    print(f"  reaped orphaned container {cid[:12]} "
+                          f"({age / 60:.0f} min old)", flush=True)
+            except Exception:  # noqa: BLE001
+                continue
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--n", type=int, default=20)
@@ -247,6 +288,13 @@ def main():
     ap.add_argument("--skip-done", action="store_true",
                     help="skip servers already present in probe_results.jsonl (resume)")
     args = ap.parse_args()
+
+    # Twice the longest legitimate container life (install budget plus probe),
+    # so a slow-but-live container is never taken for an orphan.
+    stop_reaper = threading.Event()
+    threading.Thread(target=reap_orphans,
+                     args=(2 * (args.timeout + 120) + args.timeout, stop_reaper),
+                     daemon=True).start()
 
     done_names: set[str] = set()
     if args.skip_done and OUT.exists():

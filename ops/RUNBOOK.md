@@ -71,6 +71,13 @@ Expect about 1,300 servers per hour. Watch for:
 - free disk above 20 GB (`df -h .`). If it falls, `docker system prune -af`.
 - the row count rising steadily. A stall beyond ten minutes means a container is
   ignoring its timeout.
+- orphaned containers. `docker ps -q --filter label=mcpcensus=1 | wc -l` should stay
+  at roughly the worker count. `run_batch.py` reaps anything older than twice the
+  install budget, so a number far above the worker count means the reaper is not
+  running -- check that you are on a build that has it, and until then run
+  `ops/reap.sh` in its own tmux window. Left alone, orphans exhaust host memory and
+  the kernel starts killing live probes, which the analysis reads as servers that
+  failed to start.
 - memory pressure. Eight containers at 768 MB is about 6 GB; drop to 6 workers if the
   host swaps.
 
