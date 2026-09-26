@@ -12,6 +12,7 @@ Usage:
 
 import argparse
 import json
+import datetime as dt
 import random
 import re
 import subprocess
@@ -21,6 +22,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+import mcpprobe  # noqa: E402
 from mcpprobe import probe  # noqa: E402
 
 DATA = Path(__file__).resolve().parent.parent / "data"
@@ -186,6 +188,24 @@ def docker_cmd(pkg: dict, offline: bool = False, entrypoint: str | None = None) 
     return base + vol + [UV_IMAGE] + run
 
 
+def image_digests() -> dict:
+    """Resolve each base image tag to its content digest.
+
+    Tags move. Recording the digest is what lets a later run say whether it used
+    the same image, and the first census recorded neither.
+    """
+    out = {}
+    for image in (NODE_IMAGE, UV_IMAGE):
+        try:
+            r = subprocess.run(["docker", "image", "inspect", image, "--format",
+                                "{{index .RepoDigests 0}}"],
+                               capture_output=True, text=True, timeout=30)
+            out[image] = r.stdout.strip() or None
+        except Exception:  # noqa: BLE001
+            out[image] = None
+    return out
+
+
 def harness_commit() -> str:
     """Git commit of the harness, stamped into every result for provenance."""
     try:
@@ -215,6 +235,8 @@ def harness_commit() -> str:
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--n", type=int, default=20)
+    ap.add_argument("--all", action="store_true",
+                    help="probe every eligible server, ignoring --n and --offset")
     ap.add_argument("--offset", type=int, default=0,
                     help="skip first N shuffled candidates (avoids resampling prior batches)")
     ap.add_argument("--seed", type=int, default=42)
@@ -247,7 +269,8 @@ def main():
     if done_names:
         candidates = [c for c in candidates if c["name"] not in done_names]
         print(f"resume: {len(done_names)} already probed, {len(candidates)} remaining")
-    sample = candidates[args.offset : args.offset + args.n]
+    sample = candidates if args.all else candidates[args.offset : args.offset + args.n]
+    print(f"probing {len(sample)} servers")
 
     lock = threading.Lock()
     done = 0
@@ -304,12 +327,22 @@ def main():
         return {"_docker_dead": True, **_tag(c, None)}
 
     commit = harness_commit()
+    digests = image_digests()
+    run_started = dt.datetime.now(dt.timezone.utc).isoformat()
 
     def _tag(c, primed):
+        """Provenance carried by every row, so a result can be traced to the code,
+        the images and the settings that produced it."""
         return {"server_name": c["name"], "server_version": c["version"],
                 "registry_type": c["pkg"]["registryType"],
                 "identifier": c["pkg"]["identifier"], "primed": primed,
-                "harness_commit": commit}
+                "harness_commit": commit,
+                "probe_condition": "offline" if args.offline_probe else "single-phase",
+                "request_timeout_s": args.timeout,
+                "max_frame_chars": mcpprobe.MAX_FRAME_CHARS,
+                "image_digests": digests,
+                "run_started_at": run_started,
+                "probed_at": dt.datetime.now(dt.timezone.utc).isoformat()}
 
     OUT.parent.mkdir(exist_ok=True)
     tdir = DATA / "transcripts"
