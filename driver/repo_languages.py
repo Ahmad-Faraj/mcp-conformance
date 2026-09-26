@@ -48,14 +48,14 @@ def main():
     ap.add_argument("--frame", default=str(DATA / "frame_latest.jsonl"))
     ap.add_argument("--check", default="malformed-json")
     ap.add_argument("--verdict", default="fail")
+    ap.add_argument("--sdk-family", default=None,
+                    help="select by attributed SDK family instead of by check verdict, "
+                         "e.g. none-handrolled to size the residual")
     ap.add_argument("--out", default=str(DATA / "repo_languages.csv"))
     args = ap.parse_args()
 
     with open(args.inp, encoding="utf-8") as f:
         rows = [json.loads(line) for line in f]
-    hit = sorted({r["server_name"] for r in rows
-                  if any(c["id"] == args.check and c["verdict"] == args.verdict
-                         for c in r.get("checks") or [])})
 
     repos = {}
     with open(args.frame, encoding="utf-8") as f:
@@ -70,6 +70,15 @@ def main():
             for r in csv.DictReader(f):
                 sdk[r["server"]] = r.get("sdk_family", "")
 
+    if args.sdk_family:
+        hit = sorted(n for n, fam in sdk.items() if fam == args.sdk_family)
+        selector = f"sdk_family={args.sdk_family}"
+    else:
+        hit = sorted({r["server_name"] for r in rows
+                      if any(c["id"] == args.check and c["verdict"] == args.verdict
+                             for c in r.get("checks") or [])})
+        selector = f"{args.check}={args.verdict}"
+
     out = []
     for name in hit:
         url = repos.get(name, "")
@@ -81,7 +90,7 @@ def main():
             d = api(f"repos/{slug}")
             if d:
                 lang = d.get("language") or ""
-        out.append({"server": name, "check": args.check,
+        out.append({"server": name, "check": selector,
                     "sdk_family": sdk.get(name, ""), "repository": url,
                     "language": lang,
                     "attributable": str(lang in ATTRIBUTABLE).lower()})
@@ -95,7 +104,7 @@ def main():
     opaque = [r for r in out if r["attributable"] == "false" and r["language"]]
     go = [r for r in out if r["language"] == "Go"]
     print(f"\nwrote {args.out}")
-    print(f"  {args.check}={args.verdict}: {len(out)} servers")
+    print(f"  {selector}: {len(out)} servers")
     print(f"  written in a language our attribution cannot resolve: {len(opaque)}")
     print(f"  of those, Go: {len(go)}")
 

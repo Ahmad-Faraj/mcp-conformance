@@ -276,6 +276,32 @@ def main():
                        if r["attributable"] == "false" and r["language"])
         n_go = sum(1 for r in _langs if r["language"] == "Go")
 
+    # The Go servers hiding inside the no-known-SDK residual are a natural experiment
+    # on the paper's central claim: a third SDK, never sampled as a family, whose
+    # defaults differ from the TypeScript and Python ones on two separate checks.
+    # Identified by repository language rather than by dependency graph, because a Go
+    # binary shipped through npm declares no MCP dependency at all.
+    go_n = go_resp = go_malformed = go_unknown_proto = 0
+    _res_p = _beside(args.inp, "residual_languages.csv")
+    if _res_p.exists():
+        with _res_p.open(encoding="utf-8") as _f:
+            _go = [r["server"] for r in _csv.DictReader(_f) if r["language"] == "Go"]
+        go_n = len(_go)
+        _by_name = {r.get("server_name"): r for r in attempted}
+
+        def _verdict(_name, _check):
+            for _c in (_by_name.get(_name, {}).get("checks") or []):
+                if _c["id"] == _check:
+                    return _c["verdict"]
+            return None
+
+        _responding = [n for n in _go if (_by_name.get(n) or {}).get("handshake_ok")]
+        go_resp = len(_responding)
+        go_malformed = sum(1 for n in _responding
+                           if _verdict(n, "malformed-json") == "fail")
+        go_unknown_proto = sum(1 for n in _responding
+                               if _verdict(n, "tools-call-unknown") == "pass")
+
     macros = {
         "Nframe": f"{frame_n:,}",
         "Nattempted": f"{n_attempted:,}",
@@ -293,6 +319,12 @@ def main():
         "NNeedsConfig": f"{n_needs_config:,}",
         "NMalformedOpaque": f"{n_opaque:,}",
         "NMalformedGo": f"{n_go:,}",
+        "NGoResidual": f"{go_n:,}",
+        "NGoResponding": f"{go_resp:,}",
+        "NGoMalformedFail": f"{go_malformed:,}",
+        "GoMalformedRate": (f"{100*go_malformed/go_resp:.0f}" + chr(92) + "%"
+                            if go_resp else "n/a"),
+        "NGoUnknownProto": f"{go_unknown_proto:,}",
         "NEntrypointSeen": f"{ep_seen:,}",
         "NEntrypointUnreprobed": f"{ep_missing:,}",
         # Publisher-cluster bootstrap intervals. These are the intervals the paper

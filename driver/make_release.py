@@ -290,6 +290,26 @@ def main():
                     row["package_version"] = ""
                 w.writerow(row)
 
+    # Repository language tables. These name a server and link it to a repository
+    # URL, so a withheld server has to be pseudonymised here exactly as everywhere
+    # else. The repository URL re-identifies on its own, so it goes too. The
+    # language is what the analysis needs and it is not identifying.
+    for fn in ("repo_languages.csv", "residual_languages.csv"):
+        src = DATA / fn
+        if not src.exists():
+            continue
+        with src.open(encoding="utf-8") as f, \
+             (out / fn).open("w", newline="", encoding="utf-8") as g:
+            rd = csv.DictReader(f)
+            w = csv.DictWriter(g, fieldnames=rd.fieldnames)
+            w.writeheader()
+            for row in rd:
+                alias = withheld.get(row["server"])
+                if alias:
+                    row["server"] = alias
+                    row["repository"] = ""
+                w.writerow(row)
+
     # The registry snapshot is third-party data: publishers sometimes paste a live
     # token into a header "value" field instead of a placeholder. It is already
     # public via the registry, but re-publishing it here would amplify it, so the

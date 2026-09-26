@@ -200,6 +200,30 @@ table: \SDKNoSDKRate{} of its \SDKNoSDK{} servers answer an unknown tool with an
 A few SDK defaults, whether used first-hand or through wrappers, account for this
 behavior across the ecosystem, and where they are absent so is the behavior.
 
+\paragraph{A third SDK, found inside the residual}
+A maintainer's report gave us a way to test that claim on a library we never sampled
+as a family. Their server failed our malformed-frame check and contains no framing
+code at all: it is built on the official Go SDK, whose stdio transport ends the
+session on a decode error (Section~\ref{sec:threats}). Our attribution had recorded it
+as having no known SDK, because a Go binary published through npm declares no MCP
+dependency. Reading each residual server's repository language finds
+\NGoResidual{} such Go servers, all of which complete a handshake.
+
+They behave as a family, and not as the rest of the population does. \NGoMalformedFail{}
+of the \NGoResponding{} fail the malformed-frame check, a rate of \GoMalformedRate{}
+against \MalformedDiesRate{} across all responders. On the unknown-tool check every
+one of the \NGoResponding{} returns the JSON-RPC protocol error, where
+\ErrAsResultRate{} of responders return \texttt{isError}. Under the population rate
+for that response, eleven consecutive protocol errors would arise by chance with
+probability below \(10^{-15}\).
+
+Two independent checks, opposite defaults, one library. This is the same claim the
+error-as-result result makes, tested on a library that reached our census only as a
+compiled binary, and it is the cleanest evidence we have that these verdicts record
+an SDK rather than an author. The set is small and was identified by repository
+language rather than by dependency graph, so we report it as a confirmation of the
+mechanism and not as a rate for the Go ecosystem.
+
 \begin{figure}[t]
   \centering
   \includegraphics[width=\linewidth]{figures/sdk.pdf}
