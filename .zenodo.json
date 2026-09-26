@@ -1,0 +1,28 @@
+{
+  "title": "MCP conformance census: harness, dataset and analysis pipeline",
+  "description": "<p>An execution-based conformance census of the Model Context Protocol server ecosystem. Every self-contained, locally installable stdio server in the official registry snapshot of 19 July 2026 was executed in an isolated container and driven through a conformance harness covering the initialization lifecycle, tool listing, declared-schema validity, and behaviour under an unknown tool name, a wrong-typed argument and a malformed JSON-RPC frame.</p><p>The release carries one record per probed server, the raw JSON-RPC transcripts, the registry snapshot that defines the sampling frame, the blinded validation labels with their codebook, and the analysis scripts that regenerate every number, table and figure in the accompanying paper. The identities of servers carrying a security-relevant finding are withheld pending disclosure and replaced with stable pseudonyms; no verdict or count is altered by that filter.</p>",
+  "upload_type": "dataset",
+  "access_right": "open",
+  "license": "cc-by-4.0",
+  "creators": [
+    {
+      "name": "Faraj, Ahmed Elsayed Abdo Ali",
+      "affiliation": "Faculty of Computers and Informatics, Suez Canal University, Ismailia, Egypt"
+    }
+  ],
+  "keywords": [
+    "Model Context Protocol",
+    "conformance testing",
+    "software ecosystems",
+    "mining software repositories",
+    "LLM agents",
+    "responsible disclosure"
+  ],
+  "related_identifiers": [
+    {
+      "identifier": "https://github.com/Ahmad-Faraj/mcp-conformance",
+      "relation": "isSupplementTo",
+      "scheme": "url"
+    }
+  ]
+}

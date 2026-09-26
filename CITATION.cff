@@ -12,7 +12,9 @@ abstract: >-
   analysis scripts.
 authors:
   - family-names: Faraj
-    given-names: Ahmed
+    given-names: "Ahmed Elsayed Abdo Ali"
+    affiliation: "Faculty of Computers and Informatics, Suez Canal University"
+    email: FCIugs25@ci.suez.edu.eg
 type: dataset
 license: CC-BY-4.0
 keywords:
