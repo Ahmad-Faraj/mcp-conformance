@@ -2,18 +2,18 @@ Earlier studies measured the MCP server ecosystem statically, or ran servers to 
 for vulnerabilities. We installed every eligible server in the official registry,
 launched each in a disposable sandbox, and tested whether it follows the protocol.
 
-\HandshakeRateCorr{} complete a handshake; the rest never serve the protocol, for the
+\HandshakeRateCorr{} complete a handshake. The rest never serve the protocol, for the
 reasons broken down in Figure~\ref{fig:failures}. Of the servers that respond,
 \ErrAsResultRate{} report an unknown tool in the same way, and the cause is the SDKs
-they are built on, used directly or through third-party wrappers. An open proposal
-would change the specification to match this behavior, and our numbers show how much
-of the ecosystem it already describes. A smaller group, \SilentExecRate{}, run a tool
-on input their own schema rejects and return an answer with no sign that anything is
-wrong. One, asked to scan an integer for package imports, reported it clean. The
-specification requires servers to validate their inputs, and these servers do not.
+they are built on as a direct dependency or through a third-party wrapper.
+An open proposal would change the specification to match this behavior, and our
+numbers show how much of the ecosystem it already describes. A smaller group,
+\SilentExecRate{}, run a tool on input their own schema rejects and return an answer
+with no sign that anything is wrong. One was asked to scan an integer for package
+imports and reported it clean, and the specification makes input validation a
+requirement these servers do not meet.
 
-A static scan or a registry crawl shows none of this. We release the harness and the
-dataset so that others can repeat the measurement, extend it to remote and
-credentialed servers, and check their own servers before publishing. Because the
-error-reporting and input-validation behavior comes from a few SDKs, it can be
-changed there.
+A static scan or a registry crawl shows none of this. The harness and the dataset are
+public, and others can repeat the measurement, extend it to remote and credentialed
+servers, or check their own servers before publishing. Because the error-reporting
+and input-validation behavior comes from a few SDKs, it can be changed there.

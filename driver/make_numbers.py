@@ -50,6 +50,8 @@ def main():
     harness_rows = [r for r in attempted if harness_error(r)]
     rows = [r for r in attempted if not harness_error(r)]
     n_attempted = len(attempted)
+    # Runs the host stopped: the memory cap or the disk guard sends SIGKILL (137).
+    killed = sum(1 for r in attempted if r.get("exit_code") == 137)
     n = len(rows)
     hs = sum(1 for r in rows if r.get("handshake_ok"))
     responders = [r for r in rows if r.get("handshake_ok")]
@@ -215,6 +217,10 @@ def main():
         "Nframe": f"{frame_n:,}",
         "Nattempted": f"{n_attempted:,}",
         "NHarnessError": f"{len(harness_rows):,}",
+        "NHarnessErrorPct": f"{100*len(harness_rows)/n_attempted:.1f}\\%",
+        "NKilled": f"{killed:,}",
+        "NKilledPct": f"{100*killed/n_attempted:.1f}\\%",
+        "NInterrupted": f"{killed + len(harness_rows):,}",
         "Nprobed": f"{n:,}",
         "NEntrypointSeen": f"{ep_seen:,}",
         "NEntrypointUnreprobed": f"{ep_missing:,}",

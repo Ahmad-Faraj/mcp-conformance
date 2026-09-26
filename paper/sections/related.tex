@@ -4,54 +4,57 @@ server negotiate a protocol version and capabilities during an \texttt{initializ
 handshake. The client can then list tools (\texttt{tools/list}) and invoke them
 (\texttt{tools/call}). Messages follow JSON-RPC 2.0, including its error-object
 semantics and its reserved error codes. Most deployments run the server locally over
-stdio, where stdout carries protocol traffic and nothing else. The specification is
-versioned by date, and servers may negotiate down to a version they support.
+stdio, and on that transport stdout carries protocol traffic and nothing else. The
+specification is versioned by date, and servers may negotiate down to a version they
+support.
 
 \subsection{Static studies of the MCP ecosystem}
-The ecosystem has been studied at scale, but rarely by running it.
-The two peer-reviewed studies of this ecosystem are both static. One analyzes source
+The ecosystem has been studied at scale but rarely by running it, and the two
+peer-reviewed studies of this ecosystem are both static. One analyzes source
 and metadata for roughly 1,900 GitHub-sourced servers with static scanners and
-code-smell detectors~\cite{mcpfirstglance}; the other surveys the protocol's
-landscape and security threats~\cite{mcplandscape}. Ours differs on both axes: the
+code-smell detectors~\cite{mcpfirstglance}. The other surveys the protocol's
+ecosystem and its security threats~\cite{mcplandscape}. Ours differs on both axes: the
 population comes from the official registry a client resolves against, and every
-server is executed. Elsewhere,
-registry measurement crawls several marketplaces and characterizes scale,
-maintenance and supply-chain concentration across some 8,000 servers from marketplace data, without running them~\cite{mcpcrawler}. A companion dataset effort catalogues 3,238 candidate MCP
+server is executed.
+
+Registry measurement elsewhere crawls several marketplaces and characterizes scale,
+maintenance and supply-chain concentration across some 8,000 servers, using
+marketplace data without running any of them~\cite{mcpcrawler}. A companion dataset
+effort catalogues 3,238 candidate MCP
 repositories on GitHub and classifies them by operational role, again from repository evidence~\cite{mcpgithubdataset}, and a parallel line studies
 the \emph{application} side, characterizing how 1,723 MCP applications configure and
 supervise the servers they consume~\cite{mcpapps}. Fault taxonomies take a third
 route and mine GitHub issues~\cite{runtimefaults,realfaults}. One finds tool faults
-and data-schema faults the two most frequent categories~\cite{runtimefaults}, the same two areas our harness tests directly. None of this
+and data-schema faults the two most frequent categories~\cite{runtimefaults}, the same two areas our harness tests. None of this
 work executes a server.
 
 \subsection{Execution-based work is security-focused}
-Some prior work does execute MCP servers, to find security problems. Sandboxed behavioral scanners hunt vulnerabilities in curated
-corpora~\cite{sandboxscan}, taint-style analyzers confirm exploitable flaws across
-tens of thousands of repositories~\cite{viper}, a security-invariants benchmark avoids live
-third-party execution altogether in favor of fixtures and a 40-repository metadata
-sample~\cite{securityinvariants}, and malicious-server detection, authentication
-studies, and dynamic assessment of internet-facing endpoints scope to security
-surfaces~\cite{maliciousmcp,remoteauth,exposedbydesign}.
+Some prior work does execute MCP servers, to find security problems. Sandboxed
+behavioral scanners hunt vulnerabilities in curated corpora~\cite{sandboxscan}, and
+taint-style analyzers confirm exploitable flaws across tens of thousands of
+repositories~\cite{viper}. A security-invariants benchmark avoids live third-party
+execution altogether in favor of fixtures and a 40-repository metadata
+sample~\cite{securityinvariants}. Malicious-server detection, authentication studies
+and dynamic assessment of internet-facing endpoints all keep to security
+questions~\cite{maliciousmcp,remoteauth,exposedbydesign}.
 
 MCPZoo assembles 64,611 unique servers, of
 which more than 37,288 support dynamic analysis, and uses them to show that existing
 security scanners are unreliable, with fewer than half of sampled alerts holding up
 under manual validation~\cite{mcpzoo}. That corpus differs from ours in two ways. First, MCPZoo is built by \emph{repairing}
 servers: a multi-agent framework infers environments and iteratively fixes deployment
-and runtime defects so that in-the-wild repositories become running services. That
+and runtime defects until in-the-wild repositories become running services. That
 construction is the right choice for studying what a server does once it runs, and it
-necessarily removes the signal we measure, which is how often a server runs at all
-when a client installs it as published. Second, its population is collected from
-multiple public markets, whereas ours is the official registry, the surface a client actually
-resolves against. That their corpus needed a repair framework fits our runnability finding.
+necessarily removes the signal we measure: how often a server runs when a
+client installs it as published. Second, its population is collected from
+multiple public markets, and ours is the official registry, the index a client
+installs from. That their corpus needed a repair framework fits our runnability finding.
 Conformance is a separate question: whether a server that is neither malicious nor vulnerable does what the
-specification says.
-
-Concurrently with our work, Afsar draws a seeded random sample of 400 npm stdio
-servers from the same registry and probes each without repair: 48.8\% complete a
-handshake, servers that never start (37.5\%) outnumber those missing credentials
-(13.3\%), and the 195 that run show no fatal schema violations across 2,766
-tools~\cite{randomdraw2026}. That study samples one package ecosystem and checks
+specification says. Concurrently with our work, Afsar draws a seeded random sample of
+400 npm stdio servers from the same registry and probes each without repair. There
+48.8\% complete a handshake, servers that never start (37.5\%) outnumber those missing
+credentials (13.3\%), and the 195 that run show no fatal schema violations across
+2,766 tools~\cite{randomdraw2026}. That study samples one package ecosystem and checks
 declared structure. We census both npm and PyPI and test behavior, calling tools
 with inputs the server should reject.
 
@@ -60,23 +63,23 @@ The categorization this paper measures is under active revision. SEP-1303, accep
 and reflected in the current specification, moved tool input validation errors out of
 protocol errors and into tool execution errors, reasoning that a language model can
 self-correct only from an error that reaches its context~\cite{sep1303}. SEP-2145,
-open at the time of writing, extends the same treatment to tool resolution failures,
-including unknown tools, and states its purpose as aligning the specification with
-existing Python and TypeScript SDK behavior~\cite{sep2145}. We take no position on which mechanism is correct. We measure what
-fraction of the deployed ecosystem the proposed alignment already describes.
-
-Concurrent with this work, a practitioner census posted to the same proposal probed
-roughly 10,500 \emph{remote} registry endpoints, harvested their tool lists, and
-reported that \(88.8\%\) of mutating tools declare no output schema at all, arguing
-that the proposal's output-validation clause is inert for most of the write
-surface~\cite{siliroid2026census}. That measurement and ours are close to disjoint.
-It probes hosted HTTP endpoints and reads declared metadata, whereas we install and
-execute local stdio servers and test behavior against inputs. It addresses the
-output-validation clause, and we address tool resolution and input enforcement.
+still open, extends the same treatment to tool resolution failures
+including unknown tools. Its stated purpose is alignment with what the Python and
+TypeScript SDKs already do~\cite{sep2145}. We take no position on which mechanism is
+correct. We measure what fraction of the deployed ecosystem the proposed alignment
+already describes. Concurrent with this work, a practitioner census posted to the same
+proposal probed roughly 10,500 \emph{remote} registry endpoints and harvested their
+tool lists. It reports that \(88.8\%\) of mutating tools declare no output schema, and
+argues that the proposal's output-validation clause is inert for most of the write
+path~\cite{siliroid2026census}. That measurement and ours are close to disjoint: it probes hosted HTTP endpoints and
+reads declared metadata while we install and execute local stdio servers and test
+behavior against inputs. It addresses the output-validation clause, and our checks
+cover tool resolution and input enforcement.
 
 \subsection{Conformance tooling and the gap we fill}
-The protocol maintainers ship a conformance suite for testing client and server
-implementations, built for SDK maintainers to run in continuous integration; to our
-knowledge it has not been used to measure the deployed ecosystem. As far as we know, ours is the first reproducible conformance measurement of this ecosystem
-that installs and executes the servers themselves and tests their behavior against
-adversarial inputs, released with an open harness and dataset.
+The protocol maintainers ship a conformance suite for client and server
+implementations, aimed at SDK authors running it in continuous integration. To our
+knowledge it has not been used to measure the deployed ecosystem. As far as we know,
+ours is the first reproducible conformance measurement of this ecosystem
+that installs and executes the published servers and tests their behavior against
+adversarial inputs with an open harness and dataset.

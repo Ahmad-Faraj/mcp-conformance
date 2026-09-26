@@ -1,32 +1,27 @@
 \paragraph{The specification and the SDKs}
-SEP-1303 moved input validation errors from protocol errors to tool execution errors,
-arguing that a model can only correct an error it sees~\cite{sep1303}. SEP-2145
-proposes the same change for unknown tools, so that the specification matches what
-the SDKs already do~\cite{sep2145}. Our census shows how far that behavior has
+SEP-1303 reclassified input validation failures as tool execution errors rather than
+protocol errors, arguing that a model can only correct an error it sees~\cite{sep1303}.
+SEP-2145 proposes the same change for unknown tools, which would bring the
+specification into line with the SDKs' current behavior~\cite{sep2145}. Our census shows how far that behavior has
 spread: \ErrAsResultRate{} of responding servers. If SEP-2145 is adopted, it will
 mostly describe what servers already do, and the servers that would have to change
-are the minority that follow the current text.
-
-\paragraph{Measuring at the SDK level}
-Once servers are attributed to their SDKs, what looked like thousands of separate
-decisions reduces to a few library defaults, some of them passed on again through
-third-party wrappers. Changing a few SDKs would change most of the
-population, so monitoring conformance should start with the SDKs.
-
-\paragraph{Input validation}
-The unknown-tool question is contested, and we do not score it. Input validation is
-different. The specification requires servers to validate all tool inputs, yet
-\NSilentExec{} servers run tools on arguments that their own schemas reject and return
-results with no sign of a problem. No pending proposal would relax this requirement,
-and a client cannot recover the missing information afterwards. Nothing in the
-registry, the package metadata, or a static scan shows which servers enforce their
-schemas; only running them does.
+are the minority that follow the current text. Once servers are attributed to their
+SDKs, what looked like thousands of separate decisions reduces to a few library
+defaults, some of them passed on again through third-party wrappers. Changing a few
+SDKs would change most of the population, and conformance monitoring should start
+there. The unknown-tool question is contested and we do not score it, but input
+validation is different. The specification obliges every server to validate the
+inputs it is given, yet \NSilentExec{} servers run tools on arguments that their own
+schemas reject and return results with no sign of a problem. No pending proposal
+would relax this requirement, and a client cannot recover the missing information
+afterwards. Nothing in the registry, the package metadata or a static scan shows
+which servers enforce their schemas, and only running them does.
 
 \paragraph{Startup failure}
-Two in five installable servers never serve the protocol, and a fifth of PyPI servers
-cannot be launched from registry metadata alone, because the metadata does not record
-an entry point. The registry does not say whether a server starts. A pre-publish
-check, which our harness can perform, would give clients that information.
+Two in five installable servers never serve the protocol, and registry metadata does
+not record an entry point, which leaves a fifth of PyPI servers beyond the reach of a
+client that reads only the registry. Neither fact is visible in a registry listing. A
+pre-publish check, which our harness can perform, would give clients that information.
 
 \paragraph{A moving specification}
 The lifecycle we measure is being retired. Revision 2026-07-28 drops the
@@ -35,8 +30,8 @@ optional \texttt{server/discover} call for clients that want to ask up
 front~\cite{mcpversioning}. Handshake-based behavior is now described as a backward
 compatibility concern. Our population sits well behind that boundary:
 \PctVerOffered{} of responders settled on 2025-06-18, and \NVerDowngraded{} answered
-with something older still. So this census records an installed base at the point its
-mechanism left the specification. The distance between the two is the finding. A
+with something older still. This census records an installed base at the point its
+mechanism left the specification, and measures the distance between the two. A
 server published today inherits whichever default its SDK shipped with, and the
 revision that removes the handshake reaches those servers only when their authors
 upgrade, which the version spread here suggests is slow.

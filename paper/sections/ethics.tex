@@ -1,59 +1,61 @@
-This study executes third-party code and probes servers for defects, so we adopt
+This study executes third-party code and probes servers for defects, and it follows
 the norms of responsible measurement research.
 
 \paragraph{Safe execution}
-Every server, during both installation and probing, runs inside an isolated
-container with all Linux capabilities dropped, no new privileges, bounded memory,
-CPU, and process counts, and no host filesystem access. The census was executed in the single-phase condition, in which install and
-probe share one ephemeral container and the network is available throughout; the
-install phase, which executes arbitrary \texttt{postinstall} and build scripts,
-therefore receives the same isolation as the probe. Server code also had network access while being measured. To limit the risk, every container is discarded after a
-single server, and the entire census ran on a disposable cloud instance with no
-credentials attached, so the blast radius of executing untrusted code is one
-throwaway host. The harness also supports a network-isolated probe phase
-(\texttt{-{}-network=none}), which we recommend for replications that do not need
-install and probe in a single pass. We execute no server that declares a requirement
-for credentials, both because it lies outside our frame and because doing so could
-send real requests to third-party systems.
+Every server runs inside an isolated container during both installation and probing,
+with all Linux capabilities dropped, no new privileges, bounded memory, CPU and
+process counts, and no host filesystem access. The census was executed in the
+single-phase condition, where install and probe share one ephemeral container and the
+network is available throughout. The install phase executes arbitrary
+\texttt{postinstall} and build scripts, and it receives the same isolation as the
+probe. Server code also had network access while being measured, and to limit the risk
+every container is discarded after a single server, while the entire census ran on a
+disposable cloud instance with no credentials attached. Untrusted code could reach no
+further than one throwaway host. The harness also supports a network-isolated probe
+phase (\texttt{-{}-network=none}), which we recommend for replications that do not
+need install and probe in a single pass. We execute no server that declares a
+requirement for credentials, both because it lies outside our frame and because doing
+so could send real requests to third-party systems.
 
 \paragraph{Observed side effects of networked measurement}
 Because the census ran with the network available, we audited the captured output
 for evidence that server code produced effects outside its container. At least \(1.3\%\) of servers attempted an
-outbound connection that failed and logged an error; a successful connection leaves
-no trace in the captured output, so this is a lower bound. Five servers emitted live
-credential material into their own logs (session tokens they had generated), and
-one auto-provisioned an API key and account against a third-party service, which is the class of effect our frame's exclusion of credential-requiring servers
-was meant to prevent. We have redacted every such value from the released dataset and
-asked the service to revoke the provisioned key and delete the account. We draw two
-conclusions. First, excluding servers that \emph{declare} required
-credentials does not exclude servers that \emph{acquire} them unprompted, so
-declaration-based eligibility filtering is a weaker ethical guarantee than it
-appears. Second, a network-isolated probe phase should be the default for
+outbound connection that failed and logged an error. A successful connection leaves
+no trace in the captured output, and this figure is a lower bound. Five servers
+emitted live credential material into their own logs (session tokens they had
+generated), and one auto-provisioned an API key and account against a third-party
+service. That last effect is the class our frame's exclusion of credential-requiring
+servers was meant to prevent, and we have redacted every such value from the released
+dataset and asked the service to revoke the provisioned key and delete the account.
+Excluding servers that \emph{declare} required
+credentials does not exclude servers that \emph{acquire} them unprompted, which makes
+declaration-based eligibility filtering a weaker ethical guarantee than it
+appears. A network-isolated probe phase should be the default for
 measurement at this scale, and we recommend replications use the harness's
 two-phase mode. We used the single-phase condition because it let one disposable host run the
-whole ecosystem, and the side effects above are what that cost.
+whole ecosystem, and the side effects above are what it cost.
 
 \paragraph{Responsible disclosure}
-Some of our findings concern robustness. A server that stops
-serving after a malformed frame, and a server that emits non-protocol bytes on its
-stdio channel, can each desynchronize or strand a connected client. We report these
-only in aggregate and through anonymized case studies. We do not publish a
+Some of our findings concern robustness. A server that stops serving after a
+malformed frame can desynchronize or strand a connected client, and so can a server
+that emits non-protocol bytes on its stdio channel. We report these
+only in aggregate and through anonymized case studies, and we do not publish a
 name-and-shame list of individual servers. Security-relevant findings are recorded
 in a private disclosure log with maintainer contacts resolved from registry
 repository metadata. We reported \(15\) of the \(17\) servers that stop serving after a
 malformed frame to their maintainers through their issue trackers. At the time of
-writing, five have merged a fix and four have shipped it in a release, and one
-maintainer corrected our severity assessment, which we adopted
+writing, five have merged a fix and four have shipped it in a release. One
+maintainer corrected our severity assessment, and the paper follows that correction
 (Section~\ref{sec:threats}). We also reported the input-validation gap in the
 TypeScript SDK's low-level \texttt{Server} API (Section~\ref{sec:consequences}) to
 the SDK maintainers, who have labeled it for design work on both the 1.x and 2.x
 lines. The remaining findings concern unknown-tool handling
-and stdout contamination and are of lower severity; we report them only in
-aggregate. The identities of all \(211\) servers with security-relevant findings are
-withheld from the released dataset.
+and stdout contamination, and they are of lower severity and appear only in
+aggregate. The released dataset identifies none of the \(211\) servers with security-relevant
+findings.
 
 \paragraph{Registry and maintainer impact}
-Our crawl pages sequentially through the registry's public API, backing off on
-errors, and our installs draw each package once per probe from its public registry
-in the ordinary way. The released harness lets any author check their own server's conformance before
-publishing.
+Our crawl pages sequentially through the registry's public API and backs off on
+errors. Our installs draw each package once per probe from its public registry
+in the ordinary way. The released harness lets any author check their own server's
+conformance before publishing.

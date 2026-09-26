@@ -2,85 +2,83 @@
 
 \paragraph{Construct validity}
 Our verdicts operationalize ``conformance,'' and a poorly chosen operationalization
-could over- or under-count. Three choices limit that risk. Our checks cover
-requirements that every revision in the census states in the same terms, which keeps
-any server from being judged against a rule that postdates the revision it
-negotiated. We also distinguish normative requirements from illustrative
-ones, and the most prevalent divergence we report (unknown-tool responses) is graded as
-a distinct \textsf{error-as-result} category, not as a failure, because the specification expresses it only in prose and an example, without an RFC-2119 keyword. Third, we calibrated the harness against the official reference
-servers before the study and confirmed it reproduces their known-good behavior on
-every check except the SDK-level divergence we set out to measure.
+could over- or under-count. Our checks cover requirements that every revision in the
+census states in the same terms, which keeps any server from being judged against a
+rule that postdates the revision it negotiated, and we also distinguish normative
+requirements from illustrative ones. The most prevalent divergence we report
+(unknown-tool responses) is graded in its own \textsf{error-as-result} category and
+never counted as a failure, because the specification expresses it only in prose and
+an example, without an RFC-2119 keyword. We calibrated the harness on the
+official reference servers before the study and confirmed it reproduces their
+known-good behavior on every check except the SDK-level divergence we set out to
+measure.
 
 \paragraph{Internal validity}
-The census was measured in the single-phase condition, with the network available
+The census ran in the single-phase condition, with the network available
 during both install and probe (Section~\ref{sec:method-env}). This avoids penalizing
 a server that legitimately contacts the network during initialization, but it does
 not remove server-side outbound calls as a confounder. The exposure is concentrated
-in one check. For \textsf{tools-call-invalid-args} we accept an \texttt{isError}
-result as evidence that the server rejected the ill-typed argument; an
+in one check: for \textsf{tools-call-invalid-args} we accept an \texttt{isError}
+result as evidence that the server rejected the ill-typed argument. An
 \texttt{isError} produced instead by an unrelated runtime or network failure is
 indistinguishable to the harness, and would be counted as argument checking that did
-not in fact occur. The reported rate of silent type non-enforcement is therefore a
+not in fact occur. That makes the reported rate of silent type non-enforcement a
 \emph{lower bound}. The lifecycle, tool-listing, error-handling, malformed-input and
 stdout-purity checks are local protocol behaviors and are not exposed to this
 confound. A network-isolated replication would tighten the argument-checking result,
-and the harness supports that condition directly. Sandbox heterogeneity across
-language runtimes is a further
-source of noise, which we bound by launching each package at the version its registry
-entry declares and recording every run's full launch command, including the
-base-image tag.
+and the harness already supports that condition. Sandbox heterogeneity across
+language runtimes is a further source of noise. We bound it by launching each package
+at the version its registry entry declares and by recording every run's full launch
+command, including the base-image tag.
 
 \paragraph{External validity}
 Our population is self-contained, locally-installable servers distributed on npm and
 PyPI using the stdio transport. This excludes remote-only servers (which we cannot
 execute without provisioning hosted infrastructure) and servers requiring
 credentials (which we exclude for both ethics and reproducibility). We report the
-size of each excluded class explicitly and confine all rates to the stated frame;
-we do not claim they generalize to remote or credentialed servers, whose conformance
-is important future work. Agent clients mostly launch local stdio servers, which is why we studied this
-population first.
+size of each excluded class and confine all rates to the stated frame.
+Whether remote and credentialed servers behave the same way is untested here. Agent
+clients mostly launch local stdio servers, and we studied this population first.
 
-\paragraph{Completeness}
+\paragraph{Population counts and publisher clustering}
 Because we census the eligible frame, the counts are population counts. The intervals
 we report do not describe sampling error. They describe how far a rate would move if
 the registry had drawn a different set of publishers, which is the uncertainty that
-matters when a single publisher ships hundreds of servers from one template.
-
-\paragraph{Publisher clustering}
-The \Nprobed{} servers in our frame come from only \Npublishers{} distinct registry
+matters when a single publisher ships hundreds of servers from one template. The
+\Nprobed{} servers in our frame come from only \Npublishers{} distinct registry
 namespaces, and the distribution is heavy-tailed: the largest single publisher
 accounts for \TopPublisherN{} servers (\TopPublisherPct{} of the census) and the ten
 largest for \TopTenPct{}. Servers from one publisher frequently share a template and
-behave near-identically, so a binomial interval that treats them as independent trials
-is too narrow. Every interval in this paper therefore comes from a bootstrap that
-resamples publishers instead of servers. The widening is substantial: the handshake
+behave near-identically; a binomial interval that treats them as independent trials
+is therefore too narrow. Every interval in this paper comes from a bootstrap
+over publishers rather than over servers. The widening is substantial: the handshake
 interval is \HandshakeDesignEffect{} times wider than the binomial one
 (\HandshakeRateCl{} against \HandshakeRate{}). Error-as-result becomes
 \ErrAsResultRateCl{} and silent type non-enforcement \NoTypecheckRateCl{}. As a second
 check we recompute each rate on a subset holding one server per namespace
 (\NuniqPub{} servers): handshake yield \HandshakeRatePub{}, error-as-result
-\ErrAsResultRatePub{}, silent type non-enforcement \NoTypecheckRatePub{}. No
+\ErrAsResultRatePub{}, silent type non-enforcement \NoTypecheckRatePub{}, and no
 conclusion changes under either treatment. The largest publisher is atypical in
-runnability, at a \TopPublisherHandshake{} handshake yield, and its presence moves the
+runnability at a \TopPublisherHandshake{} handshake yield, and its presence moves the
 census figure by \TopPublisherDepressionPP{} percentage points.
 
 \paragraph{Severity of the malformed-frame finding, and a limitation it exposed}
 We initially characterized failure to recover from a malformed frame as a
 denial-of-service primitive. A maintainer who reproduced the finding independently
-argued that this overstates it. The argument holds. Under the stdio transport the client
-launches the server and is the sole writer to its standard input, so a party capable of
-sending a malformed frame can already terminate the subprocess; the specification also
-places the obligation not to send invalid messages on the client. The correct reading
-is a robustness and conformance failure, and this paper reports it that way. The same maintainer traced the
-behavior in their server to the official Go SDK's stdio transport, so this check,
-like the unknown-tool divergence, can measure an SDK default that the server only inherits.
-
+argued that this overstates it, and the argument holds. Under the stdio transport
+only the launching client writes to that standard input, and anyone able to
+send it a malformed frame can already kill the subprocess. The specification also
+places the obligation not to send invalid messages on the client. This paper
+classifies the behavior as a robustness and conformance failure. The same maintainer
+traced it in their own server to the official Go SDK's stdio transport. Like the
+unknown-tool divergence, this check can measure an SDK default that the server only
+inherits.
 Another maintainer's fix exposed a limitation in our instrument. In their server the
-process stayed alive while its parser absorbed the frames that followed, so the next
+process stayed alive while its parser absorbed the frames that followed, and the next
 \texttt{ping} timed out. Our harness records a single verdict for
 ``did not answer after a malformed frame'' and does not distinguish a terminated
 process from a desynchronized one. Both are conformance failures, but they are
-different failures with different fixes, and \MalformedDiesRate{} therefore aggregates
+different failures with different fixes, and \MalformedDiesRate{} aggregates
 the two. Separating them requires per-server process-state tracking that the released
 transcripts support but the current verdict does not encode.
 
@@ -94,11 +92,13 @@ or its missing verdicts.
 
 \paragraph{Reproducibility}
 Every number in this paper is regenerated by the released analysis scripts from the
-released census rows, and we have checked that doing so reproduces them exactly. The
-registry snapshot, launch commands, and package versions are recorded. Census rows do
-not record the harness commit; the code that produced them is tagged
-\texttt{census-v1}, and the probe logic there is unchanged from the version that was
-calibrated. The registry changes daily, and the object of study is the snapshot of
+released census rows, and we have checked that the regenerated values match the ones
+printed here. The registry snapshot, launch commands, and package versions are
+recorded. Census rows do not record the harness commit, but the code that produced
+them is tagged \texttt{census-v1}, and the probe logic there is unchanged from the
+version that was calibrated.
+
+The registry changes daily, and the object of study is the snapshot of
 19 July 2026.
 A longitudinal study of the same registry shows how fast it moves, growing from 3,510
 to 18,966 servers over 88.6 days~\cite{registrydrift}.

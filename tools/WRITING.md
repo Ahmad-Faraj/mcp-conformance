@@ -22,7 +22,10 @@ Checker: `tools/prose_audit.py` (set `REPO` and the section list at the top). Hu
 - Mixed spelling. IEEE venues use US spelling (behavior, organize, judgment).
 
 ## 2. Budgets per 1,000 words [S]
-Baseline values in brackets are the pooled human papers.
+These are caps, and the human baseline is a floor as much as a target. Driving a
+category to exactly zero is its own signal: human papers in the baseline use about
+0.5 semicolons and 1.4 causal connectors per 1,000 words. Aim inside the human range,
+not below it.
 
 | Pattern | Cap | Human baseline |
 |---|---|---|

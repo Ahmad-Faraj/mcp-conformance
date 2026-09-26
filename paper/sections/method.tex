@@ -15,7 +15,7 @@ reproducible.
 \subsection{Sampling frame}
 We crawl the official MCP registry (\texttt{registry.modelcontextprotocol.io})
 via its cursor-paginated API, retaining the latest published version of each
-server. This yields \Nframe{} unique servers. Each server declares zero or more
+server, which yields \Nframe{} unique servers. Each server declares zero or more
 \emph{packages} (installable artifacts on npm, PyPI, OCI, NuGet, or Cargo) and/or
 \emph{remotes} (hosted HTTP endpoints). Our study population is the set of servers
 that are (i) locally installable, (ii) use the \texttt{stdio} transport, (iii)
@@ -24,13 +24,14 @@ distributed on npm or PyPI (the two dominant registries), and (iv)
 that lacks a default. Criterion (iv) restricts us to servers that a client could
 launch without provisioning secrets, which limits what mass execution can do to
 third-party systems and keeps the population reproducible. We report the exclusion of
-remote-only and credential-requiring servers explicitly (Section~\ref{sec:threats})
+remote-only and credential-requiring servers (Section~\ref{sec:threats})
 and treat the resulting frame as the denominator for all rates. We probe the
-\emph{entire} frame (all \Nprobed{} eligible servers), so the measurement is a census of the eligible population.
+\emph{entire} frame (all \Nprobed{} eligible servers), which makes the measurement a
+census of the eligible population.
 
 \subsection{Conformance harness}
 The harness, \texttt{mcpprobe}, is a minimal, hand-written JSON-RPC
-client speaking line-delimited messages over the server's stdio. We do \emph{not}
+client speaking line-delimited messages over the server's stdio. We do not
 use an official SDK client. To observe raw behavior, including responses to
 malformed frames, the probe must not inherit any SDK-side correction or
 validation. The harness offers protocol version \texttt{2025-06-18} at
@@ -41,8 +42,8 @@ supports the offered version must answer with it, and \NVerOffered{} of
 \NVerDowngraded{} settled on an older one, the oldest dating to 2024-11-05, and
 \NVerAhead{} answered with a revision newer than the one offered, which the
 lifecycle does not permit. Our checks encode requirements that every one of these
-revisions states in the same terms, so no verdict depends on the negotiated version;
-a requirement that moved between revisions would need a version-dependent rule, and
+revisions states in the same terms, so no verdict depends on the negotiated version.
+A requirement that moved between revisions would need a version-dependent rule, and
 we add none.
 
 Each server is driven through the following checks, whose identifiers align with
@@ -51,8 +52,8 @@ where an analogue exists:
 
 \begin{itemize}
   \item \textbf{server-initialize}: the \texttt{initialize} request must return a
-    result carrying a protocol version and a capabilities object; the harness then
-    sends \texttt{notifications/initialized}.
+    result carrying a protocol version and a capabilities object, after which the
+    harness sends \texttt{notifications/initialized}.
   \item \textbf{ping}: a \texttt{ping} must return an empty-object result.
   \item \textbf{tools-list}: if the server advertises the tools capability,
     \texttt{tools/list} must return an array in which every entry has a
@@ -64,20 +65,19 @@ where an analogue exists:
     \emph{Protocol Errors} (standard JSON-RPC errors) and illustrates this with a
     \texttt{-32602} example, as opposed to \emph{Tool Execution Errors} reported as
     a result with \texttt{isError: true}. This categorization is prose plus an
-    example; it uses no RFC-2119 \textsf{MUST}/\textsf{SHOULD} keyword. A
-    diverging response is therefore never scored as a ``violation''. We
-    record which of the two mechanisms the server uses (see
-    \textsf{error-as-result} below).
+    example, and it uses no RFC-2119 \textsf{MUST}/\textsf{SHOULD} keyword. A
+    diverging response is never scored as a ``violation''. Each server's choice
+    between the two mechanisms is recorded (see \textsf{error-as-result} below).
   \item \textbf{tools-call-invalid-args}: for a tool with a typed required
     property, calling it with a wrong-typed value should be rejected. The spec is
-    itself ambiguous here, since it lists ``Invalid arguments'' under Protocol Errors
-    but ``Invalid input data'' under Tool Execution Errors, so we count \emph{either} a
+    ambiguous here, since it lists ``Invalid arguments'' under Protocol Errors
+    but ``Invalid input data'' under Tool Execution Errors. We count \emph{either} a
     protocol error \emph{or} an \texttt{isError} result as acceptable, and flag only
     a plain success response (the tool ran on ill-typed input) as a defect.
   \item \textbf{malformed-json}: after receiving a syntactically invalid frame, the
-    server must not crash or hang; a subsequent \texttt{ping} must still succeed.
+    server must not crash or hang, and a subsequent \texttt{ping} must still succeed.
   \item \textbf{stdout-purity}: under the stdio transport, the server must emit only
-    protocol messages on stdout; any non-JSON line is a channel-corruption defect.
+    protocol messages on stdout, and any non-JSON line is a channel-corruption defect.
 \end{itemize}
 
 \subsection{Grading and the error-as-result category}
@@ -97,49 +97,51 @@ Linux capabilities dropped, and no host filesystem mounts. The harness supports 
 probe conditions. In the \textbf{two-phase}
 condition, an online install pass populates the cache and the conformance probe then
 runs with \texttt{-{}-network=none}, so no server code has network access while it is
-being measured. In the \textbf{single-phase} condition, install and probe occur
-together in one ephemeral container and the network is available throughout. The
+being measured. In the \textbf{single-phase} condition the network is available
+throughout, and install and probe occur together in one ephemeral container. The
 census reported here was measured in the single-phase condition, for the operational
-reasons given in Section~\ref{sec:method-env}. Section~\ref{sec:threats} carries
-the consequences for
-validity in Section~\ref{sec:threats}.
+reasons given in Section~\ref{sec:method-env}, and Section~\ref{sec:threats} carries
+the consequences for validity.
 
 \subsection{Execution environment and probe condition}
 \label{sec:method-env}
 The census was executed on a single disposable cloud instance (no cloud credentials attached) using the online single-phase condition: install and probe occur
 in one ephemeral \texttt{-{}-rm} container per server, with nothing cached between
-servers so that disk usage stays bounded across the full ecosystem; the recorded
+servers, which keeps disk usage bounded across the full ecosystem. The recorded
 launch command of every run confirms that no volume was mounted. We did not run a
-controlled comparison of the two conditions. In development runs on smaller subsets,
-error-as-result prevalence (\(87\%\)) and silent type non-enforcement (\(7\%\)) among
-responding servers were the same under both conditions; handshake yields from those
-runs are not comparable, because the subsets differed. Two groups of runs ended for
-reasons outside the server's control or of uncertain cause: \(32\) probes
-(\(0.5\%\)) were killed (exit 137) by either the memory cap or an automated guard
-that reclaims host disk space, and the census does not record which; \(17\) probes
-(\(0.3\%\)) aborted on a harness-side error before any check ran. All but one of
-these \(49\) are counted as non-handshaking, so they can only lower the handshake
-yield; the exception was killed after completing its handshake.
+controlled comparison of the two conditions. In development runs on smaller subsets
+we saw the same error-as-result prevalence and the same silent type non-enforcement
+among responding servers under both. Handshake yields from those runs are not
+comparable, because the subsets differed.
+
+Two groups of runs ended for reasons outside the server's control. \NKilled{}
+probes (\NKilledPct{}) were killed with exit 137 by either the memory cap or an
+automated guard that reclaims host disk space, and the census does not record which.
+Another \NHarnessError{} (\NHarnessErrorPct{}) aborted on a harness-side error before
+any check ran. Only one of these \NInterrupted{} runs had completed a handshake
+first, and the rest can only lower the reported yield.
 
 \subsection{SDK-level confirmation}
 \label{sec:sdk-probe}
-Where a conformance failure concentrates in one SDK family, the census alone cannot
+Where a conformance failure concentrates in one SDK family, the census cannot
 say whether the library permits the failure or the authors introduced it
-independently. For the input-validation result we tested the SDK directly. We build two minimal servers exposing one tool that declares a
-single required string property, one using the low-level \texttt{Server} API and one
-using the high-level \texttt{McpServer} API, both on the same SDK release, and drive
-each with the same harness check used in the census: a \texttt{tools/call} carrying an
+independently. For the input-validation result we probed the SDK on its own. We build
+two minimal servers, each exposing one tool that declares a single required string
+property. One uses the low-level \texttt{Server} API and the other the high-level
+\texttt{McpServer} API, both on the same SDK release. Each is driven with the harness
+check used in the census: a \texttt{tools/call} carrying an
 integer where the declared schema requires a string. The construction is otherwise
 identical, so any difference in outcome is a property of the API path. We report the
-result in Section~\ref{sec:consequences}. The two servers and the probe script are
-released with the harness.
+result in Section~\ref{sec:consequences}, and the two servers and the probe script
+are released with the harness.
 
 \subsection{Funnel accounting}
-Whether a server runs at all is RQ1, so we count every stage:
+RQ1 asks whether a server runs, and we count every stage:
 declared $\rightarrow$ eligible (self-contained stdio npm/PyPI) $\rightarrow$
 container started $\rightarrow$ process launched
-$\rightarrow$ handshake completed $\rightarrow$ probed. Servers that never reach a
+$\rightarrow$ handshake completed $\rightarrow$ probed. Servers that never complete a
 handshake are classified into startup-failure categories
-(Section~\ref{sec:results}) from their exit code and stderr, so that the lost yield can be explained.
-Runs the harness itself broke are a separate outcome, reported with the funnel and
+(Section~\ref{sec:results}) from their exit code and stderr, which accounts for the
+lost yield.
+Runs broken by the harness are a separate outcome, reported with the funnel and
 excluded from the graded population, because they measure our instrument.

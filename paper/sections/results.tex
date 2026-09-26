@@ -1,16 +1,16 @@
 \label{sec:results}
 
-We launched all \Nattempted{} servers in the eligible frame. On \NHarnessError{} of
-them the harness itself failed, through a broken pipe or an uncaught exception in our
-probe, and those runs carry no verdict about the server. We report them here and
-exclude them from every denominator, leaving \Nprobed{} graded servers.
+We launched all \Nattempted{} servers in the eligible frame, and on \NHarnessError{}
+of them our own probe failed on a broken pipe or an uncaught exception, leaving those
+runs with no verdict about the server. We report them with the funnel and exclude them
+from every denominator, which leaves \Nprobed{} graded servers.
 
 \subsection{RQ1: Runnability and the startup funnel}
 \HandshakeCountCorr{} of \Nprobed{} servers (\HandshakeRateCorr{}) complete the MCP
 handshake once the entry-point artifact described in Section~\ref{sec:rq5} is
-corrected; the uncorrected census figure is \HandshakeRate{}. Roughly two in five
-never serve the protocol. Figure~\ref{fig:failures} classifies those failures
-by cause.
+corrected, against an uncorrected census figure of \HandshakeRate{}. Roughly two in
+five never serve the protocol, and Figure~\ref{fig:failures} classifies those
+failures by cause.
 
 Servers that only need credentials or configuration are counted apart from servers
 that crash, since a missing setting is a documentation gap. Most failures happen
@@ -25,7 +25,7 @@ studies, which is enough to explain a gap of that size.
   \centering
   \includegraphics[width=\linewidth]{figures/failures.pdf}
   \caption{Why servers never reach a handshake. Configuration requirements and the
-  entry-point artifact are separated from genuine startup failures.}
+  entry-point artifact are separated from true startup failures.}
   \label{fig:failures}
 \end{figure}
 
@@ -39,7 +39,7 @@ argument type enforcement, and malformed-input survival. \NoTypecheckRate{} of
 responders failed to reject a wrong-typed required argument, which
 Section~\ref{sec:consequences} decomposes into the servers that reported the problem
 anyway and the smaller class that did not. \MalformedDiesRate{} failed to recover from a
-malformed frame. We classify that as a robustness and conformance failure. The
+malformed frame, which we classify as a robustness and conformance failure. The
 security reading does not survive the transport: under stdio the client is the parent
 process and the sole writer to the server's standard input, and a party able to
 deliver a malformed frame can already terminate the subprocess. JSON-RPC 2.0, on which MCP is built,
@@ -50,7 +50,7 @@ follows it (Section~\ref{sec:threats}).
 
 \input{tables/verdicts}
 
-\subsection{RQ3 refined: what a failure to reject actually returns}
+\subsection{RQ3 refined: what a failure to reject returns to the client}
 \label{sec:consequences}
 The \texttt{tools-call-invalid-args} verdict records whether a server rejects an
 argument that violates its own declared schema. As a protocol judgment that
@@ -72,43 +72,56 @@ classifying the recorded response of every server in this category
 \end{figure}
 
 Of \NAcceptInvalid{} such servers, \NInBandError{} (\InBandShare{}) reported the
-problem in the result text, so the server noticed and a client willing to parse prose
+problem in the result text. The server noticed, and a client willing to parse prose
 could too. \NSilentExec{} (\SilentExecShare{}) executed the tool and returned a
 result with no indication that anything was wrong. For \NUnclassifiable{} the
-response could not be classified from the transcript. The hazard class is therefore \SilentExecRate{} of responding servers, smaller than the \NoTypecheckRate{} of the raw verdict, and it is the figure we report. We
-count a server as reporting the problem whenever its output contains any error-like
-token, so \NSilentExec{} is a lower bound.
+response could not be classified from the transcript. The hazard class is
+\SilentExecRate{} of responding servers, smaller than the \NoTypecheckRate{} of the
+raw verdict, and we report the smaller figure.
 
-This is not a matter of interpretation. The
+Splitting the two takes a classifier, and ours is a keyword rule over an English
+error vocabulary that errs in both directions. A server reporting the problem in
+another language, or in a field name our list does not cover, is counted as silent.
+A returned document containing an error-like token is counted as reporting.
+% TODO(validation): once the blinded second-rater labels are in, report the
+% agreement statistic here and in Threats. Until then this paragraph must not
+% promise a validation the paper does not contain.
+Section~\ref{sec:threats} states what that leaves unresolved.
+
+The
 specification's security requirements state that servers \textbf{MUST} validate all
 tool inputs~\cite{mcpspec}. A server that executes a tool on an argument contradicting
-its own published schema has not validated that input, so these \NSilentExec{} servers
-fail an explicit RFC-2119 requirement, as do the servers that write non-protocol output to stdout, which the stdio transport forbids with a \textsf{MUST NOT}.
+its own published schema has not validated that input. These \NSilentExec{} servers
+fail an explicit RFC-2119 requirement, as do the servers that write non-protocol
+output to stdout, which the stdio transport forbids with a \textsf{MUST NOT}.
 
 Here SDK attribution narrows the cause further than it does for the
 error-reporting divergence. \SilentExecTS{} of the \NSilentExec{} are built on
 the official TypeScript SDK and \SilentExecPy{} on either Python SDK, against
-responding populations of \SDKPopTS{} and \SDKPopPy{} respectively. A behavior absent from one
-language ecosystem and concentrated in another points to the library, so we tested the SDKs directly (Section~\ref{sec:sdk-probe}). On
+responding populations of \SDKPopTS{} and \SDKPopPy{} respectively. A behavior absent
+from one language ecosystem and concentrated in another points to the library, and we
+went on to test the SDKs (Section~\ref{sec:sdk-probe}). On
 \texttt{@modelcontextprotocol/sdk} 1.30.0, the current release at the time of writing,
 a server built with the low-level \texttt{Server} API publishes an
 \texttt{inputSchema} in \texttt{tools/list} and the SDK then does not check
-\texttt{tools/call} arguments against it: a tool declaring a string property, called
+\texttt{tools/call} arguments against it. A tool declaring a string property, called
 with an integer, runs and returns a well-formed result. The same tool built with the
 high-level \texttt{McpServer} API, whose schemas carry type information the SDK
 already validates, rejects the identical call with an \texttt{isError} result. We did
-not test the Python SDKs under the same conditions, so we report their absence from this population as an observation only. Within
+not test the Python SDKs under the same conditions, and their absence from this
+population stands as an observation only. Within
 the TypeScript SDK the gap is that one supported construction path publishes a
-contract the library never enforces, so the servers on it have not declined a check
+contract the library never enforces. The servers on that path have not declined a check
 the SDK offered them. Of the \SilentExecTS{} TypeScript-SDK servers,
 \SilentExecTSCaret{} declare a caret range and none declares an exact version.
-Because each server was installed fresh, those ranges resolve to the newest 1.x, so this is current behavior, and a fix on the 1.x line
-would reach almost all of them at their next install.
+Because each server was installed fresh, those ranges resolve to the newest 1.x. The
+behavior is current, and a fix on the 1.x line would reach almost all of these
+servers at their next install.
 
 The unknown-tool divergence has a merged fix that deployed servers do not show. The
 SDK's tracker records tool resolution as corrected in March 2026, four months before
-our crawl, by a change that moves the tool-not-found check outside the handler's
-\texttt{try} block so it propagates as a protocol error~\cite{sdkpr1389,sdkissue1510}.
+our crawl. The change moves the tool-not-found check outside the handler's
+\texttt{try} block, letting it propagate as a protocol error~\cite{sdkpr1389,sdkissue1510}.
 We rebuilt the minimal high-level server on releases 1.28.0, 1.29.0 and 1.30.1 and
 sent the same unknown-tool call. All three answer with an \texttt{isError} result
 whose text reads \texttt{MCP error -32602: Tool \ldots{} not found}. The protocol
@@ -123,35 +136,36 @@ probe asked a low-level server for a tool it does not have and received that ser
 ordinary answer, reporting a clean scan of code it was never given. Nothing in the
 response marks the tool as missing.
 
-In the recorded responses, a code-scanning tool asked to
-scan the integer \texttt{12345} answered \texttt{CLEAN}, a prompt-scoring tool returned
-a complete rubric including per-dimension sub-scores for the same integer, and a project
-registry confirmed that a project named \texttt{12345} had been registered. All three are well-formed successful results. None relates to the question asked,
-and at the protocol level none can be told apart from a correct answer: there is no
+In the recorded responses, a code-scanning tool asked to scan the integer
+\texttt{12345} answered \texttt{CLEAN}. A prompt-scoring tool returned a complete
+rubric with per-dimension sub-scores for the same integer, and a project
+registry confirmed that a project named \texttt{12345} had been registered. All three
+are well-formed successful results, and none answers what was asked. At the protocol
+level none can be told apart from a correct answer: there is no
 error code and no \texttt{isError} flag. Each server published a schema that would
 have caught the call and then left it unenforced.
 
 \input{tables/consequences}
 
 \subsection{RQ4: Where practice and specification disagree, and which one moved}
-\ErrAsResultRate{} of responding servers reported a call to a non-existent tool as an
-\texttt{isError} tool-execution result instead of a JSON-RPC protocol error. The
+\ErrAsResultRate{} of responding servers answered a call to a tool that does not exist
+with an \texttt{isError} tool-execution result instead of a JSON-RPC protocol error. The
 specification's error-handling section lists ``unknown tool'' under \emph{Protocol
-Errors} and illustrates it with a \texttt{-32602} example~\cite{mcpspec}. It attaches
-no RFC-2119 keyword. We record which mechanism each server uses and score neither
-as a violation (Section~\ref{sec:threats}).
+Errors} and illustrates it with a \texttt{-32602} example~\cite{mcpspec}, and attaches
+no RFC-2119 keyword. The harness logs which mechanism each server uses, and neither
+is scored as a violation (Section~\ref{sec:threats}).
 
 The specification has been moving toward what servers do. SEP-1303, now
 accepted and reflected in the specification, reclassified input validation errors from
 protocol errors to tool execution errors on the grounds that a model can only
 self-correct from an error it can see~\cite{sep1303}. SEP-2145, open at the time of
 writing, proposes the same move for tool resolution failures, covering unknown and
-disabled tools, and gives as its rationale that it ``aligns specification with existing
-Python and TypeScript SDK behavior''~\cite{sep2145}. Our census measures how much of
+disabled tools. Its stated rationale is that the change ``aligns specification with existing
+Python and TypeScript SDK behavior''~\cite{sep2145}. We can say how much of
 the deployed ecosystem that alignment already describes: \ErrAsResultRate{} of
 responding servers. (Aggregate figures from this census were posted to the
-proposal's discussion thread while it was open.) The other \NotErrAsResultPct{} are
-not one population: \UnknownProtoErrCount{} servers emit a protocol error coded
+proposal's discussion thread while it was open.) The other \NotErrAsResultPct{} do
+not form one population: \UnknownProtoErrCount{} servers emit a protocol error coded
 \texttt{-32602} or \texttt{-32601}, \UnknownWrongCodeCount{} use some other code, and
 \UnknownProseCount{} return a plain success that states the failure only in its text,
 a mechanism neither proposal describes.
@@ -159,31 +173,31 @@ a mechanism neither proposal describes.
 To explain the uniformity, we attribute each server to its SDK from its resolved
 dependency graph (Figure~\ref{fig:sdk}, Table~\ref{tab:sdk}). We take the exact
 package version the probe launched and resolve its runtime dependencies through
-deps.dev, so a server that reaches an SDK through a third-party wrapper is credited
-to that SDK and not to the residual. \SDKDirect{} servers depend on an SDK directly
-and \SDKIndirect{} reach one only through a wrapper. For \SDKUnattributed{} we have
-no graph: the package or the probed version has since been withdrawn from its
-registry. The behavior tracks the SDK: the
+deps.dev. A server that reaches an SDK through a third-party wrapper is credited
+to that SDK and not to the residual. \SDKDirect{} servers name an SDK among their own
+dependencies, and \SDKIndirect{} reach one only through a wrapper. For
+\SDKUnattributed{} we have no graph: the package or the probed version has since been
+withdrawn from its registry. The behavior tracks the SDK: the
 official TypeScript and Python SDKs and the FastMCP framework all default to it. A
-small number of TypeScript-SDK servers emit the protocol error, so the alternative is
-reachable within the SDK and simply is not the default. The official reference servers
-behave the same way.
+small number of TypeScript-SDK servers emit the protocol error, which shows the
+alternative is reachable within the SDK without being its default, and the official
+reference servers behave the same way.
 
-Our attribution recognizes a fixed list of known SDK package names, so the residual
+Our attribution recognizes a fixed list of known SDK package names, and the residual
 \textsf{no-known-SDK} category holds servers with none of those names anywhere in
 their runtime graph. Such a server may still have vendored an SDK at build time.
 Resolving the graph transitively moves servers that inherit an SDK through a wrapper
 into that SDK's family. That leaves the residual as the sharpest contrast in the
 table: \SDKNoSDKRate{} of its \SDKNoSDK{} servers answer an unknown tool with an
 \texttt{isError} result, against about nine in ten in every official-SDK family.
-A few SDK defaults, used directly or through wrappers, account for this behavior
-across the ecosystem. Where they are absent, so is the behavior.
+A few SDK defaults, whether used first-hand or through wrappers, account for this
+behavior across the ecosystem, and where they are absent so is the behavior.
 
 \begin{figure}[t]
   \centering
   \includegraphics[width=\linewidth]{figures/sdk.pdf}
-  \caption{Unknown-tool responses by SDK family. In every family, most servers answer with an \texttt{isError} result. Bars show 95\% Wilson intervals;
-  families with fewer than 25 servers appear in Table~\ref{tab:sdk} only.}
+  \caption{Unknown-tool responses by SDK family. In every family, most servers answer with an \texttt{isError} result. Bars show 95\% Wilson intervals, and families
+  with fewer than 25 servers appear in Table~\ref{tab:sdk} only.}
   \label{fig:sdk}
 \end{figure}
 
@@ -193,35 +207,36 @@ across the ecosystem. Where they are absent, so is the behavior.
 \label{sec:rq5}
 We test whether runnability and conformance correlate with the package registry
 (Figure~\ref{fig:byregistry}). Runnability differs: npm servers complete a
-handshake far more often than PyPI servers (\NpmRate{} of \NpmN{} against
+handshake much more often than PyPI servers (\NpmRate{} of \NpmN{} against
 \PypiRateRaw{} of \PypiN{}, a difference of \GapRunnableCl{}). Conformance does not:
 the same publisher-cluster bootstrap puts the error-as-result difference at
-\GapErrAsResultCl{}, an interval spanning zero. We apply one method to both
-comparisons so that neither rests on a stronger footing. The pattern follows from RQ4: because the
-divergence is inherited from the SDKs, and both language ecosystems' SDKs share the
-same default, the registry a server ships on changes whether it \emph{starts} but not
-whether it \emph{conforms}.
+\GapErrAsResultCl{}, an interval spanning zero. Both comparisons use the same method,
+and neither rests on a stronger footing than the other. The pattern follows from RQ4,
+where the divergence is inherited from the SDKs and both language ecosystems' SDKs
+share the same default. The registry a server ships on changes whether it
+starts but not whether it conforms.
 
-Part of this gap came from our own launcher, and we corrected for it. We launch PyPI servers as \texttt{uvx <package>}, which resolves only
-if the package's console script is named after the package; npm's \texttt{npx}
+Part of this gap came from our own launcher, and we corrected for it. We launch PyPI
+servers as \texttt{uvx <package>}, which resolves only
+if the package's console script is named after the package. npm's \texttt{npx}
 resolves the entry point from \texttt{package.json} and has no such requirement.
 \NEntrypointBlocked{} PyPI servers (\EntrypointBlockedPct{} of the PyPI population)
-installed successfully but were never launched for this reason alone. Our classifier
-identifies \NEntrypointSeen{} such rows in the census; the completed re-probe covers
-\NEntrypointBlocked{} of them, and \NEntrypointUnreprobed{} were missed. We
-re-probed those servers with the entry point resolved from the installed package
-metadata. \EntrypointRecovered{} (\EntrypointRecoveryRate{}) then completed a
-handshake; the rest failed for reasons unrelated to naming (Python exceptions, hangs,
-undeclared configuration). Correcting for this raises PyPI runnability from
+installed successfully but were never launched for that reason and no other. Our
+classifier identifies \NEntrypointSeen{} such rows in the census, the completed
+re-probe covers \NEntrypointBlocked{} of them, and \NEntrypointUnreprobed{} were
+missed. We re-probed those servers with the entry point resolved from the installed
+package metadata. \EntrypointRecovered{} (\EntrypointRecoveryRate{}) then completed a
+handshake, and the rest failed for reasons unrelated to naming (Python exceptions,
+hangs, undeclared configuration). Correcting for this raises PyPI runnability from
 \PypiRateRaw{} to \PypiRateCorr{} and the overall census figure to
 \HandshakeRateCorr{}, which we report as the headline throughout. The npm--PyPI gap
 narrows from \GapRaw{} to \GapCorr{} percentage points but stays large.
 
-The entry-point problem is itself an ecosystem finding. Registry metadata does not
-record a server's entry point, so a client following the registry alone cannot launch
-a fifth of published PyPI servers, and once the entry point is resolved, nine in ten
-of those servers still fail to start. A listing in the registry says
-nothing about either.
+The entry-point problem is also a finding about the ecosystem. Registry metadata does
+not record a server's entry point, and a client working from the registry and nothing
+else cannot launch a fifth of published PyPI servers. Once the entry point is
+resolved, nine in ten of those servers still fail to start, and a listing in the
+registry says nothing about either outcome.
 
 \begin{figure}[t]
   \centering
