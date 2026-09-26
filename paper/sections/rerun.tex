@@ -1,0 +1,53 @@
+\label{sec:rerun}
+
+The census frame is fixed at the snapshot of 19 July 2026, so re-running it probes
+the same servers, at the same declared versions, with the same launch commands. What
+those commands resolve is not fixed. Each launch installs the package and whatever
+its dependency ranges admit on the day. We re-ran the complete frame on \SeptDate{},
+sixty-nine days later, with the harness unchanged.
+
+\paragraph{What the re-run found}
+\NSeptHandshake{} of \NSeptGraded{} graded servers complete a handshake,
+\SeptHandshakeRate{} against \HandshakeRate{} in July. \NLost{} servers that
+answered in July no longer answer, and \NGained{} that did not answer now do.
+
+Conformance among the servers that still answer is unchanged.
+Error-as-result moved from \ErrAsResultRate{} to \SeptErrAsResult{}, silent type
+non-enforcement from \NoTypecheckRate{} to \SeptNoTypecheck{}, and failure to recover
+from a malformed frame from \MalformedDiesRate{} to \SeptMalformedDies{}. The
+instrument reports the same ecosystem. What changed is how much of it starts.
+
+\paragraph{One dependency release accounts for most of the loss}
+Of the \NLost{} servers that stopped answering, \NLostUnchanged{} were probed at the
+same declared version with the same launch command as in July, so the servers
+themselves did not change. \NSDKTwoBroke{} of them fail with one of two signatures in
+their own output: the official Python SDK's compatibility message, which states that
+this is \texttt{mcp} 2.x and that \texttt{FastMCP} has been renamed to
+\texttt{MCPServer}, or an \texttt{AttributeError} for a handler-registration
+decorator that the same major version removed from the low-level
+\texttt{Server} class.
+
+That SDK published 2.0.0 on \SDKTwoDate{}, nine days after our snapshot.
+\NSDKTwoRange{} of the \NSDKTwoBroke{} declare the dependency as a floor or a range
+rather than an exact pin, so the same launch command resolved 1.x in July and 2.x in
+September.
+
+Three observations separate this from a fault in our own instrument or host.
+The effect is confined to one package ecosystem: \NpmLost{} of \NpmWas{} npm servers
+that answered in July stopped answering (\NpmLostRate{}), against \PypiLost{} of
+\PypiWas{} on PyPI (\PypiLostRate{}). A host, network or harness fault would not
+respect that boundary. The attribution comes from the servers' own stderr rather than
+from our classification. And the failure is reversible: we re-launched a random
+\NPinTested{} of the affected servers with the SDK constrained below 2.0 and
+otherwise unaltered, and \NPinRestored{} completed a handshake.
+
+Restricting attention to the servers this could affect, \NPySDKWas{} PyPI servers
+attributed to a Python MCP SDK completed a handshake in July and \NPySDKNow{} do now.
+\PySDKLostCI{} of them stopped working, and no author changed anything.
+
+\paragraph{What this run is and is not}
+It is not an independent census. It is the same frame re-probed, so it says nothing
+about servers published after July, and the \NGained{} recoveries are not a sample of
+anything. The July run remains the measurement this paper reports, because its
+conformance verdicts were collected when the population was largest. The re-run's
+contribution is the comparison.

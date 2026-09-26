@@ -234,6 +234,10 @@ def main():
                     if isinstance(rec, dict) and rec.get("server"):
                         consequence[rec["server"]] = bucket
 
+    # Captured before the loop pseudonymises anything, so the September comparison
+    # can ask whether a server was probed at the same declared version in both runs.
+    before_version = {r.get("server_name"): r.get("server_version") for r in rows}
+
     withheld, redactions, n_sensitive = {}, 0, 0
     released = []
     for r in rows:
@@ -289,6 +293,63 @@ def main():
                     # so it would undo the pseudonym. The SDK columns are not.
                     row["package_version"] = ""
                 w.writerow(row)
+
+    # Signatures the Python SDK 2.0 leaves in a server's own output: its
+    # compatibility message, and the attribute that the same major version removed
+    # from the low-level Server class. Matched here, before withholding strips the
+    # stderr that carries them.
+    _SDK2 = (re.compile(r"This is mcp 2\.x, where FastMCP was renamed to MCPServer"),
+             re.compile(r"'(Low[Ll]evel)?Server' object has no attribute"))
+
+    def rerun_cause(row):
+        if row.get("handshake_ok"):
+            return None
+        blob = "\n".join(row.get("stderr_tail") or [])
+        return "python-sdk-2" if any(p.search(blob) for p in _SDK2) else None
+
+    # The September re-run of the same frame. Same servers, same withheld set, so
+    # it takes the same pseudonyms and the same redaction. Shipping it raw would
+    # undo the withholding for every server in it, since the two files join on the
+    # server name.
+    src_sept = DATA / "runs" / "sept" / "probe_census_sept.jsonl"
+    if src_sept.exists():
+        n_sept = 0
+        with src_sept.open(encoding="utf-8") as f, \
+             (out / "probe_census_sept.jsonl").open("w", encoding="utf-8") as g:
+            for line in f:
+                r = json.loads(line)
+                r, _ = redact_any(r)
+                real = r.get("server_name")
+                r["publisher_id"] = keyed((real or "").split("/")[0], key)
+                # Withholding strips the stderr and the version that the re-run
+                # comparison classifies on, so the classification is attached to
+                # the row first. Otherwise the comparison cannot be recomputed
+                # from the release for exactly the servers it withholds.
+                r["rerun_break_cause"] = rerun_cause(r)
+                r["version_unchanged"] = (
+                    before_version.get(real) == r.get("server_version"))
+                alias = withheld.get(real)
+                if alias:
+                    r["server_name"] = alias
+                    r["identifier"] = alias
+                    r["identity_withheld"] = True
+                    for c in r.get("checks", []):
+                        if "detail" in c:
+                            c["detail"] = scrub_detail(c["detail"])
+                    r.pop("cmd", None)
+                    r.pop("server_info", None)
+                    r.pop("server_version", None)
+                    r.pop("stderr_tail", None)
+                    r.pop("stdout_noise", None)
+                g.write(json.dumps(r, ensure_ascii=False) + "\n")
+                n_sept += 1
+        print(f"  september re-run    : {n_sept:,} rows")
+
+    # The pinning experiment names only package identifiers that are already public
+    # on PyPI and no server names, so it ships as written.
+    src_pin = DATA / "pin_experiment.csv"
+    if src_pin.exists():
+        shutil.copy2(src_pin, out / "pin_experiment.csv")
 
     # Repository language tables. These name a server and link it to a repository
     # URL, so a withheld server has to be pseudonymised here exactly as everywhere
