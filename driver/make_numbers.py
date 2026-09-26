@@ -9,25 +9,15 @@ Usage:
 
 import argparse
 import json
-import math
 import re
 from collections import Counter
 from pathlib import Path
 
+from failure_classes import UVX_NO_EXE as UVX_RE, harness_error
+from stats import cluster_ci, cluster_diff_ci, design_effect, wilson
+
 ROOT = Path(__file__).resolve().parent.parent
 DATA = ROOT / "data"
-
-
-def wilson(k: int, n: int):
-    """95% Wilson score interval for a proportion (robust for small/edge counts)."""
-    if n == 0:
-        return (0.0, 0.0, 0.0)
-    z = 1.96
-    p = k / n
-    denom = 1 + z * z / n
-    center = (p + z * z / (2 * n)) / denom
-    half = z * math.sqrt(p * (1 - p) / n + z * z / (4 * n * n)) / denom
-    return (p, max(0.0, center - half), min(1.0, center + half))
 
 
 def pctci(k, n):
@@ -53,7 +43,13 @@ def main():
                     help="completed re-probe of entry-point-blocked PyPI servers")
     args = ap.parse_args()
 
-    rows = load(Path(args.inp))
+    attempted = load(Path(args.inp))
+    # Rows where our own harness died (broken pipe, uncaught exception) carry no verdict
+    # about the server, so they are reported separately and excluded from every
+    # denominator instead of counting as servers that failed to start.
+    harness_rows = [r for r in attempted if harness_error(r)]
+    rows = [r for r in attempted if not harness_error(r)]
+    n_attempted = len(attempted)
     n = len(rows)
     hs = sum(1 for r in rows if r.get("handshake_ok"))
     responders = [r for r in rows if r.get("handshake_ok")]
@@ -92,7 +88,32 @@ def main():
         # clustering check reproduces identically from the released dataset.
         return r.get("publisher_id") or (r.get("server_name") or "").split("/")[0]
 
+    def clustered(sub, pred):
+        """Publisher-cluster bootstrap interval for a predicate over a row subset."""
+        units = [(publisher(r), pred(r)) for r in sub]
+        p, lo, hi = cluster_ci(units)
+        return f"{100*p:.1f}\\% (95\\% CI {100*lo:.1f}--{100*hi:.1f})"
+
+    def diff_ci(pred, sub):
+        npm = [(publisher(r), pred(r)) for r in sub if r.get("registry_type") == "npm"]
+        pypi = [(publisher(r), pred(r)) for r in sub if r.get("registry_type") == "pypi"]
+        d, lo, hi = cluster_diff_ci(npm, pypi)
+        return f"{d:.1f} pp (95\\% CI {lo:.1f}--{hi:.1f})"
+
+    def check_pred(cid, verdict):
+        return lambda r: any(c["id"] == cid and c["verdict"] == verdict
+                             for c in r.get("checks", []))
+
+    ver_counts = Counter(r.get("negotiated_version") for r in responders)
     pub_counts = Counter(publisher(r) for r in rows)
+    # How far the single largest publisher moves the headline runnability figure.
+    _top_id = pub_counts.most_common(1)[0][0] if pub_counts else None
+    _top_rows = [r for r in rows if publisher(r) == _top_id]
+    _rest = [r for r in rows if publisher(r) != _top_id]
+    top_pub_rate = (f"{100*sum(1 for r in _top_rows if r.get('handshake_ok'))/len(_top_rows):.1f}\\%"
+                    if _top_rows else "-")
+    _rest_rate = (sum(1 for r in _rest if r.get("handshake_ok")) / len(_rest)) if _rest else 0
+    top_pub_drop = f"{100*(_rest_rate - hs/n):.1f}" if n else "-"
     seen, uniq = set(), []
     for r in rows:
         p = publisher(r)
@@ -116,6 +137,11 @@ def main():
     # runnability numbers. (An early 30-server pilot suggested a far higher recovery
     # rate; the complete re-probe supersedes it and is what we report.)
     reprobe = load(Path(args.reprobe)) if Path(args.reprobe).exists() else []
+    # A server counts as runnable once the entry-point artifact is corrected.
+    _recovered = {r.get("server_name") for r in reprobe if r.get("handshake_ok")}
+
+    def corrected_ok(r):
+        return bool(r.get("handshake_ok")) or r.get("server_name") in _recovered
     ep_n = len(reprobe)
     ep_ok = sum(1 for r in reprobe if r.get("handshake_ok"))
     hs_corr = hs + ep_ok
@@ -165,9 +191,40 @@ def main():
     silent_ts_caret = sum(v for k, v in silent_ver.items() if k.startswith("^"))
     silent_ts_exact = sum(v for k, v in silent_ver.items() if k and k[0].isdigit())
 
+    # Entry-point re-probe coverage: the census classifier finds this many uvx
+    # entry-point rows, and the completed re-probe covers this many of them.
+    ep_seen = sum(1 for r in rows
+                  if any(UVX_RE.search(x or "") for x in (r.get("stderr_tail") or [])))
+    ep_missing = ep_seen - ep_n
+
     macros = {
         "Nframe": f"{frame_n:,}",
+        "Nattempted": f"{n_attempted:,}",
+        "NHarnessError": f"{len(harness_rows):,}",
         "Nprobed": f"{n:,}",
+        "NEntrypointSeen": f"{ep_seen:,}",
+        "NEntrypointUnreprobed": f"{ep_missing:,}",
+        # Publisher-cluster bootstrap intervals. These are the intervals the paper
+        # reports, because servers from one publisher are not independent trials.
+        "HandshakeRateCl": clustered(rows, lambda r: r.get("handshake_ok")),
+        "ErrAsResultRateCl": clustered(
+            responders, check_pred("tools-call-unknown", "error-as-result")),
+        "NoTypecheckRateCl": clustered(
+            responders, check_pred("tools-call-invalid-args", "fail")),
+        "MalformedDiesRateCl": clustered(
+            responders, check_pred("malformed-json", "fail")),
+        # Registry comparison, same method applied to both outcomes so neither is
+        # reported on a stronger footing than the other.
+        "GapRunnableCl": diff_ci(lambda r: r.get("handshake_ok"), rows),
+        "GapErrAsResultCl": diff_ci(
+            check_pred("tools-call-unknown", "error-as-result"), responders),
+        "PctVerOffered": f"{100*ver_counts.get('2025-06-18', 0)/len(responders):.0f}\\%" if responders else "-",
+        "NVerOffered": f"{ver_counts.get('2025-06-18', 0):,}",
+        "NVerDowngraded": f"{sum(v for k, v in ver_counts.items() if k and k < '2025-06-18'):,}",
+        "NVerAhead": f"{sum(v for k, v in ver_counts.items() if k and k > '2025-06-18'):,}",
+        "TopPublisherHandshake": top_pub_rate,
+        "TopPublisherDepressionPP": top_pub_drop,
+        "HandshakeDesignEffect": f"{design_effect([(publisher(r), r.get('handshake_ok')) for r in rows]):.1f}",
         "Nresponders": f"{n_resp:,}",
         "HandshakeRate": pctci(hs, n),
         "HandshakeCount": str(hs),
@@ -200,12 +257,14 @@ def main():
         "EntrypointRecovered": f"{ep_ok:,}",
         "EntrypointRecoveryRate": pctci(ep_ok, ep_n) if ep_n else "-",
         "HandshakeCountCorr": f"{hs_corr:,}",
-        "HandshakeRateCorr": pctci(hs_corr, n),
+        "HandshakeRateCorr": clustered(rows, corrected_ok),
+        "HandshakeRateCorrBinom": pctci(hs_corr, n),
         "NpmRate": f"{npm_p:.1f}\\%",
         "NpmN": f"{npm_n:,}",
         "PypiN": f"{pypi_n:,}",
         "PypiRateRaw": f"{pypi_p:.1f}\\%",
-        "PypiRateCorr": pctci(pypi_hs + ep_ok, pypi_n) if pypi_n else "-",
+        "PypiRateCorr": clustered([r for r in rows if r.get("registry_type") == "pypi"],
+                                  corrected_ok) if pypi_n else "-",
         "GapRaw": f"{npm_p - pypi_p:.1f}",
         "GapCorr": f"{npm_p - pypi_p_corr:.1f}",
     }

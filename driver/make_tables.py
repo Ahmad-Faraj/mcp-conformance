@@ -11,7 +11,7 @@ import math
 from collections import Counter, defaultdict
 from pathlib import Path
 
-from failure_classes import failure_class
+from failure_classes import failure_class, harness_error
 
 ROOT = Path(__file__).resolve().parent.parent
 DATA = ROOT / "data"
@@ -47,7 +47,9 @@ def esc(s):
 
 
 def startup_table(rows):
-    non = [r for r in rows if not r.get("handshake_ok")]
+    # Harness-error rows carry no verdict about the server, so they are excluded here
+    # and reported separately in the text.
+    non = [r for r in rows if not r.get("handshake_ok") and not harness_error(r)]
     c = Counter(failure_class(r) for r in non)
     total = len(non)
     out = [r"\begin{table}[t]", r"\centering",
@@ -63,7 +65,7 @@ def startup_table(rows):
 
 
 def verdicts_table(rows):
-    resp = [r for r in rows if r.get("handshake_ok")]
+    resp = [r for r in rows if r.get("handshake_ok") and not harness_error(r)]
     n = len(resp)
     tally = defaultdict(Counter)
     for r in resp:

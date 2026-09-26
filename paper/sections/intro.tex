@@ -14,16 +14,17 @@ structure, or mines GitHub issues to build fault taxonomies. None of it answers 
 question: \emph{if you install these servers and speak the protocol to them, do they
 start, and do they follow the specification?} The protocol maintainers
 ship a conformance test suite, but it is built for SDK maintainers to run in
-continuous integration, and we know of no use of it on the deployed ecosystem. It tests the SDKs, not the
-seventeen thousand servers built on them.
+continuous integration, and we know of no use of it on the deployed ecosystem. It
+exercises the SDKs. The \Nframe{} servers published on top of them go untested.
 
 We ran that measurement. Starting from the official registry, we census every
 self-contained, locally-installable server, launch each in an isolated sandbox, and
 drive it through a conformance harness. The harness checks the initialization
 lifecycle, tool listing and declared-schema validity, and three inputs that come up
 in ordinary agent sessions: a call to an unknown tool, a call with a wrong-typed
-argument, and a malformed protocol frame. Each server is graded against the protocol
-version it negotiates. Requirements stated with an RFC-2119 keyword
+argument, and a malformed protocol frame. Every check covers a requirement that all
+observed revisions state in the same terms, and the version each server negotiates is
+recorded with its result. Requirements stated with an RFC-2119 keyword
 (\textsf{MUST}/\textsf{SHOULD}) are graded apart from behavior the specification
 only shows in an example.
 

@@ -34,3 +34,10 @@ __pycache__/
 
 # Private working notes, never published.
 private/
+
+# Prose checker outputs.
+tools/metrics.*
+tools/flags.tsv
+tools/sentences.tsv
+tools/ngrams.txt
+tools/numbers.txt

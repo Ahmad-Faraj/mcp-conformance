@@ -2,10 +2,10 @@
 
 \paragraph{Construct validity}
 Our verdicts operationalize ``conformance,'' and a poorly chosen operationalization
-could over- or under-count. We mitigate this in three ways. First, we grade each
-server against the protocol version it \emph{negotiates}, not the latest
-specification, so a server is never penalized for a requirement that postdates its
-target revision. Second, we distinguish normative requirements from illustrative
+could over- or under-count. Three choices limit that risk. Our checks cover
+requirements that every revision in the census states in the same terms, which keeps
+any server from being judged against a rule that postdates the revision it
+negotiated. We also distinguish normative requirements from illustrative
 ones, and the most prevalent divergence we report (unknown-tool responses) is graded as
 a distinct \textsf{error-as-result} category, not as a failure, because the specification expresses it only in prose and an example, without an RFC-2119 keyword. Third, we calibrated the harness against the official reference
 servers before the study and confirmed it reproduces their known-good behavior on
@@ -41,36 +41,37 @@ is important future work. Agent clients mostly launch local stdio servers, which
 population first.
 
 \paragraph{Completeness}
-Because we census the eligible frame, our confidence intervals reflect residual
-measurement noise (e.g.\ server-side nondeterminism) rather than sampling error, and
-should be read with the publisher-clustering caveat below.
+Because we census the eligible frame, the counts are population counts. The intervals
+we report do not describe sampling error. They describe how far a rate would move if
+the registry had drawn a different set of publishers, which is the uncertainty that
+matters when a single publisher ships hundreds of servers from one template.
 
 \paragraph{Publisher clustering}
 The \Nprobed{} servers in our frame come from only \Npublishers{} distinct registry
 namespaces, and the distribution is heavy-tailed: the largest single publisher
 accounts for \TopPublisherN{} servers (\TopPublisherPct{} of the census) and the ten
 largest for \TopTenPct{}. Servers from one publisher frequently share a template and
-behave near-identically, so they are not independent observations, and the Wilson
-intervals we report, which assume independent trials, understate the true
-uncertainty. To bound the effect, we recompute each headline rate on a
-publisher-deduplicated subset retaining one server per namespace (\NuniqPub{}
-servers). Every estimate moves by a few points and no conclusion changes: handshake
-yield \HandshakeRatePub{} (against \HandshakeRate{} for the full census),
-error-as-result \ErrAsResultRatePub{} (against \ErrAsResultRate{}), and silent type
-non-enforcement \NoTypecheckRatePub{} (against \NoTypecheckRate{}). The
-single largest publisher is atypical in runnability (a \(26.2\%\) handshake yield
-against \(60.4\%\) overall), and alone depresses the census figure by \(1.8\)
-percentage points. We report the full-census figures as our primary result, because the census is the object of study, and the
-publisher-deduplicated figures as the robustness check.
+behave near-identically, so a binomial interval that treats them as independent trials
+is too narrow. Every interval in this paper therefore comes from a bootstrap that
+resamples publishers instead of servers. The widening is substantial: the handshake
+interval is \HandshakeDesignEffect{} times wider than the binomial one
+(\HandshakeRateCl{} against \HandshakeRate{}). Error-as-result becomes
+\ErrAsResultRateCl{} and silent type non-enforcement \NoTypecheckRateCl{}. As a second
+check we recompute each rate on a subset holding one server per namespace
+(\NuniqPub{} servers): handshake yield \HandshakeRatePub{}, error-as-result
+\ErrAsResultRatePub{}, silent type non-enforcement \NoTypecheckRatePub{}. No
+conclusion changes under either treatment. The largest publisher is atypical in
+runnability, at a \TopPublisherHandshake{} handshake yield, and its presence moves the
+census figure by \TopPublisherDepressionPP{} percentage points.
 
 \paragraph{Severity of the malformed-frame finding, and a limitation it exposed}
 We initially characterized failure to recover from a malformed frame as a
 denial-of-service primitive. A maintainer who reproduced the finding independently
-argued that this overstates it, and we agree. Under the stdio transport the client
+argued that this overstates it. The argument holds. Under the stdio transport the client
 launches the server and is the sole writer to its standard input, so a party capable of
 sending a malformed frame can already terminate the subprocess; the specification also
 places the obligation not to send invalid messages on the client. The correct reading
-is a robustness and conformance failure, which is how we now report it, and we record the correction here. The same maintainer traced the
+is a robustness and conformance failure, and this paper reports it that way. The same maintainer traced the
 behavior in their server to the official Go SDK's stdio transport, so this check,
 like the unknown-tool divergence, can measure an SDK default that the server only inherits.
 
@@ -97,7 +98,7 @@ released census rows, and we have checked that doing so reproduces them exactly.
 registry snapshot, launch commands, and package versions are recorded. Census rows do
 not record the harness commit; the code that produced them is tagged
 \texttt{census-v1}, and the probe logic there is unchanged from the version that was
-calibrated. Because the registry is a moving target, we fix the
-snapshot of 19 July 2026 and treat it, not the live registry, as the object of study.
+calibrated. The registry changes daily, and the object of study is the snapshot of
+19 July 2026.
 A longitudinal study of the same registry shows how fast it moves, growing from 3,510
 to 18,966 servers over 88.6 days~\cite{registrydrift}.

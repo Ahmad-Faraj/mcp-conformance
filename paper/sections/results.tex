@@ -1,6 +1,9 @@
 \label{sec:results}
 
-We probed all \Nprobed{} servers in the eligible frame.
+We launched all \Nattempted{} servers in the eligible frame. On \NHarnessError{} of
+them the harness itself failed, through a broken pipe or an uncaught exception in our
+probe, and those runs carry no verdict about the server. We report them here and
+exclude them from every denominator, leaving \Nprobed{} graded servers.
 
 \subsection{RQ1: Runnability and the startup funnel}
 \HandshakeCountCorr{} of \Nprobed{} servers (\HandshakeRateCorr{}) complete the MCP
@@ -12,10 +15,11 @@ by cause.
 Servers that only need credentials or configuration are counted apart from servers
 that crash, since a missing setting is a documentation gap. Most failures happen
 \emph{after} a successful install: the package downloads, then the process crashes,
-hangs, or exits without speaking the protocol. The failure is in the software, not
-the packaging. A concurrent random draw of 400 npm
+hangs, or exits without speaking the protocol. The software fails after the packaging
+has done its job. A concurrent random draw of 400 npm
 servers reports a 48.8\% handshake rate~\cite{randomdraw2026}, against \NpmRate{} for
-the npm servers in our census. The two differ in snapshot and harness, so we do not read the gap as a trend.
+the npm servers in our census. Snapshot and harness both differ between the two
+studies, which is enough to explain a gap of that size.
 
 \begin{figure}[t]
   \centering
@@ -35,14 +39,14 @@ argument type enforcement, and malformed-input survival. \NoTypecheckRate{} of
 responders failed to reject a wrong-typed required argument, which
 Section~\ref{sec:consequences} decomposes into the servers that reported the problem
 anyway and the smaller class that did not. \MalformedDiesRate{} failed to recover from a
-malformed frame. We report this as a robustness and conformance failure, not a
-security one. Under the stdio transport the client is the parent process and the only
-writer to the server's standard input, so a party able to deliver a malformed frame can
-already terminate the subprocess directly. JSON-RPC 2.0, on which MCP is built,
+malformed frame. We classify that as a robustness and conformance failure. The
+security reading does not survive the transport: under stdio the client is the parent
+process and the sole writer to the server's standard input, and a party able to
+deliver a malformed frame can already terminate the subprocess. JSON-RPC 2.0, on which MCP is built,
 nonetheless defines a parse-error response for this case and requires a reply to
 every subsequent request~\cite{jsonrpc}, and these servers give neither. One
-maintainer who reproduced our finding made exactly this argument, and we adopt their
-characterization over our original one (Section~\ref{sec:threats}).
+maintainer who reproduced the finding made this argument, and the classification here
+follows it (Section~\ref{sec:threats}).
 
 \input{tables/verdicts}
 
@@ -101,13 +105,31 @@ the SDK offered them. Of the \SilentExecTS{} TypeScript-SDK servers,
 Because each server was installed fresh, those ranges resolve to the newest 1.x, so this is current behavior, and a fix on the 1.x line
 would reach almost all of them at their next install.
 
+The unknown-tool divergence has a merged fix that deployed servers do not show. The
+SDK's tracker records tool resolution as corrected in March 2026, four months before
+our crawl, by a change that moves the tool-not-found check outside the handler's
+\texttt{try} block so it propagates as a protocol error~\cite{sdkpr1389,sdkissue1510}.
+We rebuilt the minimal high-level server on releases 1.28.0, 1.29.0 and 1.30.1 and
+sent the same unknown-tool call. All three answer with an \texttt{isError} result
+whose text reads \texttt{MCP error -32602: Tool \ldots{} not found}. The protocol
+error is raised and then delivered inside a successful response, where a client
+branching on JSON-RPC errors cannot see it. This explains a puzzle in our own data:
+the census ran after the fix shipped, and the rate did not move.
+
+The low-level path loses the tool name as well, which we had not tested. That API
+takes one handler for every \texttt{tools/call} request, and the handler receives the
+requested name without the library checking it against the declared tool list. Our
+probe asked a low-level server for a tool it does not have and received that server's
+ordinary answer, reporting a clean scan of code it was never given. Nothing in the
+response marks the tool as missing.
+
 In the recorded responses, a code-scanning tool asked to
 scan the integer \texttt{12345} answered \texttt{CLEAN}, a prompt-scoring tool returned
 a complete rubric including per-dimension sub-scores for the same integer, and a project
 registry confirmed that a project named \texttt{12345} had been registered. All three are well-formed successful results. None relates to the question asked,
 and at the protocol level none can be told apart from a correct answer: there is no
-error code and no \texttt{isError} flag. The schema that would have caught the call is
-the one the server published and did not enforce.
+error code and no \texttt{isError} flag. Each server published a schema that would
+have caught the call and then left it unenforced.
 
 \input{tables/consequences}
 
@@ -116,7 +138,8 @@ the one the server published and did not enforce.
 \texttt{isError} tool-execution result instead of a JSON-RPC protocol error. The
 specification's error-handling section lists ``unknown tool'' under \emph{Protocol
 Errors} and illustrates it with a \texttt{-32602} example~\cite{mcpspec}. It attaches
-no RFC-2119 keyword, so we record which mechanism each server uses and score neither as a violation (Section~\ref{sec:threats}).
+no RFC-2119 keyword. We record which mechanism each server uses and score neither
+as a violation (Section~\ref{sec:threats}).
 
 The specification has been moving toward what servers do. SEP-1303, now
 accepted and reflected in the specification, reclassified input validation errors from
@@ -164,10 +187,11 @@ A few SDK defaults, used directly or through wrappers, account for this behavior
 \label{sec:rq5}
 We test whether runnability and conformance correlate with the package registry
 (Figure~\ref{fig:byregistry}). Runnability differs: npm servers complete a
-handshake far more often than PyPI servers (\NpmRate{} of \NpmN{} vs.\ \PypiRateRaw{}
-of \PypiN{}; two-proportion $z=12.1$, $p<10^{-3}$). Conformance does not differ, with
-the error-as-result divergence appearing in $87.7\%$ of responding npm servers and
-$90.2\%$ of responding PyPI servers. The pattern follows from RQ4: because the
+handshake far more often than PyPI servers (\NpmRate{} of \NpmN{} against
+\PypiRateRaw{} of \PypiN{}, a difference of \GapRunnableCl{}). Conformance does not:
+the same publisher-cluster bootstrap puts the error-as-result difference at
+\GapErrAsResultCl{}, an interval spanning zero. We apply one method to both
+comparisons so that neither rests on a stronger footing. The pattern follows from RQ4: because the
 divergence is inherited from the SDKs, and both language ecosystems' SDKs share the
 same default, the registry a server ships on changes whether it \emph{starts} but not
 whether it \emph{conforms}.
@@ -176,8 +200,10 @@ Part of this gap came from our own launcher, and we corrected for it. We launch 
 if the package's console script is named after the package; npm's \texttt{npx}
 resolves the entry point from \texttt{package.json} and has no such requirement.
 \NEntrypointBlocked{} PyPI servers (\EntrypointBlockedPct{} of the PyPI population)
-installed successfully but were never launched for this reason alone. We
-re-probed all of them with the entry point resolved from the installed package
+installed successfully but were never launched for this reason alone. Our classifier
+identifies \NEntrypointSeen{} such rows in the census; the completed re-probe covers
+\NEntrypointBlocked{} of them, and \NEntrypointUnreprobed{} were missed. We
+re-probed those servers with the entry point resolved from the installed package
 metadata. \EntrypointRecovered{} (\EntrypointRecoveryRate{}) then completed a
 handshake; the rest failed for reasons unrelated to naming (Python exceptions, hangs,
 undeclared configuration). Correcting for this raises PyPI runnability from
@@ -195,7 +221,7 @@ nothing about either.
   \centering
   \includegraphics[width=\linewidth]{figures/by_registry.pdf}
   \caption{Handshake yield (PyPI after the entry-point correction) and the
-  error-as-result rate for unknown tools, by package registry, with 95\% Wilson
-  intervals.}
+  error-as-result rate for unknown tools, by package registry, with 95\% intervals
+  from a publisher-cluster bootstrap.}
   \label{fig:byregistry}
 \end{figure}

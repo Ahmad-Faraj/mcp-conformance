@@ -35,11 +35,15 @@ use an official SDK client. To observe raw behavior, including responses to
 malformed frames, the probe must not inherit any SDK-side correction or
 validation. The harness offers protocol version \texttt{2025-06-18} at
 initialization (the then-current revision was \texttt{2025-11-25}), records the
-version the server \emph{negotiates}, and grades all later checks against that version. A server that supports the
-offered version must answer with it, and \(3{,}576\) of \Nresponders{} responders did,
-so almost all grading is against \texttt{2025-06-18}. Responding servers negotiated four distinct
-revisions, and \(109\) of them settled on something other than the version we
-offered, the oldest dating to 2024-11-05.
+version the server \emph{negotiates}, and records it with every result. A server that
+supports the offered version must answer with it, and \NVerOffered{} of
+\Nresponders{} responders did. The rest negotiated three other revisions:
+\NVerDowngraded{} settled on an older one, the oldest dating to 2024-11-05, and
+\NVerAhead{} answered with a revision newer than the one offered, which the
+lifecycle does not permit. Our checks encode requirements that every one of these
+revisions states in the same terms, so no verdict depends on the negotiated version;
+a requirement that moved between revisions would need a version-dependent rule, and
+we add none.
 
 Each server is driven through the following checks, whose identifiers align with
 the categories of the official \texttt{modelcontextprotocol/conformance} suite
@@ -60,8 +64,8 @@ where an analogue exists:
     \emph{Protocol Errors} (standard JSON-RPC errors) and illustrates this with a
     \texttt{-32602} example, as opposed to \emph{Tool Execution Errors} reported as
     a result with \texttt{isError: true}. This categorization is prose plus an
-    example; it uses no RFC-2119 \textsf{MUST}/\textsf{SHOULD} keyword. We
-    therefore do not treat a non-conforming response as a ``violation''; instead we
+    example; it uses no RFC-2119 \textsf{MUST}/\textsf{SHOULD} keyword. A
+    diverging response is therefore never scored as a ``violation''. We
     record which of the two mechanisms the server uses (see
     \textsf{error-as-result} below).
   \item \textbf{tools-call-invalid-args}: for a tool with a typed required
@@ -83,7 +87,8 @@ harness against the official reference servers (\texttt{server-memory},
 \texttt{server-everything}), we found they answer an unknown-tool call not with the
 specified JSON-RPC \texttt{-32602} error but with a \emph{successful} response whose
 \texttt{result.isError} flag is set. Because this behavior originates in the
-official SDKs and is therefore ecosystem-wide, we grade it as its own category, not as a failure, and report its prevalence as a result.
+official SDKs, it reaches most of the ecosystem, and it earns its own verdict
+category. Its prevalence is a result in its own right.
 
 \subsection{Sandbox}
 Each server runs in a fresh container (\texttt{node:22-slim} for npm, an \texttt{astral-sh/uv} image for
@@ -95,7 +100,8 @@ runs with \texttt{-{}-network=none}, so no server code has network access while 
 being measured. In the \textbf{single-phase} condition, install and probe occur
 together in one ephemeral container and the network is available throughout. The
 census reported here was measured in the single-phase condition, for the operational
-reasons given in Section~\ref{sec:method-env}, and we state the consequences for
+reasons given in Section~\ref{sec:method-env}. Section~\ref{sec:threats} carries
+the consequences for
 validity in Section~\ref{sec:threats}.
 
 \subsection{Execution environment and probe condition}
@@ -135,3 +141,5 @@ container started $\rightarrow$ process launched
 $\rightarrow$ handshake completed $\rightarrow$ probed. Servers that never reach a
 handshake are classified into startup-failure categories
 (Section~\ref{sec:results}) from their exit code and stderr, so that the lost yield can be explained.
+Runs the harness itself broke are a separate outcome, reported with the funnel and
+excluded from the graded population, because they measure our instrument.

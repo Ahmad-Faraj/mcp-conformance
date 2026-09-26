@@ -4,7 +4,10 @@ Launches a server process, performs the MCP initialize lifecycle, then runs a
 sequence of conformance and robustness checks. Emits one JSON result object
 capturing the full verdict vector plus a message transcript.
 
-Checks are judged against the *negotiated* protocol version, and IDs are
+The negotiated protocol version is recorded with every result. No check branches on
+it, because each one encodes a requirement the observed revisions state
+identically; a check whose meaning differs across revisions would need that branch
+before it could be added here. IDs are
 aligned with the official modelcontextprotocol/conformance suite's categories
 (server-initialize, tools-list, tools-call-*) with additional ecosystem
 robustness probes (malformed framing, stdout purity, crash survival) that the
@@ -35,6 +38,16 @@ CLIENT_INFO = {"name": "mcpprobe", "version": "0.1.0"}
 PARSE_ERROR = -32700
 INVALID_PARAMS = -32602
 METHOD_NOT_FOUND = -32601
+
+# Frames are logged whole. The first census capped them at 2,000 characters, which
+# made most tools/list replies unparseable in the released transcripts and put the
+# claim that every number regenerates from them out of reach. Set a positive value
+# only if a run must bound its output size, and record the value with the data.
+MAX_FRAME_CHARS = 0
+
+
+def _clip(text: str) -> str:
+    return text if MAX_FRAME_CHARS <= 0 else text[:MAX_FRAME_CHARS]
 
 
 class ServerProcess:
@@ -73,7 +86,7 @@ class ServerProcess:
             del self.stderr_tail[:-40]
 
     def send_raw(self, text: str):
-        self.io_log.append((round(time.monotonic() - self._t0, 3), "send", text[:2000]))
+        self.io_log.append((round(time.monotonic() - self._t0, 3), "send", _clip(text)))
         self.proc.stdin.write(text + "\n")
         self.proc.stdin.flush()
 
@@ -100,7 +113,7 @@ class ServerProcess:
                 return {"_probe": "timeout"}
             if line is None:
                 return {"_probe": "eof"}
-            self.io_log.append((round(time.monotonic() - self._t0, 3), "recv", line[:2000]))
+            self.io_log.append((round(time.monotonic() - self._t0, 3), "recv", _clip(line)))
             if not line.strip():
                 continue
             try:
@@ -168,26 +181,53 @@ def classify_failure(exit_code, stderr_lines) -> str:
     return "exit-silent"
 
 
-def wrong_typed_args(schema: dict) -> dict | None:
-    """Build args violating the first typed required property of inputSchema."""
+def wrong_typed_args(schema: dict) -> tuple[dict, str, bool] | None:
+    """Build args that violate one typed property of inputSchema.
+
+    Returns (arguments, poisoned property name, whether that property is declared
+    required), or None when the schema offers nothing to violate. The earlier version
+    treated every property as required when the schema declared no required list,
+    which made a third of the poisoned properties optional while the paper described
+    them all as required. The caller records which case it was.
+    """
     if not isinstance(schema, dict):
         return None
     props = schema.get("properties") or {}
-    required = schema.get("required") or list(props)
+    declared = schema.get("required") or []
+    candidates = list(declared) or list(props)
     poison = {"string": 12345, "number": "not-a-number", "integer": "not-an-int",
               "boolean": "not-a-bool", "array": 7, "object": 7}
-    for name in required:
-        p = props.get(name)
-        if isinstance(p, dict) and p.get("type") in poison:
-            args = {n: _minimal_value(props.get(n, {})) for n in required}
-            args[name] = poison[p["type"]]
-            return args
+    for name in candidates:
+        t = _schema_type(props.get(name) or {})
+        if t in poison:
+            args = {n: _minimal_value(props.get(n, {})) for n in declared}
+            args[name] = poison[t]
+            return args, name, name in declared
+    return None
+
+
+def _schema_type(prop: dict) -> str | None:
+    """The declared type of a property, or None when it has no usable one.
+
+    JSON Schema allows a union ("type": ["string", "null"]). Passing that list to a
+    dict lookup raises TypeError and killed the whole probe on six census servers,
+    losing every later check for them. A union yields its first non-null member.
+    """
+    if not isinstance(prop, dict):
+        return None
+    t = prop.get("type")
+    if isinstance(t, str):
+        return t
+    if isinstance(t, list):
+        for item in t:
+            if isinstance(item, str) and item != "null":
+                return item
     return None
 
 
 def _minimal_value(prop: dict):
     return {"string": "x", "number": 1, "integer": 1, "boolean": True,
-            "array": [], "object": {}}.get(prop.get("type", "string"), "x")
+            "array": [], "object": {}}.get(_schema_type(prop) or "string", "x")
 
 
 def probe(cmd: list[str], timeout: float) -> dict:
@@ -281,12 +321,22 @@ def probe(cmd: list[str], timeout: float) -> dict:
             check(result, "tools-call-unknown", "fail", f"success reply: {str(resp.get('result'))[:120]}")
 
         # tools-call-invalid-args: wrong-typed argument should be rejected
-        target = next((t for t in tools if wrong_typed_args(t.get("inputSchema") or {})), None)
+        target = None
+        for t in tools:
+            built = wrong_typed_args(t.get("inputSchema") or {})
+            if built:
+                target = t
+                args, poisoned, was_required = built
+                break
         if target:
-            args = wrong_typed_args(target["inputSchema"])
+            result["poisoned_property"] = poisoned
+            result["poisoned_required"] = was_required
             resp = sp.request("tools/call", {"name": target["name"], "arguments": args}, timeout=timeout)
             if resp.get("_probe"):
-                check(result, "tools-call-invalid-args", "fail", f"{resp['_probe']} on {target['name']}")
+                # A timeout or EOF is not the server accepting the argument. It is a
+                # hang, and the census graded it identically to acceptance.
+                check(result, "tools-call-invalid-args", "no-reply",
+                      f"{resp['_probe']} on {target['name']}")
             elif "error" in resp or (resp.get("result") or {}).get("isError"):
                 check(result, "tools-call-invalid-args", "pass", f"rejected on {target['name']}")
             else:

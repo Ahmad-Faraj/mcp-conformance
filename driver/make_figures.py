@@ -22,7 +22,8 @@ import matplotlib.transforms  # noqa: E402
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
 
-from failure_classes import failure_class  # noqa: E402
+from failure_classes import failure_class, harness_error  # noqa: E402
+from stats import cluster_ci  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 DATA = ROOT / "data"
@@ -218,7 +219,7 @@ def fig_pipeline(rows, n_frame):
 # ---------------------------------------------------------------- failures ----
 def fig_failures(rows):
     """RQ1. Ranked bars; packaging/config/harness separated from real failures."""
-    non = [r for r in rows if not r.get("handshake_ok")]
+    non = [r for r in rows if not r.get("handshake_ok") and not harness_error(r)]
     counts = Counter(failure_class(r) for r in non)
     items = [(PRETTY.get(k, k), v, k) for k, v in counts.most_common() if v >= 5]
 
@@ -274,23 +275,36 @@ def fig_sdk():
 # ------------------------------------------------------------- by registry ----
 def fig_by_registry(rows, reprobe):
     """RQ5. Runnability differs by registry; conformance does not."""
-    ep_ok = sum(1 for r in reprobe if r.get("handshake_ok"))
+
+    def pub(r):
+        return r.get("publisher_id") or (r.get("server_name") or "").split("/")[0]
+
+    def ci(sub, pred):
+        """Publisher-cluster bootstrap interval, in percent, matching the paper."""
+        p, lo, hi = cluster_ci([(pub(r), pred(r)) for r in sub])
+        return 100 * p, 100 * lo, 100 * hi
 
     def reg(name):
-        sub = [r for r in rows if r.get("registry_type") == name]
-        hs = sum(1 for r in sub if r.get("handshake_ok"))
+        sub = [r for r in rows if r.get("registry_type") == name
+               and not harness_error(r)]
         resp = [r for r in sub if r.get("handshake_ok")]
-        ear = sum(1 for r in resp for c in r.get("checks", [])
-                  if c["id"] == "tools-call-unknown" and c["verdict"] == "error-as-result")
-        return len(sub), hs, len(resp), ear
+        return sub, resp
 
-    npm_n, npm_hs, npm_r, npm_e = reg("npm")
-    py_n, py_hs, py_r, py_e = reg("pypi")
+    npm_all, npm_resp = reg("npm")
+    py_all, py_resp = reg("pypi")
+    started = lambda r: bool(r.get("handshake_ok"))  # noqa: E731
+    ear = lambda r: any(c["id"] == "tools-call-unknown"  # noqa: E731
+                        and c["verdict"] == "error-as-result"
+                        for c in r.get("checks", []))
+    # PyPI runnability is shown after the entry-point correction, so the recovered
+    # servers are folded in before the interval is taken.
+    ep_ids = {r.get("server_name") for r in reprobe if r.get("handshake_ok")}
+    py_corr = lambda r: bool(r.get("handshake_ok")) or r.get("server_name") in ep_ids  # noqa: E731
     rows_ = [
-        ("npm", wilson(npm_hs, npm_n), npm_n, NAVY),
-        ("PyPI", wilson(py_hs + ep_ok, py_n), py_n, SKY),
-        ("npm", wilson(npm_e, npm_r), npm_r, NAVY),
-        ("PyPI", wilson(py_e, py_r), py_r, SKY),
+        ("npm", ci(npm_all, started), len(npm_all), NAVY),
+        ("PyPI", ci(py_all, py_corr), len(py_all), SKY),
+        ("npm", ci(npm_resp, ear), len(npm_resp), NAVY),
+        ("PyPI", ci(py_resp, ear), len(py_resp), SKY),
     ]
     fig, ax, _ = hbar_figure(
         [f"{r[0]} (n={r[2]:,})" for r in rows_], [r[1][0] for r in rows_],

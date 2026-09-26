@@ -28,6 +28,19 @@ cannot be launched from registry metadata alone, because the metadata does not r
 an entry point. The registry does not say whether a server starts. A pre-publish
 check, which our harness can perform, would give clients that information.
 
+\paragraph{A moving specification}
+The lifecycle we measure is being retired. Revision 2026-07-28 drops the
+initialization handshake and negotiates a version on every request instead, with an
+optional \texttt{server/discover} call for clients that want to ask up
+front~\cite{mcpversioning}. Handshake-based behavior is now described as a backward
+compatibility concern. Our population sits well behind that boundary:
+\PctVerOffered{} of responders settled on 2025-06-18, and \NVerDowngraded{} answered
+with something older still. So this census records an installed base at the point its
+mechanism left the specification. The distance between the two is the finding. A
+server published today inherits whichever default its SDK shipped with, and the
+revision that removes the handshake reaches those servers only when their authors
+upgrade, which the version spread here suggests is slow.
+
 \paragraph{Recommendations}
 For the specification: decide SEP-2145 with these numbers available. For SDK authors:
 validate declared argument types before dispatch by default, which would close a gap that violates an explicit MCP requirement. For agent frameworks:

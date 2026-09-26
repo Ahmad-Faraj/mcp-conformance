@@ -9,8 +9,12 @@ versioned by date, and servers may negotiate down to a version they support.
 
 \subsection{Static studies of the MCP ecosystem}
 The ecosystem has been studied at scale, but rarely by running it.
-Health-and-maintainability work analyzes source and metadata for roughly 1,900
-servers using static scanners and code-smell detectors~\cite{mcpfirstglance}, while
+The two peer-reviewed studies of this ecosystem are both static. One analyzes source
+and metadata for roughly 1,900 GitHub-sourced servers with static scanners and
+code-smell detectors~\cite{mcpfirstglance}; the other surveys the protocol's
+landscape and security threats~\cite{mcplandscape}. Ours differs on both axes: the
+population comes from the official registry a client resolves against, and every
+server is executed. Elsewhere,
 registry measurement crawls several marketplaces and characterizes scale,
 maintenance and supply-chain concentration across some 8,000 servers from marketplace data, without running them~\cite{mcpcrawler}. A companion dataset effort catalogues 3,238 candidate MCP
 repositories on GitHub and classifies them by operational role, again from repository evidence~\cite{mcpgithubdataset}, and a parallel line studies

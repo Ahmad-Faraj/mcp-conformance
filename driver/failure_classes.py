@@ -13,12 +13,25 @@ The released census keeps the original label; this is applied at analysis time.
 import re
 
 ENTRYPOINT_NOT_PROVIDED = "entrypoint-not-provided"
+HARNESS_ERROR = "harness-error"
 
 UVX_NO_EXE = re.compile(r"An executable named `[^`]+` is not provided by package `[^`]+`")
 
 
+def harness_error(r: dict) -> bool:
+    """True when the harness itself failed, so the row carries no verdict about the server.
+
+    These rows hold a broken pipe or an uncaught exception in the probe. They have no
+    checks and no handshake result, so counting them as servers that failed to start
+    charges our own defects to the ecosystem.
+    """
+    return bool(r.get("batch_error")) or r.get("handshake_ok") is None
+
+
 def failure_class(r: dict) -> str | None:
     """Return the startup-failure class for a census row, or None if it handshook."""
+    if harness_error(r):
+        return HARNESS_ERROR
     if r.get("handshake_ok"):
         return None
     if any(UVX_NO_EXE.search(line or "") for line in r.get("stderr_tail") or []):
