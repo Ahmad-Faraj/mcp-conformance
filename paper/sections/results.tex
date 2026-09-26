@@ -18,8 +18,15 @@ that crash, since a missing setting is a documentation gap. Most failures happen
 hangs, or exits without speaking the protocol. The software fails after the packaging
 has done its job. A concurrent random draw of 400 npm
 servers reports a 48.8\% handshake rate~\cite{randomdraw2026}, against \NpmRate{} for
-the npm servers in our census. Snapshot and harness both differ between the two
-studies, which is enough to explain a gap of that size.
+the npm servers in our census. That study argues that curated frames select for
+servers that work, and reports 66.7\% for a hand-curated frame under its own
+instrument, which is close to our figure. Our frame is not curated: it is every
+eligible server in the snapshot, with no popularity filter and no repair of a server
+that fails to start. The difference we can name is the snapshot. Theirs is drawn from
+a registry of 24,135 servers against the \Nframe{} in ours, and a registry that grew
+from 3,510 to 18,966 servers in 88.6 days~\cite{registrydrift} is mostly newer
+entries by the later date. Whether a newer cohort starts less often is a question a
+single snapshot cannot settle.
 
 \begin{figure}[t]
   \centering
