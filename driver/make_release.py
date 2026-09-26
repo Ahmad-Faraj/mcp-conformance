@@ -58,6 +58,24 @@ SECURITY_RELEVANT = {
     ("tools-call-unknown", "fail"),
 }
 
+
+def silent_execution_servers() -> set:
+    """Servers that ran a tool on an argument their own schema rejects.
+
+    These are withheld for the same reason as the other security-relevant classes.
+    The finding fails an explicit MUST, and naming a server next to a transcript
+    showing it answer a poisoned call is a reputational claim about its author. The
+    empirical standard for secondary data asks that privacy and reputation be
+    respected in the reporting, and treating the most serious class as the only
+    named one would invert the policy applied everywhere else.
+    """
+    path = DATA / "consequences.json"
+    if not path.exists():
+        return set()
+    cons = json.loads(path.read_text(encoding="utf-8"))
+    return {r["server"] for r in cons.get("silent-execution", [])
+            if isinstance(r, dict) and r.get("server")}
+
 # Credential material observed in runtime output. Redacted from the release.
 CREDENTIAL_PATTERNS = [
     re.compile(r"(?i)((?:api[_-]?key|secret|auth token|password|token)[\"'\s:=]+)([A-Za-z0-9_\-]{24,})"),
@@ -108,9 +126,17 @@ def redact_any(obj):
     return obj, 0
 
 
+_SILENT: set | None = None
+
+
 def is_sensitive(row: dict) -> bool:
+    global _SILENT
     if not row.get("handshake_ok"):
         return False
+    if _SILENT is None:
+        _SILENT = silent_execution_servers()
+    if row.get("server_name") in _SILENT:
+        return True
     return any((c.get("id"), c.get("verdict")) in SECURITY_RELEVANT
                for c in row.get("checks", []))
 
@@ -284,6 +310,37 @@ def main():
 
     if (DATA / "summary.json").exists():
         shutil.copy2(DATA / "summary.json", out / "summary.json")
+
+    # The consequence classification behind the silent-execution figure, and the
+    # human labels that validate it. Without these two the headline number cannot be
+    # checked from the release alone. Server identities are replaced by the same
+    # pseudonyms used elsewhere, and the rating key, which maps an item back to its
+    # server, stays unreleased.
+    src_cons = DATA / "consequences.json"
+    if src_cons.exists():
+        cons = json.loads(src_cons.read_text(encoding="utf-8"))
+        for bucket, rows in cons.items():
+            if not isinstance(rows, list):
+                continue
+            for r in rows:
+                if isinstance(r, dict) and r.get("server") in withheld:
+                    r["server"] = withheld[r["server"]]
+                    r["identity_withheld"] = True
+        cons, _ = redact_any(cons)
+        (out / "consequences.json").write_text(
+            json.dumps(cons, ensure_ascii=False, indent=1), encoding="utf-8")
+
+    rating = ROOT / "private" / "rating"
+    val_out = out / "validation"
+    for name in ("human.csv", "human_pass1_training.csv", "llm_labels.csv"):
+        src = rating / name
+        if src.exists():
+            val_out.mkdir(exist_ok=True)
+            shutil.copy2(src, val_out / name)
+    for doc in (ROOT / "validation" / "CODEBOOK.md",):
+        if doc.exists():
+            val_out.mkdir(exist_ok=True)
+            shutil.copy2(doc, val_out / doc.name)
 
     # The entry-point re-probe corrects the runnability numbers, so the release must
     # carry it or those numbers cannot be reproduced. Same redaction pass.

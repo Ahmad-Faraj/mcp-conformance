@@ -24,6 +24,16 @@ from pathlib import Path
 DATA = Path(__file__).resolve().parent.parent / "data"
 
 FINDINGS = {
+    ("tools-call-invalid-args", "fail"): (
+        "high", "Tool runs on an argument its own declared schema rejects",
+        "The server publishes an inputSchema in tools/list and then executes the "
+        "tool on an argument that contradicts it, returning an ordinary result with "
+        "no error indication. A client cannot tell that answer from a correct one, "
+        "and the specification requires servers to validate all tool inputs.",
+        "Validate arguments against the declared inputSchema before dispatch, and "
+        "answer a violation with an error the client can branch on. On the "
+        "TypeScript SDK's low-level Server API this check is not automatic.",
+    ),
     ("malformed-json", "fail"): (
         "high", "Server crashes or stops responding after a malformed JSON-RPC frame",
         "A single syntactically invalid frame from a client ends the session. Any "
@@ -192,6 +202,19 @@ def main():
             r = json.loads(line)
             rows[r.get("server_name")] = r
 
+    # Only the servers that answered with no error indication get this notice. The
+    # rest of the invalid-args failures reported the problem in prose, which is a
+    # conformance defect but not the hazard described here, and telling an author
+    # their server did something it did not do wastes their time and our credibility.
+    silent = set()
+    cons_path = Path(args.inp).resolve().parent.parent / "consequences.json"
+    if not cons_path.exists():
+        cons_path = DATA / "consequences.json"
+    if cons_path.exists():
+        cons = json.loads(cons_path.read_text(encoding="utf-8"))
+        silent = {r["server"] for r in cons.get("silent-execution", [])
+                  if isinstance(r, dict) and r.get("server")}
+
     contacts, tiers = [], Counter()
     for name, r in rows.items():
         if not r.get("handshake_ok"):
@@ -199,6 +222,8 @@ def main():
         for c in r.get("checks", []):
             key = (c["id"], c["verdict"])
             if key not in FINDINGS:
+                continue
+            if key == ("tools-call-invalid-args", "fail") and name not in silent:
                 continue
             sev, title, impact, fix = FINDINGS[key]
             tiers[sev] += 1

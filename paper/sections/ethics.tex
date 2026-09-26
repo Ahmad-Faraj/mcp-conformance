@@ -49,10 +49,20 @@ maintainer corrected our severity assessment, and the paper follows that correct
 (Section~\ref{sec:threats}). We also reported the input-validation gap in the
 TypeScript SDK's low-level \texttt{Server} API (Section~\ref{sec:consequences}) to
 the SDK maintainers, who have labeled it for design work on both the 1.x and 2.x
-lines. The remaining findings concern unknown-tool handling
-and stdout contamination, and they are of lower severity and appear only in
-aggregate. The released dataset identifies none of the \(211\) servers with security-relevant
-findings.
+lines. Notices for the servers that run a tool on an argument their own schema
+rejects are prepared and going out in batches; those findings are the second
+high-severity class, \NDisclosureHigh{} in total with the malformed-frame set. The
+remaining findings concern unknown-tool handling and stdout contamination, and they
+are of lower severity and appear only in aggregate.
+
+The released dataset withholds the identities of all \NWithheld{} servers carrying a
+security-relevant finding, replacing each name with a stable pseudonym so the rows
+remain linkable across files. That set includes every server in the silent-execution
+class. Naming a server beside a transcript of it answering a poisoned call is a
+claim about its author's work, and the empirical standard for secondary data asks
+that the reputation of the subjects be respected in the reporting as well as in the
+conduct of the study. Identities are restored only where a maintainer has fixed the
+defect or asked to be named.
 
 \paragraph{Registry and maintainer impact}
 Our crawl pages sequentially through the registry's public API and backs off on

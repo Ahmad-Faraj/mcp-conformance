@@ -52,6 +52,25 @@ def main():
     n_attempted = len(attempted)
     # Runs the host stopped: the memory cap or the disk guard sends SIGKILL (137).
     killed = sum(1 for r in attempted if r.get("exit_code") == 137)
+
+    # Identities withheld from the release: the security-relevant check failures plus
+    # the servers that ran a tool on an argument their own schema rejects.
+    _sec = {("malformed-json", "fail"), ("stdout-purity", "fail"),
+            ("tools-call-unknown", "fail"), ("tools-call-invalid-args", "fail")}
+    _cons_file = DATA / "consequences.json"
+    _silent = set()
+    if _cons_file.exists():
+        _c = json.loads(_cons_file.read_text(encoding="utf-8"))
+        _silent = {r["server"] for r in _c.get("silent-execution", [])
+                   if isinstance(r, dict) and r.get("server")}
+    withheld = sum(1 for r in attempted if r.get("handshake_ok") and (
+        r.get("server_name") in _silent
+        or any((c.get("id"), c.get("verdict")) in _sec and c.get("id") != "tools-call-invalid-args"
+               for c in r.get("checks", []))))
+    disclosure_high = len(_silent) + sum(
+        1 for r in attempted if r.get("handshake_ok")
+        and any(c.get("id") == "malformed-json" and c.get("verdict") == "fail"
+                for c in r.get("checks", [])))
     n = len(rows)
     hs = sum(1 for r in rows if r.get("handshake_ok"))
     responders = [r for r in rows if r.get("handshake_ok")]
@@ -218,6 +237,8 @@ def main():
         "Nattempted": f"{n_attempted:,}",
         "NHarnessError": f"{len(harness_rows):,}",
         "NHarnessErrorPct": f"{100*len(harness_rows)/n_attempted:.1f}\\%",
+        "NWithheld": f"{withheld:,}",
+        "NDisclosureHigh": f"{disclosure_high:,}",
         "NKilled": f"{killed:,}",
         "NKilledPct": f"{100*killed/n_attempted:.1f}\\%",
         "NInterrupted": f"{killed + len(harness_rows):,}",
