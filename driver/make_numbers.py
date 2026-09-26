@@ -409,12 +409,20 @@ def main():
     if cons_path.exists():
         cons = json.loads(cons_path.read_text(encoding="utf-8"))
         silent = len(cons.get("silent-execution", []))
+        # How much of that set rests on one poison value. The harness sends the
+        # integer 12345 where a string is declared, and a runtime that coerces it
+        # answers a well-formed question well. That is a weaker reading of the same
+        # verdict, and its size belongs in the threats section rather than nowhere.
+        int_poison = sum(1 for r in cons.get("silent-execution", [])
+                         if isinstance(r, dict)
+                         and 12345 in (r.get("sent") or {}).values())
         inband = len(cons.get("in-band-error", []))
         unclass = len(cons.get("unparsed", [])) + len(cons.get("no-transcript", []))
         tot = silent + inband + unclass + len(cons.get("empty-result", []))
         macros.update({
             "NAcceptInvalid": f"{tot:,}",
             "NSilentExec": f"{silent:,}",
+            "NSilentIntPoison": f"{int_poison:,}",
             "SilentExecShare": f"{100*silent/tot:.0f}\\%" if tot else "-",
             "SilentExecRate": pctci(silent, n_resp),
             "NInBandError": f"{inband:,}",

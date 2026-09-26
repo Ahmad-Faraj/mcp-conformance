@@ -51,9 +51,14 @@ maintainer corrected our severity assessment, and the paper follows that correct
 (Section~\ref{sec:threats}). We also reported the input-validation gap in the
 TypeScript SDK's low-level \texttt{Server} API (Section~\ref{sec:consequences}) to
 the SDK maintainers, who have labeled it for design work on both the 1.x and 2.x
-lines. Notices for the servers that run a tool on an argument their own schema
-rejects are prepared and going out in batches: \NSilentNotices{} notices, which with
-the malformed-frame set make \NDisclosureHigh{} high-severity findings in total. The
+lines. We did not open an issue against each of the \NSilentNotices{} servers that run a
+tool on an argument their own schema rejects. The defect we identify there is in the
+library rather than in those servers: \SilentExecTS{} of them are built on the SDK
+whose low-level API publishes a schema it does not enforce, and a per-server report
+would tell an author their code is at fault where our own analysis says it is not.
+Notices are drafted and released with the harness so that any maintainer can check
+their own server, their identities are withheld from the dataset, and the finding is
+reported where it can be fixed. The
 remaining findings concern unknown-tool handling and stdout contamination, and they
 are of lower severity and appear only in aggregate.
 

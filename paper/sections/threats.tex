@@ -26,6 +26,21 @@ not in fact occur. The rating pass below puts a number on that: a quarter of the
 responses the classifier read as argument checking were, to a human reader, tools
 that had run anyway.
 
+A weaker reading of the same verdict deserves stating, because a reviewer will
+reach it. The harness poisons one declared property, and for
+\NSilentIntPoison{} of the \NSilentExec{} silent executions the poison is the integer
+\texttt{12345} where the schema declares a string. A runtime that coerces an integer
+to a string will then answer a well-formed question correctly, and the flagship
+example in Section~\ref{sec:consequences} is of that kind: a scanner handed
+\texttt{12345}, stringifying it, and finding no imports in \texttt{"12345"} is not
+obviously wrong. What the check establishes is narrower than a wrong answer. A server
+publishes an \texttt{inputSchema}, receives a call that the schema rejects, and
+neither refuses it nor signals anything, which is the behavior the specification's
+validation requirement exists to prevent. The remaining \(\NSilentExec{} -
+\NSilentIntPoison{}\) carry a poison that no coercion rule would repair. A
+replication that varied the poison by declared type would separate the two
+populations, and the released transcripts record what was sent in every case.
+
 A second artifact affects the same check. Where a tool declares several required
 properties, the harness poisons one and fills the rest with placeholder values, so a
 server may reject a placeholder and never examine the argument under test. We find
