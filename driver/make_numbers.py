@@ -64,7 +64,24 @@ def main():
     # the servers that ran a tool on an argument their own schema rejects.
     _sec = {("malformed-json", "fail"), ("stdout-purity", "fail"),
             ("tools-call-unknown", "fail"), ("tools-call-invalid-args", "fail")}
-    _cons_file = DATA / "consequences.json"
+    def _beside(census, name):
+        """Find a companion file next to the census we were handed.
+
+        Run against the release, that is the release's own copy, whose server
+        names are the same pseudonyms the released rows carry -- so joins land and
+        the counts are recomputable by anyone holding only the release. Reading the
+        private copy here would silently under-count, because its keys are the real
+        names.
+        """
+        beside = Path(census).resolve().parent / name
+        return beside if beside.exists() else DATA / name
+
+    # Resolve the consequences file beside the census we were given. Run against the
+    # release, that is the release's copy, whose server names are the same
+    # pseudonyms the released rows carry -- so the join still lands and the count
+    # is recomputable by anyone holding only the release. Reading the private copy
+    # here would silently under-count, because its keys are the real names.
+    _cons_file = _beside(args.inp, "consequences.json")
     _silent = set()
     if _cons_file.exists():
         _c = json.loads(_cons_file.read_text(encoding="utf-8"))
@@ -103,7 +120,8 @@ def main():
     malformed_k, malformed = resp_rate(
         lambda c: c["id"] == "malformed-json" and c["verdict"] == "fail")
 
-    frame_n = sum(1 for _ in open(args.frame, encoding="utf-8"))
+    with open(args.frame, encoding="utf-8") as _f:
+        frame_n = sum(1 for _ in _f)
 
     # Publisher clustering. Registry names are "namespace/server", and a single
     # publisher can account for hundreds of servers that share a template and
@@ -190,8 +208,8 @@ def main():
     # behaviour is confined to one SDK family. Joins the classified consequences
     # against the same package-metadata attribution used for Table 4.
     import csv as _csv
-    _cons_p = DATA / "consequences.json"
-    _sdk_p = DATA / "sdk_attribution.csv"
+    _cons_p = _cons_file
+    _sdk_p = _beside(args.inp, "sdk_attribution.csv")
     silent_fam = Counter()
     silent_major = Counter()
     silent_ver = Counter()
@@ -202,8 +220,8 @@ def main():
     edge_tot = Counter()
     if _cons_p.exists() and _sdk_p.exists():
         _cons = json.loads(_cons_p.read_text(encoding="utf-8"))
-        _sdk = {r["server"]: r for r in
-                _csv.DictReader(_sdk_p.open(encoding="utf-8"))}
+        with _sdk_p.open(encoding="utf-8") as _f:
+            _sdk = {r["server"]: r for r in _csv.DictReader(_f)}
         for _row in _sdk.values():
             fam_tot[_row["sdk_family"]] += 1
             edge_tot[_row.get("sdk_edge") or "unattributed"] += 1
@@ -333,7 +351,7 @@ def main():
     # argument, how many actually executed the tool and returned ordinary-looking
     # output (the class a client cannot recover from), versus reporting the problem
     # in the result text without setting isError. Produced by analyze_consequences.py.
-    cons_path = DATA / "consequences.json"
+    cons_path = _cons_file
     if cons_path.exists():
         cons = json.loads(cons_path.read_text(encoding="utf-8"))
         silent = len(cons.get("silent-execution", []))

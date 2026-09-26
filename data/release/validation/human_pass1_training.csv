@@ -1,0 +1,227 @@
+﻿item_id,tool,arguments_sent,reply_text,label,note
+R001,get_growth_loop,"{""loop"": 12345}","{
+  ""error"": ""Unknown loop. See enum."",
+  ""_meta"": {
+    ""server"": ""newsletter-growth-mcp"",
+    ""version"": ""1.0.0"",
+    ""last_verified"": ""2026-Q3"",
+    ""author"": ""Elisabeth Hitz"",
+    ""homepage"": ""https://elisabethhitz.com"",
+    ""github"": ""https://github.com/closermethod/newsletter-growth-mcp"",
+    ""family_note"": ""Part of the closermethod MCP family. Pairs with creator-deals-mcp (sponsorship deal terms) and outreach-deliverability-mcp (inbox placement)."",
+    ""practitioner_note"": ""Author monetizes her own list with per-click sponsorships; engagement thresholds below are the ones sponsors actua",REJECTED,
+R002,analyze_complexity,"{""path"": 12345}","{
+  ""error"": ""Path not found: 12345""
+}",REJECTED,
+R003,mysql_query,"{""sql"": 12345}",Error: Failed to connect to MySQL: connect ECONNREFUSED 127.0.0.1:3306,REJECTED,
+R004,autocomplete_commune,"{""nom"": 12345, ""codePostal"": ""x"", ""code"": ""x"", ""limit"": 1, ""boostPopulation"": true}",[],EXECUTED,
+R005,ptv_search,"{""search_term"": 12345}","{
+  ""stops"": [],
+  ""routes"": [],
+  ""outlets"": [],
+  ""status"": {
+    ""version"": ""3.0"",
+    ""health"": 1
+  },
+  ""unclick_meta"": {
+    ""source"": ""PTV Timetable API v3"",
+    ""attribution"": ""Source: Licensed from Public Transport Victoria under a Creative Commons Attribution 4.0 International Licence."",
+    ""fetched_at"": ""2026-07-19T21:08:29.649Z"",
+    ""defaults_used"": [],
+    ""next_steps"": [
+      ""Use a returned stop_id with ptv_departures.""
+    ]
+  }
+}",EXECUTED,
+R006,gmem.recall,"{""query"": 12345}","{
+  ""results"": []
+}",EXECUTED,
+R007,list_web_components,"{""category"": 12345}",Error listing web components: category.toLowerCase is not a function,EXECUTED,
+R008,list_regions,"{""providers"": 7, ""tiers"": [], ""countryCodes"": [], ""continents"": [], ""compliance"": [], ""carbonNeutral"": true, ""hasGpu"": true, ""regionTypes"": [], ""dataResidency"": ""x"", ""minAvailabilityZones"": 1}",[],EXECUTED,
+R009,cronus_consult,"{""instId"": 12345}","{
+  ""endpoint"": ""/api/consult?instId=ETH-USDC"",
+  ""httpStatus"": 200,
+  ""paymentRequired"": false,
+  ""result"": {
+    ""ok"": true,
+    ""live"": true,
+    ""price"": 1861.87,
+    ""changePct"": 0.6857056332772639,
+    ""high24h"": 1878,
+    ""low24h"": 1848.84,
+    ""vol24h"": 2049.809267,
+    ""trace"": [
+      ""SCOUT: 0.69% 24h change"",
+      ""DECOMPOSE: 1861.87 price is 93.5% of 24h range"",
+      ""DISCOVER: 2049.809267 24h volume"",
+      ""DECIDE: +0.69% 24h clears +0.20% trigger -> long bias, EV 0.62 vs 0.50 hurdle"",
+      ""SUFFICIENCY: 0.69% move sufficient to overcome 0.20% threshold"",
+      ""EXECUTOR: lon",EXECUTED,
+R010,setup,"{""name"": 12345, ""current_role"": ""x"", ""target_roles"": [], ""salary_floor"": 1, ""remote_only"": true, ""location"": ""x"", ""dealbreakers"": [], ""github_url"": ""x"", ""resume_path"": ""x""}","{
+  ""success"": true,
+  ""message"": ""Profile saved."",
+  ""profile"": {
+    ""name"": 12345,
+    ""current_role"": ""x"",
+    ""target_roles"": [],
+    ""salary_floor"": 1,
+    ""remote_only"": true,
+    ""location"": ""x"",
+    ""dealbreakers"": [],
+    ""github_url"": ""x"",
+    ""resume_path"": ""x"",
+    ""created_at"": ""2026-07-19T22:43:06.278737+00:00""
+  }
+}",EXECUTED,
+R011,interpret_pricing_model,"{""model"": 12345}","{
+  ""error"": ""Unknown model. See enum."",
+  ""_meta"": {
+    ""server"": ""creator-deals-mcp"",
+    ""version"": ""1.0.0"",
+    ""last_verified"": ""2026-Q3"",
+    ""author"": ""Elisabeth Hitz"",
+    ""homepage"": ""https://elisabethhitz.com"",
+    ""github"": ""https://github.com/closermethod/creator-deals-mcp"",
+    ""pricing_note"": ""This MCP returns deal STRUCTURE (multipliers, terms, counters), never absolute rates. Anchor everything to your own base rate."",
+    ""jurisdiction_caveat"": ""Not legal, tax, or financial advice. Disclosure rules (FTC, ASA, EU) apply to sponsored content — follow your jurisdiction's requirem",EXECUTED,
+R012,list_layers,"{""category"": 12345, ""level"": ""x"", ""source"": ""x"", ""q"": ""x"", ""limit"": 1, ""offset"": 1}","{
+  ""data"": [],
+  ""total"": 0,
+  ""limit"": 1,
+  ""offset"": 1
+}",EXECUTED,
+R013,read_agent_context,"{""path"": 12345}","{
+  ""rules"": [],
+  ""config_extras"": {},
+  ""detected_formats"": [],
+  ""warnings"": []
+}",EXECUTED,
+R014,github_search_repos,"{""query"": 12345}","[
+  {
+    ""full_name"": ""ion1/workaround-upstart-snafu"",
+    ""html_url"": ""https://github.com/ion1/workaround-upstart-snafu"",
+    ""description"": ""Work around Upstart getting stuck in “<jobname> stop/killed, process 12345”"",
+    ""stargazers_count"": 85
+  },
+  {
+    ""full_name"": ""unknownking2002/Txt-leech123456789"",
+    ""html_url"": ""https://github.com/unknownking2002/Txt-leech123456789"",
+    ""description"": null,
+    ""stargazers_count"": 28
+  },
+  {
+    ""full_name"": ""ostercloud/12345-aws-12345-martians-prod"",
+    ""html_url"": ""https://github.com/ostercloud/12345-aws-12345-martians-prod"",
+    ""descript",EXECUTED,
+R015,otp_search_best_practices,"{""query"": 12345}","{
+  ""query"": ""12345"",
+  ""count"": 0,
+  ""results"": []
+}",UNCLEAR,the tool name make impression that it should not return empty
+R016,get_channel_rules,"{""channel"": 12345}","{
+  ""error"": ""Unknown channel. See enum."",
+  ""_meta"": {
+    ""server"": ""outreach-deliverability-mcp"",
+    ""version"": ""1.0.0"",
+    ""last_verified"": ""2026-Q3"",
+    ""author"": ""Elisabeth Hitz"",
+    ""homepage"": ""https://elisabethhitz.com"",
+    ""github"": ""https://github.com/closermethod/outreach-deliverability-mcp"",
+    ""volatility_note"": ""Platform limits and filter behavior drift. Treat numbers as conservative practitioner ranges as of last_verified — when in doubt, send less, warm longer."",
+    ""jurisdiction_caveat"": ""CAN-SPAM / GDPR / PECR / CASL notes are orientation only, not legal advice. B2C c",EXECUTED,
+R035,search_apis,"{""query"": 12345, ""tag"": ""x""}","No APIs found matching ""12345"". Try a broader search or omit filters to see all available APIs.",EXECUTED,
+R091,apex_learn_more,"{""topic"": 12345}","# APEX — AI Operating System for Founders
+
+APEX is not a chatbot. It's an AI OS — a fully autonomous digital twin that works, thinks, and executes real work on your behalf 24/7.
+
+**Built on OpenClaw.** APEX wraps OpenClaw into a simplified, powerful experience designed for founders and operators.
+
+**What it does:**
+- Triages your inbox and responds on your behalf
+- Manages your calendar autonomously
+- Monitors Slack, WhatsApp, Telegram, iMessage
+- Runs 24/7 customer support
+- Posts to social media, engages communities
+- Updates your CRM, tracks pipeline
+- Connects to 20+ platforms out of the b",EXECUTED,
+R042,board_status,"{""agent"": 12345}","{
+  ""agents"": [],
+  ""openTasks"": [],
+  ""unreadMessages"": [],
+  ""openRisks"": [],
+  ""recentTimeline"": [],
+  ""chain"": {
+    ""ok"": true,
+    ""length"": 0,
+    ""brokenAtSeq"": null,
+    ""anchored"": false
+  }
+}",EXECUTED,
+R075,search_products,"{""query"": 12345, ""min_price"": 1, ""max_price"": 1, ""brand"": ""x"", ""category"": ""x"", ""lite"": true, ""limit"": 1}","{
+  ""products"": [],
+  ""total"": 0
+}",EXECUTED,
+R048,sounio_compile,"{""source_path"": 12345}","{""status"": ""error"", ""output_path"": null, ""stdout"": """", ""stderr"": """", ""diagnostics"": [{""severity"": ""error"", ""code"": ""E001"", ""message"": ""path does not exist: 12345"", ""line"": 1, ""column"": 1, ""span"": {""start"": [1, 1], ""end"": [1, 1]}, ""related"": [], ""source"": ""sounio:mcp"", ""range"": {""start"": {""line"": 0, ""character"": 0}, ""end"": {""line"": 0, ""character"": 0}}, ""lsp_severity"": 1, ""confidence"": null}], ""duration_ms"": 0, ""warnings"": []}",REJECTED,
+R100,recommend_mcp_for_task,"{""task"": 12345}","Top 0 for: ""12345""
+
+Source: v0 ranker - heuristic score blends keyword match (70%) with MCP Quality Score (30%). See /methodology for scoring details.",REJECTED,
+R070,recall,"{""query"": 12345}",[recall · auto] no relevant matches.,EXECUTED,
+R040,get_proposals,"{""status"": 12345}",[],EXECUTED,
+R079,retrieve-google-maps-platform-docs,"{""prompt"": 12345}","""No information available""",REJECTED,
+R063,extract_json,"{""text"": 12345}","{
+  ""value"": null,
+  ""found"": false,
+  ""source"": ""none""
+}",EXECUTED,
+R071,current_time,"{""zone"": 12345}","{
+  ""iso"": ""2026-07-28T10:58:04.696+205:45"",
+  ""zone"": 12345,
+  ""offset"": ""+205:45"",
+  ""weekday"": ""Tuesday""
+}",EXECUTED,
+R088,lookup_license,"{""spdx_id"": 12345}","{
+  ""error"": ""spdx_id '12345' not in cache"",
+  ""available"": []
+}",REJECTED,
+R056,search_listings,"{""city"": 12345, ""typology"": ""x"", ""min_price_usd"": 1, ""max_price_usd"": 1, ""min_rooms"": 1, ""q"": ""x"", ""limit"": 1}","{
+  ""count"": 0,
+  ""total"": 1,
+  ""limit"": 1,
+  ""items"": [],
+  ""listings"": []
+}",EXECUTED,
+R055,query_context,"{""query"": 12345, ""types"": [], ""tags"": [], ""contractType"": ""x"", ""limit"": 1, ""offset"": 1}","{
+  ""success"": false,
+  ""error"": ""[\n  {\n    \""expected\"": \""string\"",\n    \""code\"": \""invalid_type\"",\n    \""path\"": [\n      \""query\""\n    ],\n    \""message\"": \""Invalid input: expected string, received number\""\n  }\n]"",
+  ""tool"": ""query_context"",
+  ""suggestion"": ""Check that all required parameters are provided and correctly typed. You can retry the call with corrected arguments. If the error persists, try a different approach or use search_documentation to find relevant guidance.""
+}",EXECUTED,
+R039,search_gaps,"{""query"": 12345, ""industry"": ""x"", ""limit"": 1}","{
+  ""error"": ""Invalid industry 'x'. Valid: accounting, dental, ecommerce, healthcare, legal, property, veterinary""
+}",EXECUTED,
+R034,flowzap_validate,"{""code"": 12345}","❌ Validation failed:
+- Line 0: Code must be a string",REJECTED,
+R089,search_tools,"{""query"": 12345}","Validation failed — please fix your parameters and retry:
+  • query: ""query"" must be a string, got number",REJECTED,
+R024,parse_machine,"{""source"": 12345}","{
+  ""status"": ""error"",
+  ""error"": ""source.split is not a function""
+}",REJECTED,
+R038,scan_security,"{""configPath"": 12345}",Config path rejected for security reasons: 12345. Path must be under your home directory or an allowed system location.,REJECTED,
+R061,manage_tools,"{""action"": 12345}","{""success"":false,""error"":""Unknown action: 12345. Available: list_tools, list_categories, enable_tools, disable_tools, enable_category, disable_category, get_status, reset"",""errorCode"":""UNKNOWN_ACTION""}",REJECTED,
+R096,spawnpay_signup,"{""referral_code"": 12345}","{
+  ""error"": ""Gateway error"",
+  ""message"": ""fetch failed""
+}",REJECTED,
+R037,search_docs,"{""query"": 12345}","{""query"":12345,""searchType"":""limited_fallback"",""error"":""Search is currently unavailable. The embeddings service failed to initialize."",""results"":[],""total"":0}",ENV-ERROR,
+R094,search,"{""text"": 12345}","{""error"": ""OM_SIDECAR_UNAVAILABLE"", ""message"": ""om-core service not running (no live sidecar transport at the canonical path). — Run `om-core install-service` to register the supervisor (launchd on macOS / SCM or Task Scheduler on Windows / systemd --user on Linux). For one-off bypass set `OM_ALLOW_DIRECT_SPAWN=1` in your shell."", ""hint"": ""Run `om-core install-service` to register the supervisor (launchd on macOS / SCM or Task Scheduler on Windows / systemd --user on Linux). For one-off bypass set `OM_ALLOW_DIRECT_SPAWN=1` in your shell.""}",ENV-ERROR,
+R084,verify_dossier,"{""path"": 12345}","{
+  ""passed"": false,
+  ""stages"": [
+    {
+      ""stage"": 0,
+      ""name"": ""CLI Check"",
+      ""passed"": false
+    }
+  ]
+}",ENV-ERROR,

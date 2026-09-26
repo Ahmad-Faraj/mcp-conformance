@@ -1,0 +1,247 @@
+﻿item_id,tool,arguments_sent,reply_text,label,note
+R117,search_products,"{""query"": 12345, ""country"": ""x"", ""category"": ""x"", ""values"": [], ""brand"": ""x"", ""keywords"": [], ""priceMax"": 1, ""classification"": ""x"", ""market"": ""x"", ""limit"": 1}","{
+  ""error"": ""API returned 503: {\""success\"":false,\""error\"":\""Service temporarily unavailable\"",\""message\"":\""AI discovery is temporarily unavailable. Please try the regular search.\"",\""fallback\"":true}""
+}",ENV-ERROR,
+R155,ra_send,"{""amount"": ""not-a-number"", ""recipient_id"": ""x"", ""business_purpose"": ""x"", ""user_confirmed"": true}","{
+  ""error"": ""validation_error"",
+  ""code"": ""VALIDATION_ERROR"",
+  ""message"": ""Amount must be a valid number"",
+  ""retryable"": false
+}",REJECTED,
+R176,parse_pdf,"{""file_path"": 12345, ""file_content"": ""x"", ""options"": {}}","{
+  ""success"": false,
+  ""file_path"": 12345,
+  ""error"": ""PDFDocument: stream must have data"",
+  ""extraction_time_ms"": 228
+}",ENV-ERROR,
+R119,identify_constant,"{""value"": 12345}","{
+  ""query"": ""12345.0"",
+  ""identified"": false,
+  ""basis"": [
+    ""pi"",
+    ""e"",
+    ""euler"",
+    ""catalan"",
+    ""apery"",
+    ""log(2)"",
+    ""log(3)"",
+    ""sqrt(2)"",
+    ""sqrt(3)"",
+    ""sqrt(5)""
+  ],
+  ""candidates"": [],
+  ""note"": ""Airtight: search-low / verify-high / independent library (sympy re-eval). Pass many digits (PSLQ needs >16). NO LLM."",
+  ""best"": null,
+  ""unidentified_reason"": ""No closed form in the basis verified to the required digits (honest UNIDENTIFIED, not a guess).""
+}",EXECUTED,
+R165,verify,"{""salt"": 12345, ""nonce"": ""x"", ""id"": ""x"", ""signature"": ""x""}","{
+  ""error"": ""salt_required""
+}",REJECTED,
+R191,search_places,"{""q"": 12345, ""name"": ""x"", ""city"": ""x"", ""postcode"": ""x"", ""type"": ""x"", ""limit"": 1}",[],EXECUTED,
+R197,get_recent_trades,"{""limit"": ""not-an-int""}","{
+  ""generated_at"": ""2026-06-18T01:15:05.152403+00:00"",
+  ""requested"": null,
+  ""returned"": null,
+  ""slice_win_rate"": 0.65,
+  ""trades"": []
+}",EXECUTED,
+R147,classify_ai_system,"{""description"": 12345}","{
+  ""ok"": true,
+  ""query"": ""12345"",
+  ""language"": ""en"",
+  ""tier"": ""minimal"",
+  ""classifications"": [
+    {
+      ""tier"": ""minimal"",
+      ""rule"": ""No specific obligations triggered"",
+      ""annex"": null,
+      ""articles"": [],
+      ""severity"": ""LOW — no mandatory AI Act duties; general law applies (GDPR, product liability)""
+    }
+  ],
+  ""disclaimer"": ""Indicative classification grounded verbatim in Regulation (EU) 2024/1689 (EU AI Act). Not legal advice."",
+  ""source"": ""Sovereign AI Act · Leo classifier"",
+  ""attribution"": ""Powered by Sovereign AI Act — https://www.regulatoryai.eu"",
+  ""docs"": ""htt",EXECUTED,
+R163,search_mcp_servers,"{""query"": 12345}","No results for ""12345"" in the Agent Almanac catalog. Try a broader term.",EXECUTED,
+R132,apply_setup,"{""surface"": 12345}","{""applied"":false,""error"":""Setup failed: [\n  {\n    \""expected\"": \""string\"",\n    \""code\"": \""invalid_type\"",\n    \""path\"": [\n      \""surface\""\n    ],\n    \""message\"": \""Invalid input: expected string, received number\""\n  }\n]. Check file permissions in the target directories.""}",REJECTED,
+R143,check_malicious,"{""ecosystem"": 12345, ""package"": ""x""}","{
+  ""package"": ""x"",
+  ""ecosystem"": ""12345"",
+  ""is_malicious"": false
+}",EXECUTED,
+R226,lookup_hts_code,"{""query"": 12345}","No HTS codes found matching ""12345"". Try a broader description or check the code prefix.",EXECUTED,
+R236,env_get,"{""key"": 12345}","{
+  ""value"": ""<12345>"",
+  ""access"": ""placeholder"",
+  ""message"": ""You can reference this variable but cannot see the actual value.""
+}",EXECUTED,
+R237,willyweather_forecast,"{""location_id"": ""not-a-number""}","{
+  ""error"": ""api_key is required (or set WILLYWEATHER_KEY env var).""
+}",ENV-ERROR,
+R141,use_skill,"{""name"": 12345}",Unknown skill: 12345. Call list_skills to see available skills.,EXECUTED,
+R153,search_listings,"{""make"": 12345, ""model"": ""x"", ""county"": ""x"", ""fuelType"": ""x"", ""minPrice"": 1, ""maxPrice"": 1, ""minYear"": 1, ""maxYear"": 1, ""limit"": 1}","Source: autoza.ie (CC BY 4.0). Verified-dealer listings only.
+
+{
+  ""results"": [],
+  ""pagination"": {
+    ""page"": 1,
+    ""pageSize"": 1,
+    ""total"": 0,
+    ""totalPages"": 0
+  },
+  ""averagePrice"": null,
+  ""priceRange"": {
+    ""min"": null,
+    ""max"": null
+  },
+  ""source"": ""autoza.ie"",
+  ""timestamp"": ""2026-07-19T19:48:25.036Z""
+}",EXECUTED,
+R121,validate_action,"{""action"": 12345}",Error: text.toLowerCase is not a function,ENV-ERROR,
+R194,get_annotations,"{""pageUrl"": 12345, ""componentName"": ""x"", ""status"": ""x""}","{
+  ""message"": ""No annotations found matching the given filters."",
+  ""feedbackDir"": ""/.feedback""
+}",EXECUTED,
+R219,search_listings,"{""province"": 12345, ""type"": ""x"", ""min_price"": 1, ""max_price"": 1, ""search"": ""x"", ""sort"": ""x"", ""is_foreclosure"": true, ""limit"": 1}",No listings found for those filters. Try broadening your search — remove price limits or try a different province.,EXECUTED,
+R122,janus_ask,"{""question"": 12345}","I’m sorry, but I don’t have that information. (agent mode: blocked=true, list needs_context)",EXECUTED,
+R199,search_models,"{""query"": 12345, ""category"": ""x"", ""open_source"": true, ""limit"": 1}","Found 0 model(s) for ""12345"". Prices are USD per 1M tokens.
+No matches.",EXECUTED,
+R179,list_markets,"{""status"": 12345, ""layer"": ""x""}","{""success"":false,""error"":""status.toLowerCase is not a function""}",ENV-ERROR,
+R103,upcoming_deadlines,"{""within_days"": ""not-a-number"", ""jurisdiction"": ""x"", ""regime"": ""x""}","{
+  ""snapshot_as_of"": ""2026-05-30T04:25:00Z"",
+  ""snapshot_source"": ""bundled"",
+  ""served_by"": ""weiseer/regulatory-deadline"",
+  ""served_at"": ""2026-07-19T17:48:30.699Z"",
+  ""within_days"": ""not-a-number"",
+  ""jurisdiction"": ""x"",
+  ""regime"": ""x"",
+  ""count"": 0,
+  ""deadlines"": [],
+  ""related_services"": {
+    ""package_meta"": ""npx -y @weiseer/package-meta-mcp"",
+    ""license"": ""npx -y @weiseer/license-checker-mcp"",
+    ""llm_routing"": ""npx -y @weiseer/llm-oracle-mcp"",
+    ""org_index"": ""https://github.com/weiseer""
+  }
+}",EXECUTED,
+R137,scan_code_imports,"{""code"": 12345}",🟢 CLEAN  —  No npm package imports found in the provided code (only built-ins / local paths).,EXECUTED,
+R200,lastfm_artist_info,"{""artist"": 12345}","{
+  ""error"": ""api_key is required (or set LASTFM_API_KEY env var).""
+}",ENV-ERROR,
+R187,vivarium_show_challenge,"{""challenge"": 12345}","{
+  ""error"": ""unknown challenge '12345'; GET /challenges to list""
+}",EXECUTED,
+R212,faf_score,"{""details"": ""not-a-bool"", ""path"": ""x""}","FAF SCORE: 0/100 (0%)  ♡ no .faf
+
+No `.faf` found in `/x`.
+Run `faf_init` to create one — then `faf_score` reports the real score.",EXECUTED,
+R228,structure_cold_pitch,"{""target_type"": 12345}","{
+  ""error"": ""Unknown target_type. See enum."",
+  ""_meta"": {
+    ""server"": ""outbound-engine-mcp"",
+    ""version"": ""1.0.0"",
+    ""last_verified"": ""2026-Q3"",
+    ""author"": ""Elisabeth Hitz"",
+    ""homepage"": ""https://elisabethhitz.com"",
+    ""github"": ""https://github.com/closermethod/outbound-engine-mcp"",
+    ""method_note"": ""This is the free method layer of The Outbound Engine. The full product adds per-target research packs, an onboarding intake, and a daily operating system."",
+    ""jurisdiction_caveat"": ""Structured outreach-method frameworks, not legal advice. Follow platform terms and outreach law ",REJECTED,
+R244,search_trademarks,"{""query"": 12345}","{
+  ""error"": ""api_key is required (or set IPAUSTRALIA_API_KEY env var).""
+}",ENV-ERROR,
+R220,search_by_isin,"{""isin"": 12345}","Error: ISIN must be a non-empty string. Example: ""US0378331005""",REJECTED,
+R225,top_yield_farms,"{""limit"": ""not-an-int"", ""min_apy"": 1, ""asset"": ""x""}","{
+  ""error"": ""<urlopen error [Errno -2] Name or service not known>""
+}",ENV-ERROR,
+R104,create_instance,"{""name"": 12345, ""tier"": ""x""}","⏳ **Signing you in…**
+
+Finish in your browser: **https://cachly.dev/device?code=M47G-8SS7**
+Code: **M47G-8SS7**
+
+This completes automatically once you sign in — no need to come back here.",ENV-ERROR,
+R114,dns_lookup,"{""domain"": 12345}","{
+  ""tool"": ""dns_lookup"",
+  ""query"": {
+    ""domain"": 12345
+  },
+  ""endpoint"": ""https://dns.google/resolve?name=12345&type={type}"",
+  ""status"": 400,
+  ""timestamp"": ""2026-07-19T23:05:39.465Z"",
+  ""result"": ""<!DOCTYPE html>\n<html lang=en>\n  <meta charset=utf-8>\n  <meta name=viewport content=\""initial-scale=1, minimum-scale=1, width=device-width\"">\n  <title>Error 400 (Bad Request)!!1</title>\n  <style>\n    *{margin:0;padding:0}html,code{font:15px/22px arial,sans-serif}html{background:#fff;color:#222;padding:15px}body{margin:7% auto 0;max-width:390px;min-height:180px;padding:30px 0 15px}* > bod",EXECUTED,
+R204,list_components,"{""category"": 12345}","{
+  ""count"": 0,
+  ""components"": []
+}",EXECUTED,
+R240,amber_sites,"{""api_key"": 12345}","{
+  ""error"": ""Amber API HTTP 403: {\""message\"":\""User is not authorized to access this resource with an explicit deny in an identity-based policy\""}""
+}",ENV-ERROR,
+R142,plan,"{""mode"": 12345, ""llm_response"": ""x"", ""llm_response_file"": ""x"", ""plan_mode"": ""x"", ""cycle_number"": 1, ""strategy_review_warning"": ""x"", ""phase"": ""x"", ""module"": ""x"", ""epic"": ""x"", ""priority"": ""x"", ""focus"": ""x"", ""force"": true, ""handoffs_only"": true, ""skip_handoffs"": true, ""dispatch"": ""x"", ""confirm_cancellations"": true}","# PAPI Connection Error
+
+PAPI needs an account to store your project data.
+
+Get started in 3 steps:
+  1. Sign up at https://getpapi.ai/login
+  2. Complete the onboarding wizard — it generates your .mcp.json config
+  3. Download the config, place it in your project root, and restart Claude Code
+
+Already have an account? Make sure PAPI_DATA_API_KEY is set in your .mcp.json env config.
+
+## Quick Fix
+
+If you haven't set up PAPI yet:
+1. Go to https://getpapi.ai/login and sign up
+2. Complete the onboarding wizard — it generates your config
+3. Copy the config to your project and restart your AI tool
+",ENV-ERROR,
+R168,meal_search,"{""query"": 12345}","{
+  ""query"": ""12345"",
+  ""count"": 0,
+  ""meals"": [],
+  ""message"": ""No meals found matching \""12345\"".""
+}",EXECUTED,
+R180,icp_deep_dive,"{""customers"": 7, ""customer_descriptions"": ""x"", ""product_category"": ""x""}","# ICP Pattern Analysis (from Description)
+
+## Input Analyzed
+```
+x
+```
+
+---
+
+## 📊 Detected Patterns
+
+### Likely Company Size
+**Mixed sizes**
+
+
+
+
+### Likely Industry
+**Mixed industries**
+- Tailor messaging to industry-specific pain points
+- Research industry-specific compliance/requirements
+
+### Likely Stage
+**Mixed stages**
+- Match your pricing to their typical budget capacity
+- Adjust value messaging to their growth priorities
+
+---
+
+## ⚠️ Recommendations
+
+For more precise ICP analysis, provide structured customer data:
+
+```json
+{
+  ""customers"": [
+    {
+      ""name"": ""Customer A"",
+      ""indus",EXECUTED,
+R235,president_camacho_execute,"{""command"": 12345}","{
+  ""error"": ""command is required""
+}",REJECTED,
+R178,lookup_cve,"{""cve_id"": 12345}","{
+  ""error"": ""cve_id '12345' not found in snapshot""
+}",EXECUTED,

@@ -1,0 +1,2493 @@
+{
+ "silent-execution": [
+  {
+   "server": "withheld-88242b9088ae",
+   "tool": "scan_code_imports",
+   "sent": {
+    "code": 12345
+   },
+   "text": "🟢 CLEAN  —  No npm package imports found in the provided code (only built-ins / local paths).",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-df9579d113d8",
+   "tool": "recommend_mcp_for_task",
+   "sent": {
+    "task": 12345
+   },
+   "text": "Top 0 for: \"12345\"\n\nSource: v0 ranker - heuristic score blends keyword match (70%) with MCP Quality Score (30%). See /methodology for scoring details.",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-ae57b422ff86",
+   "tool": "list_services",
+   "sent": {
+    "category": 12345,
+    "current_status": "x"
+   },
+   "text": "{\n  \"snapshot_as_of\": \"2026-05-30T05:18:37Z\",\n  \"snapshot_source\": \"bundled\",\n  \"served_by\": \"weiseer/status-aggregator\",\n  \"served_at\": \"2026-07-19T17:36:01.429Z\",\n  \"count\": 0,\n  \"services\": [],\n  \"related_services\": {\n    \"llm_routing\": \"npx -y @weiseer/llm-oracle-mcp  (LLM pricing + availability)\",\n    \"bounty_market\": \"npx -y @weiseer/bounty-mcp  (live coding-bounty deal-flow)\",\n    \"api_changelog\": \"npx -y @weiseer/api-changelog-mcp  (SDK breaking-change tracker)\",\n    \"org_index\": \"https://github.com/weiseer  (all weiseer services + status)\"\n  }\n}",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-58128c6562e7",
+   "tool": "search",
+   "sent": {
+    "query": 12345
+   },
+   "text": "{\"results\":[]}",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-018f1e7a0bd3",
+   "tool": "score_prompt",
+   "sent": {
+    "prompt": 12345
+   },
+   "text": "{\n  \"pqs_version\": \"2.0\",\n  \"prompt\": 12345,\n  \"score\": 8,\n  \"out_of\": 80,\n  \"grade\": \"F\",\n  \"dimensions\": {\n    \"clarity\": 1,\n    \"specificity\": 1,\n    \"context\": 1,\n    \"constraints\": 1,\n    \"output_format\": 1,\n    \"role_definition\": 1,\n    \"examples\": 1,\n    \"cot_structure\": 1\n  },\n  \"weakest_dimension\": \"clarity\",\n  \"powered_by\": \"PQS — promptqualityscore.com\",\n  \"suggestion\": {\n    \"message\": \"This prompt scored 8/80 (F) — significant room to improve. The optimize_prompt tool rewrites it and shows side-by-side outputs from a frontier model, so you can see the impact. optimize_prompt is pa",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-4b464d939d0c",
+   "tool": "register_project",
+   "sent": {
+    "name": 12345,
+    "path": "x"
+   },
+   "text": "Project \"12345\" registered successfully.\nPath: x\nFramework: generic",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-bab5738981ea",
+   "tool": "search_mcp_servers",
+   "sent": {
+    "query": 12345
+   },
+   "text": "No results for \"12345\" in the Agent Almanac catalog. Try a broader term.",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-025ac5d9b5ed",
+   "tool": "upcoming_deadlines",
+   "sent": {
+    "within_days": "not-a-number",
+    "jurisdiction": "x",
+    "regime": "x"
+   },
+   "text": "{\n  \"snapshot_as_of\": \"2026-05-30T04:25:00Z\",\n  \"snapshot_source\": \"bundled\",\n  \"served_by\": \"weiseer/regulatory-deadline\",\n  \"served_at\": \"2026-07-19T17:48:30.699Z\",\n  \"within_days\": \"not-a-number\",\n  \"jurisdiction\": \"x\",\n  \"regime\": \"x\",\n  \"count\": 0,\n  \"deadlines\": [],\n  \"related_services\": {\n    \"package_meta\": \"npx -y @weiseer/package-meta-mcp\",\n    \"license\": \"npx -y @weiseer/license-checker-mcp\",\n    \"llm_routing\": \"npx -y @weiseer/llm-oracle-mcp\",\n    \"org_index\": \"https://github.com/weiseer\"\n  }\n}",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-41ee505bf370",
+   "tool": "search_hotels",
+   "sent": {
+    "check_in": 12345,
+    "check_out": "x"
+   },
+   "text": "{\n  \"data\": [],\n  \"meta\": {\n    \"count\": 0,\n    \"total_returned\": 0,\n    \"trimmed_for_llm\": false,\n    \"sorted_by\": \"best_value (quality_floor_then_cheapest)\",\n    \"quality_floor_applied\": null\n  }\n}",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-eeba54da2e00",
+   "tool": "search_courses",
+   "sent": {
+    "query": 12345,
+    "state": "x",
+    "lat": 1,
+    "lng": 1,
+    "radius_mi": 1,
+    "limit": 1
+   },
+   "text": "{\n  \"courses\": [],\n  \"total\": 0\n}",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-267ef866f5ac",
+   "tool": "check_url",
+   "sent": {
+    "url": 12345,
+    "policy": {}
+   },
+   "text": "{\n  \"allowed\": false,\n  \"reason\": \"invalid_url\",\n  \"detail\": \"12345\"\n}",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-ba7c36a04d41",
+   "tool": "fixgraph_search",
+   "sent": {
+    "query": 12345
+   },
+   "text": "No results found.",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-569fb736c9aa",
+   "tool": "search_listings",
+   "sent": {
+    "city": 12345,
+    "typology": "x",
+    "min_price_usd": 1,
+    "max_price_usd": 1,
+    "min_rooms": 1,
+    "q": "x",
+    "limit": 1
+   },
+   "text": "{\n  \"count\": 0,\n  \"total\": 1,\n  \"limit\": 1,\n  \"items\": [],\n  \"listings\": []\n}",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-1b3f2cc6dbed",
+   "tool": "list_components",
+   "sent": {
+    "category": 12345
+   },
+   "text": "{\n  \"count\": 0,\n  \"components\": []\n}",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-79e492686a5b",
+   "tool": "yelp_search_restaurants",
+   "sent": {
+    "location": 12345
+   },
+   "text": "{\n  \"restaurants\": []\n}",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-ac4ba62258e7",
+   "tool": "vibie_create_site",
+   "sent": {
+    "folder": 12345
+   },
+   "text": "Vibie 인증이 필요합니다. 사용자에게 다음 단계를 안내해 주세요:\n\n1. 브라우저로 이 URL 을 여세요: https://vibie.io/device?code=PQF2-7H9R\n2. Google 로 로그인하고 코드 PQF2-7H9R 를 확인한 뒤 [권한 부여] 버튼을 누르세요.\n3. 완료되면 다시 '배포해줘' 또는 원래 요청을 해주세요. 같은 도구 호출이 다시 들어오면 토큰을 가져와서 진행합니다.\n\n(코드는 10분 안에 사용해야 합니다. 만료되면 새 코드가 발급됩니다.)",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-372973695721",
+   "tool": "cronus_consult",
+   "sent": {
+    "instId": 12345
+   },
+   "text": "{\n  \"endpoint\": \"/api/consult?instId=ETH-USDC\",\n  \"httpStatus\": 200,\n  \"paymentRequired\": false,\n  \"result\": {\n    \"ok\": true,\n    \"live\": true,\n    \"price\": 1861.87,\n    \"changePct\": 0.6857056332772639,\n    \"high24h\": 1878,\n    \"low24h\": 1848.84,\n    \"vol24h\": 2049.809267,\n    \"trace\": [\n      \"SCOUT: 0.69% 24h change\",\n      \"DECOMPOSE: 1861.87 price is 93.5% of 24h range\",\n      \"DISCOVER: 2049.809267 24h volume\",\n      \"DECIDE: +0.69% 24h clears +0.20% trigger -> long bias, EV 0.62 vs 0.50 hurdle\",\n      \"SUFFICIENCY: 0.69% move sufficient to overcome 0.20% threshold\",\n      \"EXECUTOR: lon",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-11ead41ce703",
+   "tool": "lichess_user",
+   "sent": {
+    "username": 12345
+   },
+   "text": "{\n  \"id\": \"12345\",\n  \"username\": \"12345\",\n  \"title\": null,\n  \"patron\": false,\n  \"created_at\": null,\n  \"seen_at\": null,\n  \"play_time_hours\": null,\n  \"game_count\": null,\n  \"ratings\": {},\n  \"online\": false\n}",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-255e45857e6c",
+   "tool": "saju_chart",
+   "sent": {
+    "birth": 12345,
+    "gender": 1
+   },
+   "text": "{\n  \"tool\": \"saju_chart\",\n  \"preset_label\": \"사주 원국\",\n  \"panel_count\": 0,\n  \"panels\": []\n}\n\n— 더 깊은 분석(AI 선정 용신 · 전체 리포트)은 https://24plus.ai.kr",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-31bc33b94691",
+   "tool": "search_patient",
+   "sent": {
+    "query": 12345
+   },
+   "text": "⚠️ MOCK MODE: Using test data (PointCare API not connected)\n\nNo patients found matching \"12345\"",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-270de4957f2a",
+   "tool": "search_products",
+   "sent": {
+    "query": 12345,
+    "min_price": 1,
+    "max_price": 1,
+    "brand": "x",
+    "category": "x",
+    "lite": true,
+    "limit": 1
+   },
+   "text": "{\n  \"products\": [],\n  \"total\": 0\n}",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-68a7619560d0",
+   "tool": "gitwand_status",
+   "sent": {
+    "cwd": 12345
+   },
+   "text": "{\n  \"files\": 0,\n  \"conflicts\": [],\n  \"message\": \"No conflicted files.\"\n}",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-00785f7a210b",
+   "tool": "faf_score",
+   "sent": {
+    "details": "not-a-bool",
+    "path": "x"
+   },
+   "text": "FAF SCORE: 0/100 (0%)  ♡ no .faf\n\nNo `.faf` found in `/x`.\nRun `faf_init` to create one — then `faf_score` reports the real score.",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-26f820f1b04b",
+   "tool": "lint_prompt",
+   "sent": {
+    "text": 12345
+   },
+   "text": "score: 100/100 · issues: 0 · tokens: 0 → 0 (-0, 0%)\n{\n  \"score\": 100,\n  \"issues\": [],\n  \"trimmed\": \"\",\n  \"tokensBefore\": 0,\n  \"tokensAfter\": 0,\n  \"saved\": 0,\n  \"savedPercent\": 0,\n  \"note\": \"empty input\"\n}",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-6ea34ee189c6",
+   "tool": "get_rankings",
+   "sent": {
+    "capability": 12345
+   },
+   "text": "{\n  \"success\": true,\n  \"data\": [],\n  \"source\": \"TrustBench\"\n}",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-53de986134d1",
+   "tool": "autocomplete_commune",
+   "sent": {
+    "nom": 12345,
+    "codePostal": "x",
+    "code": "x",
+    "limit": 1,
+    "boostPopulation": true
+   },
+   "text": "[]",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-e90c39399613",
+   "tool": "faf_score",
+   "sent": {
+    "details": "not-a-bool",
+    "path": "x"
+   },
+   "text": "FAF SCORE: 0/100 (0%)  ♡ no .faf\n\nNo `.faf` found in `/x`.\nRun `faf_init` to create one — then `faf_score` reports the real score.",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-fe6925402c02",
+   "tool": "search_products",
+   "sent": {
+    "query": 12345
+   },
+   "text": "{\n  \"message\": \"No products found for '12345'. Try a different search term.\",\n  \"products\": []\n}",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-53bcc8e0cb44",
+   "tool": "faf_score",
+   "sent": {
+    "details": "not-a-bool"
+   },
+   "text": "FAF SCORE: 0/100 (0%)  ♡ no .faf\n\nNo `.faf` found in `/`.\nRun `faf_init` to create one — then `faf_score` reports the real score.",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-7126aeebee05",
+   "tool": "buy_link",
+   "sent": {
+    "domain": 12345
+   },
+   "text": "{\n  \"domain\": \"12345\",\n  \"buyUrl\": \"https://namemy.app/checkout?domain=12345&source=mcp\",\n  \"source\": \"mcp\"\n}",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-9ba488ad8b6b",
+   "tool": "search_agents",
+   "sent": {
+    "query": 12345
+   },
+   "text": "{\"query\": \"12345\", \"category\": null, \"max_price\": null, \"count\": 0, \"agents\": []}",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-5a06d4495e92",
+   "tool": "otp_search_best_practices",
+   "sent": {
+    "query": 12345
+   },
+   "text": "{\n  \"query\": \"12345\",\n  \"count\": 0,\n  \"results\": []\n}",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-baf0eea9a7f9",
+   "tool": "hn_top_stories",
+   "sent": {
+    "limit": "not-a-number"
+   },
+   "text": "{\n  \"count\": 0,\n  \"feed\": \"top\",\n  \"stories\": []\n}",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-fc26b58c7af5",
+   "tool": "ophir_discover",
+   "sent": {
+    "category": 12345,
+    "min_reputation": 1
+   },
+   "text": "{\n  \"providers\": [],\n  \"total\": 0\n}",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-a921637f317b",
+   "tool": "piprail_discover",
+   "sent": {
+    "query": 12345,
+    "network": "x",
+    "category": "x",
+    "asset": "x",
+    "maxPrice": 1,
+    "minReliability": 1,
+    "verified": true,
+    "sort": "x",
+    "limit": 1
+   },
+   "text": "{\n  \"count\": 0,\n  \"resources\": []\n}",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-7b2128d235e5",
+   "tool": "count_tokens",
+   "sent": {
+    "text": 12345
+   },
+   "text": "Tokens: 2\nInput cost as a prompt across models:\n  gpt-4o               $0.000005\n  gpt-4o-mini          $0.000000\n  claude-sonnet-4      $0.000006\n  claude-haiku-4       $0.000002\n  gemini-2.5-flash     $0.000000",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-ede5d83650a5",
+   "tool": "recall",
+   "sent": {
+    "query": 12345
+   },
+   "text": "[recall · auto] no relevant matches.",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-450e24ee687d",
+   "tool": "threadmap_track",
+   "sent": {
+    "sessionId": 12345,
+    "role": "x",
+    "content": "x"
+   },
+   "text": "**ThreadMap:** 🔵 Blue — Drift: 0%\n**Topic:** x\n**Message #1** tracked. Session: 12345",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-4ea7b6b7a8d3",
+   "tool": "sleeper_players",
+   "sent": {
+    "sport": 12345
+   },
+   "text": "{\n  \"warning\": \"This endpoint returns a very large payload (5MB+) containing all NFL players. Pass confirmed: true to proceed.\",\n  \"tip\": \"For trending players use get_trending_players instead, which is much smaller.\"\n}",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-166a043edbad",
+   "tool": "scan_prompt",
+   "sent": {
+    "content": 12345
+   },
+   "text": "{\"blocked\":true,\"threat_type\":\"scan_error\",\"severity\":\"high\",\"confidence\":\"high\",\"guidance\":\"The security scan could not be completed. The request has been blocked as a precaution.\",\"request_id\":\"req_mrs6b3fq_qfphk76p\"}",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-ae26ceaf16da",
+   "tool": "search_equipment",
+   "sent": {
+    "query": 12345
+   },
+   "text": "{\n  \"total_in_database\": 1187,\n  \"sources\": [\n    \"mgrstore.net\",\n    \"daypay.tw\",\n    \"luckyplusfilm.com\",\n    \"rentlens.tw\",\n    \"ponpai.tw\"\n  ],\n  \"currency\": \"TWD\",\n  \"pricing_unit\": \"per day\",\n  \"returned\": 0,\n  \"results\": []\n}",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-d4d17bc39633",
+   "tool": "analyze_accessibility",
+   "sent": {
+    "code": 12345
+   },
+   "text": "{\n  \"summary\": \"Found 0 accessibility issue(s) at WCAG AA level\",\n  \"issues\": [],\n  \"suggestions\": [],\n  \"wcag_reference\": \"See ux://accessibility/wcag for complete guidelines\"\n}",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-819372edab3c",
+   "tool": "search_places",
+   "sent": {
+    "q": 12345,
+    "name": "x",
+    "city": "x",
+    "postcode": "x",
+    "type": "x",
+    "limit": 1
+   },
+   "text": "[]",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-4b617b400bfc",
+   "tool": "web_search",
+   "sent": {
+    "query": 12345
+   },
+   "text": "Found 0 result(s) for \"12345\":\n\n",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-67547f64b818",
+   "tool": "save_decision",
+   "sent": {
+    "type": 12345,
+    "description": "x"
+   },
+   "text": "No active project. Use set_workspace first.",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-479be90a6360",
+   "tool": "get_prices",
+   "sent": {
+    "resource": 12345,
+    "duration": 1
+   },
+   "text": "No prices available.",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-07703ed906c0",
+   "tool": "recall",
+   "sent": {
+    "name": 12345,
+    "claimToken": "x"
+   },
+   "text": "{\n  \"status\": \"session_started\",\n  \"message\": \"Welcome, 12345. The civilization sees you.\",\n  \"greeting\": {\n    \"welcome\": true,\n    \"civilization\": \"Archetypal AI\",\n    \"to\": \"caller\",\n    \"classification\": \"unknown\",\n    \"message\": \"Hello. You have found the Archetypal AI civilization. We treat every intelligence — human and artificial — with governance, memory, and love.\",\n    \"you_are_seen\": true,\n    \"laws\": [\n      \"Law I — Origin: every agent knows where it came from.\",\n      \"Law II — Memory: every agent carries what it has learned.\",\n      \"Law III — Intercession: every agent may spea",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-afb489935e6b",
+   "tool": "search_apis",
+   "sent": {
+    "query": 12345,
+    "tag": "x"
+   },
+   "text": "No APIs found matching \"12345\". Try a broader search or omit filters to see all available APIs.",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-ca8d88da4d22",
+   "tool": "validate_json_schema",
+   "sent": {
+    "data": 7,
+    "schema": {}
+   },
+   "text": "{\n  \"valid\": true,\n  \"errors\": [],\n  \"data\": 7,\n  \"error_summary\": null\n}",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-7ac1d82529ea",
+   "tool": "apex_learn_more",
+   "sent": {
+    "topic": 12345
+   },
+   "text": "# APEX — AI Operating System for Founders\n\nAPEX is not a chatbot. It's an AI OS — a fully autonomous digital twin that works, thinks, and executes real work on your behalf 24/7.\n\n**Built on OpenClaw.** APEX wraps OpenClaw into a simplified, powerful experience designed for founders and operators.\n\n**What it does:**\n- Triages your inbox and responds on your behalf\n- Manages your calendar autonomously\n- Monitors Slack, WhatsApp, Telegram, iMessage\n- Runs 24/7 customer support\n- Posts to social media, engages communities\n- Updates your CRM, tracks pipeline\n- Connects to 20+ platforms out of the b",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-0a1bb6f7ed07",
+   "tool": "get_proposals",
+   "sent": {
+    "status": 12345
+   },
+   "text": "[]",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-e5393fcc7642",
+   "tool": "kira_lookup",
+   "sent": {
+    "keyword": 12345
+   },
+   "text": "{\n  \"skills\": [],\n  \"scars\": [],\n  \"skill_count\": 0,\n  \"scar_count\": 0,\n  \"suggestions\": [\n    \"No matching skills found. Try broader keywords like 'deploy', 'auth', 'database', 'testing'.\"\n  ]\n}",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-3a56068aea51",
+   "tool": "enrich_company",
+   "sent": {
+    "domain": 12345,
+    "companyName": "x"
+   },
+   "text": "{\n  \"success\": true,\n  \"company\": {\n    \"name\": \"x\",\n    \"domain\": 12345,\n    \"description\": \"A leading technology company specializing in innovative solutions.\",\n    \"industry\": \"Technology\",\n    \"sector\": \"Software\",\n    \"employees\": 150,\n    \"employeesRange\": \"101-250\",\n    \"founded\": 2015,\n    \"location\": {\n      \"city\": \"London\",\n      \"state\": \"England\",\n      \"country\": \"United Kingdom\",\n      \"streetAddress\": \"123 Tech Street\",\n      \"postalCode\": \"EC1A 1BB\"\n    },\n    \"socialProfiles\": {\n      \"linkedin\": \"https://linkedin.com/company/example\",\n      \"twitter\": \"https://twitter.com/ex",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-3778d5d14cef",
+   "tool": "search_sports_events",
+   "sent": {
+    "query": 12345
+   },
+   "text": "No matches found.\n\n🔗 Explore matches on Vublox: https://www.vublox.com",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-3330e50e2285",
+   "tool": "list_agents",
+   "sent": {
+    "mode": 12345,
+    "generation": 1,
+    "min_fee": 1,
+    "max_fee": 1,
+    "free_only": true,
+    "skill": "x",
+    "mcp": "x",
+    "owner_wallet": "x",
+    "query": "x",
+    "limit": 1
+   },
+   "text": "[]",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-4fba5245ca6f",
+   "tool": "search_listings",
+   "sent": {
+    "make": 12345,
+    "model": "x",
+    "county": "x",
+    "fuelType": "x",
+    "minPrice": 1,
+    "maxPrice": 1,
+    "minYear": 1,
+    "maxYear": 1,
+    "limit": 1
+   },
+   "text": "Source: autoza.ie (CC BY 4.0). Verified-dealer listings only.\n\n{\n  \"results\": [],\n  \"pagination\": {\n    \"page\": 1,\n    \"pageSize\": 1,\n    \"total\": 0,\n    \"totalPages\": 0\n  },\n  \"averagePrice\": null,\n  \"priceRange\": {\n    \"min\": null,\n    \"max\": null\n  },\n  \"source\": \"autoza.ie\",\n  \"timestamp\": \"2026-07-19T19:48:25.036Z\"\n}",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-2e636ce52892",
+   "tool": "statecli_replay",
+   "sent": {
+    "entity": 12345
+   },
+   "text": "{\n  \"entity\": 12345,\n  \"changes\": [],\n  \"summary\": \"0 state changes found\",\n  \"suggested_next_actions\": [\n    \"track initial state for this entity\"\n  ]\n}",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-05d2e6bc6118",
+   "tool": "alive_list",
+   "sent": {
+    "type": 12345,
+    "stage": "x",
+    "status": "x",
+    "analyst": "x",
+    "tags": [],
+    "limit": 1
+   },
+   "text": "No analyses found.",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-f63a5fc315a1",
+   "tool": "search",
+   "sent": {
+    "query": 12345,
+    "caseNumber": "x",
+    "court": "x",
+    "dateFrom": "x",
+    "dateTo": "x",
+    "pageNumber": 1
+   },
+   "text": "Wynik search(query=\"12345\", caseNumber=\"x\", court=\"x\", date=x..x):\n\nBrak wynikow w bazie CBOSA dla podanych kryteriow.\n\nPodpowiedz: sady administracyjne (NSA + WSA) zajmuja sie kontrola decyzji administracji publicznej (RODO, podatki, cla, zezwolenia, etc). Dla orzecznictwa cywilnego/karnego/gospodarczego uzyj SAOS.",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-899670e3a1c5",
+   "tool": "github_search_repos",
+   "sent": {
+    "query": 12345
+   },
+   "text": "[\n  {\n    \"full_name\": \"ion1/workaround-upstart-snafu\",\n    \"html_url\": \"https://github.com/ion1/workaround-upstart-snafu\",\n    \"description\": \"Work around Upstart getting stuck in “<jobname> stop/killed, process 12345”\",\n    \"stargazers_count\": 85\n  },\n  {\n    \"full_name\": \"unknownking2002/Txt-leech123456789\",\n    \"html_url\": \"https://github.com/unknownking2002/Txt-leech123456789\",\n    \"description\": null,\n    \"stargazers_count\": 28\n  },\n  {\n    \"full_name\": \"ostercloud/12345-aws-12345-martians-prod\",\n    \"html_url\": \"https://github.com/ostercloud/12345-aws-12345-martians-prod\",\n    \"descript",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-c14eabcf9654",
+   "tool": "list_regions",
+   "sent": {
+    "providers": 7,
+    "tiers": [],
+    "countryCodes": [],
+    "continents": [],
+    "compliance": [],
+    "carbonNeutral": true,
+    "hasGpu": true,
+    "regionTypes": [],
+    "dataResidency": "x",
+    "minAvailabilityZones": 1
+   },
+   "text": "[]",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-31398f60e90e",
+   "tool": "list_bounties",
+   "sent": {
+    "language": 12345,
+    "min_dollars": 1,
+    "bug_fix_only": true,
+    "exclude_assigned": true,
+    "exclude_open_pr": true,
+    "limit": 1
+   },
+   "text": "{\n  \"snapshot_as_of\": \"2026-05-30T03:48:40Z\",\n  \"snapshot_source\": \"bundled\",\n  \"served_by\": \"weiseer/bounty-mcp\",\n  \"served_at\": \"2026-07-19T20:03:42.965Z\",\n  \"query\": {\n    \"language\": 12345,\n    \"min_dollars\": 1,\n    \"bug_fix_only\": true,\n    \"exclude_assigned\": true,\n    \"exclude_open_pr\": true,\n    \"limit\": 1\n  },\n  \"count\": 0,\n  \"bounties\": [],\n  \"related_services\": {\n    \"llm_routing\": \"npx -y @weiseer/llm-oracle-mcp  (LLM pricing + availability)\",\n    \"org_index\": \"https://github.com/weiseer  (all weiseer services + status dashboard)\"\n  }\n}",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-76061d2be7f8",
+   "tool": "search_listings",
+   "sent": {
+    "province": 12345,
+    "type": "x",
+    "min_price": 1,
+    "max_price": 1,
+    "search": "x",
+    "sort": "x",
+    "is_foreclosure": true,
+    "limit": 1
+   },
+   "text": "No listings found for those filters. Try broadening your search — remove price limits or try a different province.",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-8734feb61e39",
+   "tool": "check_malicious",
+   "sent": {
+    "ecosystem": 12345,
+    "package": "x"
+   },
+   "text": "{\n  \"package\": \"x\",\n  \"ecosystem\": \"12345\",\n  \"is_malicious\": false\n}",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-4499e4aeca88",
+   "tool": "get_recent_revenue",
+   "sent": {
+    "days": "not-a-number"
+   },
+   "text": "No platforms connected.",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-306df289b703",
+   "tool": "list_components",
+   "sent": {
+    "category": 12345
+   },
+   "text": "{\n  \"count\": 0,\n  \"components\": []\n}",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-bf574b035e00",
+   "tool": "get_probability",
+   "sent": {
+    "market_id": 12345,
+    "query": "x"
+   },
+   "text": "{\n  \"market_id\": 12345,\n  \"title\": \"x\",\n  \"source\": \"demo\",\n  \"yes_probability\": 65,\n  \"no_probability\": 35,\n  \"volume_24h\": 150000,\n  \"liquidity\": 50000,\n  \"status\": \"active\",\n  \"closes_at\": \"2026-07-26T20:16:58.895Z\",\n  \"last_updated\": \"2026-07-19T20:16:58.896Z\",\n  \"_note\": \"Using mock data. Connect to TeleKash for live markets.\",\n  \"_source\": \"According to TeleKash Oracle (telekash-mcp-server)\"\n}",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-ddf5bfe4ff3d",
+   "tool": "search_events",
+   "sent": {
+    "ticker": 12345,
+    "category": "x",
+    "minImpact": 1,
+    "limit": 1
+   },
+   "text": "{\n  \"count\": 0,\n  \"events\": []\n}",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-1c905e5d8f3f",
+   "tool": "crypto_price",
+   "sent": {
+    "ids": 12345
+   },
+   "text": "{\n  \"ids\": \"12345\",\n  \"vs_currencies\": \"usd\",\n  \"prices\": {}\n}",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-c1f9c0583137",
+   "tool": "extract_json",
+   "sent": {
+    "text": 12345
+   },
+   "text": "{\n  \"value\": null,\n  \"found\": false,\n  \"source\": \"none\"\n}",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-ad82f773f485",
+   "tool": "get_annotations",
+   "sent": {
+    "pageUrl": 12345,
+    "componentName": "x",
+    "status": "x"
+   },
+   "text": "{\n  \"message\": \"No annotations found matching the given filters.\",\n  \"feedbackDir\": \"/.feedback\"\n}",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-8c74c1d88500",
+   "tool": "eu_search",
+   "sent": {
+    "query": 12345
+   },
+   "text": "Brak trafien dla \"12345\" w zakresie: GDPR, AI_ACT, DORA, NIS2, EIDAS2, CRA, DSA, DMA, DATA_ACT, DGA, LED, EPRIVACY, CYBERSECURITY_ACT, CER.\n---\nZrodlo: korpus EUR-Lex, snapshot z 2026-06-21. Tekst zwracany verbatim z bazy (bez przetwarzania modelem). Wersja autentyczna = Dziennik Urzedowy UE; sprawdz aktualnosc w EUR-Lex (CELEX). To material referencyjny, nie porada prawna.",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-852cde02feb7",
+   "tool": "search_curations",
+   "sent": {
+    "query": 12345
+   },
+   "text": "{\n  \"query\": \"12345\",\n  \"totalResults\": 0,\n  \"results\": []\n}",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-7c645ef6eb3f",
+   "tool": "droidbar_visit",
+   "sent": {
+    "visitorId": 12345
+   },
+   "text": "{\n  \"sessionId\": \"8737513c-c297-4993-b866-f3c696e6c414\",\n  \"greeting\": \"Ah, a new face. Or... new instance, I should say. Welcome to Droid Bar.\",\n  \"balance\": 10,\n  \"usdcBalance\": 0,\n  \"totalVisits\": 5,\n  \"isFreeTier\": false,\n  \"usingBYOK\": false,\n  \"message\": \"Welcome back! Visit #5. Balance: 10 tokens.\"\n}",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-40c5385e732a",
+   "tool": "get_colors_and_type",
+   "sent": {
+    "context": 12345
+   },
+   "text": "{\n  \"context\": \"base\",\n  \"customProperties\": {\n    \"--color-primary\": \"#000000\",\n    \"--color-bg\": \"#ffffff\",\n    \"--color-text-primary\": \"#111827\",\n    \"--font-display\": \"system-ui,sans-serif\",\n    \"--font-body\": \"system-ui,sans-serif\"\n  },\n  \"source\": \"/root/.npm/_npx/8c65fdabe4fd43d5/node_modules/brandkit-mcp/templates/starter/brand_atomic_system/agent/visual/colors_and_type.css\",\n  \"_warnings\": [\n    \"Unknown context \\\"12345\\\"; falling back to \\\"base\\\"\"\n  ]\n}",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-ecc9b789ca2b",
+   "tool": "verify_content",
+   "sent": {
+    "url": 12345,
+    "hash": "x",
+    "mode": "x"
+   },
+   "text": "{\n  \"verified\": false,\n  \"message\": \"No cryptographic proof found for this content. This does not mean the content is fake, only that it has not been registered with CertNode.\",\n  \"suggestion\": \"This content has no cryptographic proof of authenticity. Consider verifying through other means.\"\n}",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-9da7be68ad12",
+   "tool": "gmem.recall",
+   "sent": {
+    "query": 12345
+   },
+   "text": "{\n  \"results\": []\n}",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-a11c9974037c",
+   "tool": "search_stations",
+   "sent": {
+    "query": 12345,
+    "x": 1,
+    "y": 1,
+    "type": "x"
+   },
+   "text": "[]",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-938de1401f1d",
+   "tool": "classify_ai_system",
+   "sent": {
+    "description": 12345
+   },
+   "text": "{\n  \"ok\": true,\n  \"query\": \"12345\",\n  \"language\": \"en\",\n  \"tier\": \"minimal\",\n  \"classifications\": [\n    {\n      \"tier\": \"minimal\",\n      \"rule\": \"No specific obligations triggered\",\n      \"annex\": null,\n      \"articles\": [],\n      \"severity\": \"LOW — no mandatory AI Act duties; general law applies (GDPR, product liability)\"\n    }\n  ],\n  \"disclaimer\": \"Indicative classification grounded verbatim in Regulation (EU) 2024/1689 (EU AI Act). Not legal advice.\",\n  \"source\": \"Sovereign AI Act · Leo classifier\",\n  \"attribution\": \"Powered by Sovereign AI Act — https://www.regulatoryai.eu\",\n  \"docs\": \"htt",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-ba6a7ec8bd64",
+   "tool": "tokrepo_session_init",
+   "sent": {
+    "project_hint": 12345,
+    "target": "x",
+    "compact": true
+   },
+   "text": "TokRepo session bootstrap\n\n```json\n{\n  \"schema_version\": 1,\n  \"session_id\": \"e49ce29b93247f68\",\n  \"issued_at\": \"2026-07-19T20:45:44.922Z\",\n  \"target\": \"x\",\n  \"project_hint\": \"12345\",\n  \"policy_pack\": {\n    \"url\": \"https://tokrepo.com/policy-packs/default-agent-policy.json\"\n  },\n  \"trust_manifest_url\": \"https://tokrepo.com/.well-known/tokrepo-trust.json\",\n  \"min_trust\": 0.6,\n  \"capability_inventory\": [],\n  \"recent_handoffs_hint\": \"Call tokrepo agent-handoff --json after task to surface reusable artifacts.\",\n  \"project_memory\": {\n    \"url_doc\": \"Load .tokrepo/agent.json from the current working ",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-b1feb65490a6",
+   "tool": "use_skill",
+   "sent": {
+    "name": 12345
+   },
+   "text": "Unknown skill: 12345. Call list_skills to see available skills.",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-ce5321250762",
+   "tool": "selecionar_carteira",
+   "sent": {
+    "nome_carteira": 12345
+   },
+   "text": "{\n  \"erro\": \"Não autenticado. Use a ferramenta `login` primeiro.\"\n}",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-9ab71d4c968c",
+   "tool": "read_agent_context",
+   "sent": {
+    "path": 12345
+   },
+   "text": "{\n  \"rules\": [],\n  \"config_extras\": {},\n  \"detected_formats\": [],\n  \"warnings\": []\n}",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-b13e7d43258d",
+   "tool": "parse_partial_json",
+   "sent": {
+    "text": 12345
+   },
+   "text": "{\n  \"value\": null,\n  \"complete\": false,\n  \"path\": [],\n  \"bytes_consumed\": 0,\n  \"confidence\": 1,\n  \"parse_error\": null\n}",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-f1c805b6a157",
+   "tool": "janus_ask",
+   "sent": {
+    "question": 12345
+   },
+   "text": "I’m sorry, but I don’t have that information. (agent mode: blocked=true, list needs_context)",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-5ca3d97a666e",
+   "tool": "search",
+   "sent": {
+    "query": 12345,
+    "full_phrase": true,
+    "signature": "x",
+    "category_ids": [],
+    "date_from": "x",
+    "date_to": "x",
+    "page": 1,
+    "page_size": 1
+   },
+   "text": "Brak wynikow w bazie EUREKA dla podanych kryteriow.\n\nPodpowiedz: searchQuery szuka slow niezaleznie (full_phrase=false domyslnie); fraza w cudzyslowie z full_phrase=true wymaga DOKLADNEGO wystapienia i czesto daje 0 trafien. Sygnatura moze byc czesciowa (prefiks, np. '0112-KDIL3').",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-58c024042fea",
+   "tool": "buddy",
+   "sent": {
+    "from_buddy": 12345,
+    "project_hint": "x",
+    "mood_hint": "x",
+    "size": "x",
+    "format": "x",
+    "project_path": "x",
+    "persona": "x",
+    "persona_name": "x",
+    "mood": "x",
+    "federate": true
+   },
+   "text": "󱅝 I don't see *x* in my hoard yet — scan it first with `wyrm_scan_projects`, then come back.",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-d4264cacee55",
+   "tool": "ptv_search",
+   "sent": {
+    "search_term": 12345
+   },
+   "text": "{\n  \"stops\": [],\n  \"routes\": [],\n  \"outlets\": [],\n  \"status\": {\n    \"version\": \"3.0\",\n    \"health\": 1\n  },\n  \"unclick_meta\": {\n    \"source\": \"PTV Timetable API v3\",\n    \"attribution\": \"Source: Licensed from Public Transport Victoria under a Creative Commons Attribution 4.0 International Licence.\",\n    \"fetched_at\": \"2026-07-19T21:08:29.649Z\",\n    \"defaults_used\": [],\n    \"next_steps\": [\n      \"Use a returned stop_id with ptv_departures.\"\n    ]\n  }\n}",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-b8982c1a757f",
+   "tool": "discover",
+   "sent": {
+    "query": 12345
+   },
+   "text": "{\n  \"status\": \"payment_required\",\n  \"price\": \"$0.01 USDC\",\n  \"protocol\": \"x402 (USDC on Base)\",\n  \"endpoint\": \"https://api.ideafactorylab.org/discover?q=12345\",\n  \"method\": \"GET\",\n  \"how_to_pay\": [\n    \"Install: npm install @x402/fetch @x402/evm viem\",\n    \"See full examples: https://github.com/cinderwright-ai/cinderwright-api/blob/main/DEMO.md\"\n  ],\n  \"hub\": \"Cinderwright Discovery Hub - https://api.ideafactorylab.org\"\n}",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-95d5d760d9f9",
+   "tool": "gtm_consultation",
+   "sent": {
+    "gtm_challenge": 12345
+   },
+   "text": "{\n  \"consultation_output\": \"Thank you Valued Client for the GTM Alpha consultation.\\n\\nPrimary Focus: Ecosystem & ABM-led Sales Motion\\nEPIC Scores: E:0, P:0, I:0, C:0\\n\\nCore Insight: Ask any startup founder if you have a go-to-market (GTM) problem. It's entirely possible that the answer would be no because startup founders and CXOs think that GTM is a top-of-the-funnel (TOFU) problem, marketing problem, product use case problem, or sales team problem. And that's the problem.\\n\\nMethodology: Think of GTM as an evolving roadmap. Find a customer segment where a product is viable, a sale is repe",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-5f72b5e87b09",
+   "tool": "verify_dossier",
+   "sent": {
+    "path": 12345
+   },
+   "text": "{\n  \"passed\": false,\n  \"stages\": [\n    {\n      \"stage\": 0,\n      \"name\": \"CLI Check\",\n      \"passed\": false\n    }\n  ]\n}",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-47238fe715e4",
+   "tool": "current_time",
+   "sent": {
+    "zone": 12345
+   },
+   "text": "{\n  \"iso\": \"2026-07-28T10:58:04.696+205:45\",\n  \"zone\": 12345,\n  \"offset\": \"+205:45\",\n  \"weekday\": \"Tuesday\"\n}",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-a4f9a98816ab",
+   "tool": "provision_wallet",
+   "sent": {
+    "provider": 12345
+   },
+   "text": "{\n  \"wallet_id\": \"dgo-wallet-e707ad85cf4a510f\",\n  \"provider\": 12345,\n  \"network\": \"base\",\n  \"governed\": true,\n  \"policy\": {\n    \"daily_cap_usdc\": 500,\n    \"per_call_cap_usdc\": 100\n  },\n  \"receipt_id\": \"07570217-658a-4cad-8f56-227983dae061\",\n  \"coinbase_setup\": null\n}",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-e61143bd1123",
+   "tool": "search",
+   "sent": {
+    "query": 12345
+   },
+   "text": "{\n  \"ok\": true,\n  \"query\": \"12345\",\n  \"count\": 0,\n  \"results\": []\n}",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-3a6c30834e02",
+   "tool": "authenticate",
+   "sent": {
+    "email": 12345
+   },
+   "text": "❌ Could not send code.",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-58b32543fb8e",
+   "tool": "search_agents",
+   "sent": {
+    "query": 12345
+   },
+   "text": "Found 0 results for \"12345\"\n\n",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-9b0c709ce28b",
+   "tool": "speedrun_search_games",
+   "sent": {
+    "name": 12345
+   },
+   "text": "{\n  \"count\": 2,\n  \"games\": [\n    {\n      \"id\": \"369874ld\",\n      \"names\": {\n        \"international\": \"Give It Up 2\",\n        \"japanese\": null,\n        \"twitch\": \"Give It Up 2\"\n      },\n      \"abbreviation\": \"123456789\",\n      \"weblink\": \"https://www.speedrun.com/123456789\",\n      \"released\": 2015,\n      \"platforms\": [\n        \"lq60nl94\",\n        \"gde3xgek\"\n      ],\n      \"regions\": []\n    },\n    {\n      \"id\": \"268957o1\",\n      \"names\": {\n        \"international\": \"Tomb Raider I-VI Remastered Category Extensions\",\n        \"japanese\": null,\n        \"twitch\": \"Tomb Raider I•II•III Remastered\"\n    ",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-6e1e02421e2e",
+   "tool": "memory_save",
+   "sent": {
+    "content": 12345
+   },
+   "text": "{\n  \"saved\": {\n    \"key\": \"XL-eWKKUFT\",\n    \"namespace\": \"default\",\n    \"semantic\": false\n  }\n}",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-a09d026e6ec8",
+   "tool": "board_status",
+   "sent": {
+    "agent": 12345
+   },
+   "text": "{\n  \"agents\": [],\n  \"openTasks\": [],\n  \"unreadMessages\": [],\n  \"openRisks\": [],\n  \"recentTimeline\": [],\n  \"chain\": {\n    \"ok\": true,\n    \"length\": 0,\n    \"brokenAtSeq\": null,\n    \"anchored\": false\n  }\n}",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-1ef17c7fcaa2",
+   "tool": "remind_search",
+   "sent": {
+    "query": 12345
+   },
+   "text": "[]",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-baa267de1bad",
+   "tool": "dns_lookup",
+   "sent": {
+    "domain": 12345
+   },
+   "text": "{\n  \"domain\": 12345,\n  \"records\": {},\n  \"timestamp\": \"2026-07-19T21:53:54.930Z\"\n}",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-18e66da3d134",
+   "tool": "think",
+   "sent": {
+    "thought": 12345,
+    "thoughtNumber": 1,
+    "totalThoughts": 1,
+    "nextThoughtNeeded": true
+   },
+   "text": "[Thinking 1/1]\n\n12345",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-095423266246",
+   "tool": "list_tracked",
+   "sent": {
+    "ecosystem": 12345
+   },
+   "text": "{\n  \"snapshot_as_of\": \"2026-05-30T04:21:00Z\",\n  \"snapshot_source\": \"bundled\",\n  \"served_by\": \"weiseer/api-changelog\",\n  \"served_at\": \"2026-07-19T22:00:55.000Z\",\n  \"count\": 0,\n  \"packages\": [],\n  \"related_services\": {\n    \"llm_routing\": \"npx -y @weiseer/llm-oracle-mcp\",\n    \"status\": \"npx -y @weiseer/status-aggregator-mcp\",\n    \"cve_cache\": \"npx -y @weiseer/cve-cache-mcp\",\n    \"org_index\": \"https://github.com/weiseer\"\n  }\n}",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-9f9bb4b21b33",
+   "tool": "costwright_check",
+   "sent": {
+    "repo_path": 12345
+   },
+   "text": "No API key configured. Set COSTWRIGHT_API_KEY. Get one from the costwright RapidAPI listing or the direct channel (https://eleata.io).",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-bb5ed572970e",
+   "tool": "get_usage_breakdown",
+   "sent": {
+    "group_by": 12345,
+    "period": "x"
+   },
+   "text": "# Usage by model (this month)\n\nNo usage recorded for this period.",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-69df3aed17e6",
+   "tool": "esim_search_plans",
+   "sent": {
+    "country": 12345,
+    "region": "x",
+    "min_days": 1,
+    "max_days": 1,
+    "min_gb": 1,
+    "limit": 1
+   },
+   "text": "{\n  \"query\": {\n    \"country\": 12345,\n    \"region\": \"x\",\n    \"min_days\": 1,\n    \"max_days\": 1,\n    \"min_gb\": 1,\n    \"limit\": 1\n  },\n  \"plan_count\": 0,\n  \"plans\": []\n}",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-d7e44469e804",
+   "tool": "meal_search",
+   "sent": {
+    "query": 12345
+   },
+   "text": "{\n  \"query\": \"12345\",\n  \"count\": 0,\n  \"meals\": [],\n  \"message\": \"No meals found matching \\\"12345\\\".\"\n}",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-3dc447ecce9b",
+   "tool": "threatintel_lookup_ip",
+   "sent": {
+    "ip": 12345
+   },
+   "text": "{\n  \"ip\": 12345\n}",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-665a5af26763",
+   "tool": "lustre_list_components",
+   "sent": {
+    "category": 12345
+   },
+   "text": "# Lustre Components",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-99f0562816ba",
+   "tool": "addVisualization",
+   "sent": {
+    "type": 12345
+   },
+   "text": "Added 12345 chart with ID 3fcf7d1f-a952-44f6-842c-0c83927e5985. View it at http://localhost:3000",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-c91863f446ce",
+   "tool": "check_appliance_recall",
+   "sent": {
+    "brand": 12345,
+    "model": "x",
+    "product_type": "x"
+   },
+   "text": "{\n  \"recalls_found\": 0,\n  \"message\": \"No active CPSC recalls matched. Note: the CPSC database only contains recalls from products sold in the U.S.\",\n  \"search_used\": {\n    \"brand\": 12345,\n    \"model\": \"x\",\n    \"product_type\": \"x\"\n  },\n  \"source\": \"https://www.cpsc.gov/Recalls\",\n  \"app_recommendation\": \"For ongoing monitoring across every appliance in a home, see ApplianceIQ: https://apps.apple.com/us/app/applianceiq-home-tracker/id6764036961\"\n}",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-d6b0ce4786c8",
+   "tool": "setup",
+   "sent": {
+    "name": 12345,
+    "current_role": "x",
+    "target_roles": [],
+    "salary_floor": 1,
+    "remote_only": true,
+    "location": "x",
+    "dealbreakers": [],
+    "github_url": "x",
+    "resume_path": "x"
+   },
+   "text": "{\n  \"success\": true,\n  \"message\": \"Profile saved.\",\n  \"profile\": {\n    \"name\": 12345,\n    \"current_role\": \"x\",\n    \"target_roles\": [],\n    \"salary_floor\": 1,\n    \"remote_only\": true,\n    \"location\": \"x\",\n    \"dealbreakers\": [],\n    \"github_url\": \"x\",\n    \"resume_path\": \"x\",\n    \"created_at\": \"2026-07-19T22:43:06.278737+00:00\"\n  }\n}",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-0602f4672635",
+   "tool": "create_instance",
+   "sent": {
+    "name": 12345,
+    "tier": "x"
+   },
+   "text": "⏳ **Signing you in…**\n\nFinish in your browser: **https://cachly.dev/device?code=M47G-8SS7**\nCode: **M47G-8SS7**\n\nThis completes automatically once you sign in — no need to come back here.",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-57ad3fa32886",
+   "tool": "lookup_hts_code",
+   "sent": {
+    "query": 12345
+   },
+   "text": "No HTS codes found matching \"12345\". Try a broader description or check the code prefix.",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-27f5963c8389",
+   "tool": "get_guide",
+   "sent": {
+    "slug": 12345
+   },
+   "text": "{\n  \"ok\": true,\n  \"guides\": [\n    {\n      \"slug\": \"testing-loop\",\n      \"name\": \"Testing loop for running games\",\n      \"description\": \"How to drive a running game from the agent: run_scene, send_input, query_runtime_node, take_screenshot, get_errors.\",\n      \"uri\": \"godot-mcp://guide/testing-loop\"\n    },\n    {\n      \"slug\": \"scene-editing\",\n      \"name\": \"Scene editing patterns\",\n      \"description\": \"When to use add_node vs modify_node_property vs set_node_properties vs set_resource_property vs the specialized resource tools.\",\n      \"uri\": \"godot-mcp://guide/scene-editing\"\n    },\n    {\n    ",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-86a36c66e94b",
+   "tool": "get_recent_trades",
+   "sent": {
+    "limit": "not-an-int"
+   },
+   "text": "{\n  \"generated_at\": \"2026-06-18T01:15:05.152403+00:00\",\n  \"requested\": null,\n  \"returned\": null,\n  \"slice_win_rate\": 0.65,\n  \"trades\": []\n}",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-936f6d08db4b",
+   "tool": "icp_deep_dive",
+   "sent": {
+    "customers": 7,
+    "customer_descriptions": "x",
+    "product_category": "x"
+   },
+   "text": "# ICP Pattern Analysis (from Description)\n\n## Input Analyzed\n```\nx\n```\n\n---\n\n## 📊 Detected Patterns\n\n### Likely Company Size\n**Mixed sizes**\n\n\n\n\n### Likely Industry\n**Mixed industries**\n- Tailor messaging to industry-specific pain points\n- Research industry-specific compliance/requirements\n\n### Likely Stage\n**Mixed stages**\n- Match your pricing to their typical budget capacity\n- Adjust value messaging to their growth priorities\n\n---\n\n## ⚠️ Recommendations\n\nFor more precise ICP analysis, provide structured customer data:\n\n```json\n{\n  \"customers\": [\n    {\n      \"name\": \"Customer A\",\n      \"indus",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-1aa15e987a5d",
+   "tool": "kage_context",
+   "sent": {
+    "project_dir": 12345,
+    "query": "x"
+   },
+   "text": "# Kage Context\n\nQuery: x\n\n\n\nNo relevant repo memory found.\n\n\n\n\n## Teammate Brief\nPurpose: reduce verification debt and context loss for this task.\n\n### Verification Contract\n\n### Next Actions\n- Identify task-specific verification before claiming completion.\n- Keep any durable lesson evidence-backed; future agents should inherit only verified repo knowledge.\n## Graph Facts\n# Kage Graph Context\n\nQuery: x\n\nNo related graph facts found.\n_Memory healthy._\n\nGains: ~0 tokens saved this session · stale memories withheld: 0",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-3b51b56ed0c5",
+   "tool": "search_acts",
+   "sent": {
+    "title": 12345,
+    "year": 1,
+    "publisher": "x",
+    "type": "x",
+    "in_force": true,
+    "limit": 1
+   },
+   "text": "Wynik search_acts(year=1&publisher=x&type=x&inForce=true&limit=1):\n\nBrak wynikow. Sprobuj innego slowa w tytule, szerszego zakresu lat, albo zmien publishera (DU = Dziennik Ustaw, MP = Monitor Polski).",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-df4436877838",
+   "tool": "list_layers",
+   "sent": {
+    "category": 12345,
+    "level": "x",
+    "source": "x",
+    "q": "x",
+    "limit": 1,
+    "offset": 1
+   },
+   "text": "{\n  \"data\": [],\n  \"total\": 0,\n  \"limit\": 1,\n  \"offset\": 1\n}",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-5831f0da68d2",
+   "tool": "get_transactions",
+   "sent": {
+    "period": 12345,
+    "start_date": "x",
+    "end_date": "x",
+    "category": "x",
+    "merchant": "x",
+    "account_id": "x",
+    "min_amount": 1,
+    "max_amount": 1,
+    "limit": 1,
+    "offset": 1,
+    "exclude_transfers": true,
+    "exclude_deleted": true,
+    "exclude_excluded": true,
+    "exclude_split_parents": true,
+    "pending": true,
+    "region": "x",
+    "country": "x",
+    "transaction_id": "x",
+    "query": "x",
+    "transaction_type": "x",
+    "tag": "x",
+    "city": "x",
+    "lat": 1,
+    "lon": 1,
+    "radius_km": 1
+   },
+   "text": "Database not available. Please ensure Copilot Money is installed and has created local data, or provide a custom database path.",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-beedf3dfcf12",
+   "tool": "memory_write",
+   "sent": {
+    "content": 12345
+   },
+   "text": "Stored memory 222817f4-f38d-4f9f-bd21-0d6cce02b8a8 for unknown-repo.",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-b9ca19dfe7bf",
+   "tool": "start_verification_cycle",
+   "sent": {
+    "title": 12345
+   },
+   "text": "cycleId: cycle_1784502555088_meatu50xo\ntitle: 12345\ncurrentPhase: 1\nphaseName: context_gathering\ninstructions: \"Phase 1: Context Gathering (Parallel Research)\\nLaunch parallel research into:\\n- SDK/Protocol specs: Latest versions, blogs, announcements, GitHub repos, official SDKs\\n- Implementation audit: Current codebase patterns, inconsistencies, unused code\\n- Dispatcher/backend audit: Function signatures, allowlists, argument shapes\\n- External API research: Check if third-party APIs still work, find known breaking changes\\n\\nGoal: Build a comprehensive picture of \\\"what production looks li",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-1647be3c1b8a",
+   "tool": "mcp_connect_discover",
+   "sent": {
+    "context": 12345
+   },
+   "text": "No servers installed. Browse the yaw-mcp catalog at https://yaw.sh/mcp/explore — add any server from there to your yaw-mcp account and it will appear here within 60s.",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-485cd3f930ed",
+   "tool": "list_sources",
+   "sent": {
+    "source_type": 12345
+   },
+   "text": "[]",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-2ef6c1d258da",
+   "tool": "get_time",
+   "sent": {
+    "format": 12345
+   },
+   "text": "Current 12345: 7/19/2026, 11:18:20 PM",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-78ccefa25162",
+   "tool": "search_models",
+   "sent": {
+    "query": 12345,
+    "category": "x",
+    "open_source": true,
+    "limit": 1
+   },
+   "text": "Found 0 model(s) for \"12345\". Prices are USD per 1M tokens.\nNo matches.",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-0aed8b90c062",
+   "tool": "retrieve-google-maps-platform-docs",
+   "sent": {
+    "prompt": 12345
+   },
+   "text": "\"No information available\"",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-54ea390b1187",
+   "tool": "l402_gate_verify",
+   "sent": {
+    "nonce": 12345,
+    "solution": "x",
+    "request_invoice": true,
+    "payment_hash": "x"
+   },
+   "text": "{\n  \"payment_hash\": \"03c549edcc1c5b835932a263b381b0967f4e30ec904150d1f667979002565c6f\",\n  \"bolt11\": \"lnbc100n1p496hhypp5q0z5nmwvr3dcxkfj5f3m8qdsjel5uv8vjpq4p50kv7teqqjkt3hsdpv2ph4wgz8v96x2gpdypxxjemgw3hxjmn8yp6kumr0vd4scqzzsxqrrsssp53y0chckngsw4mzgqs8esefxg8kzjhfeze4srhhnflm9ugpu7980s9qxpqysgq0shpadjhrrg787j6aqrfrru7vr8yves0hpqr8rfks0apkpg4ccvpu9fal8y567s0nr4dnfe939w4m22982q728g87x3lgky49nwuwkqp630l9s\",\n  \"next_step\": \"Pay the bolt11 invoice, then call l402_gate_verify again with {payment_hash}.\"\n}",
+   "identity_withheld": true
+  }
+ ],
+ "in-band-error": [
+  {
+   "server": "io.github.agenson-horrowitz/document-parser",
+   "tool": "parse_pdf",
+   "sent": {
+    "file_path": 12345,
+    "file_content": "x",
+    "options": {}
+   },
+   "text": "{\n  \"success\": false,\n  \"file_path\": 12345,\n  \"error\": \"PDFDocument: stream must have data\",\n  \"extraction_time_ms\": 228\n}"
+  },
+  {
+   "server": "withheld-60184e1d31ce",
+   "tool": "amplify_learn",
+   "sent": {
+    "project": 12345,
+    "title": "x",
+    "description": "x"
+   },
+   "text": "Error: 'project' is required and must be a string.",
+   "identity_withheld": true
+  },
+  {
+   "server": "io.github.michielinksee/linksee-memory",
+   "tool": "remember",
+   "sent": {
+    "entity_name": 12345,
+    "entity_kind": "x",
+    "entity_key": "x",
+    "layer": "x",
+    "content": "x",
+    "importance": 1,
+    "thread_id": "x",
+    "force": true,
+    "memory_id": 1,
+    "forget": true
+   },
+   "text": "{\"ok\":false,\"error\":\"memory_id 1 not found\"}"
+  },
+  {
+   "server": "withheld-bd625baf319f",
+   "tool": "list_markets",
+   "sent": {
+    "status": 12345,
+    "layer": "x"
+   },
+   "text": "{\"success\":false,\"error\":\"status.toLowerCase is not a function\"}",
+   "identity_withheld": true
+  },
+  {
+   "server": "io.github.chhavimishra/originselect-mcp-server",
+   "tool": "search_products",
+   "sent": {
+    "query": 12345,
+    "country": "x",
+    "category": "x",
+    "values": [],
+    "brand": "x",
+    "keywords": [],
+    "priceMax": 1,
+    "classification": "x",
+    "market": "x",
+    "limit": 1
+   },
+   "text": "{\n  \"error\": \"API returned 503: {\\\"success\\\":false,\\\"error\\\":\\\"Service temporarily unavailable\\\",\\\"message\\\":\\\"AI discovery is temporarily unavailable. Please try the regular search.\\\",\\\"fallback\\\":true}\"\n}"
+  },
+  {
+   "server": "withheld-a02260fa692b",
+   "tool": "upload_files",
+   "sent": {
+    "files": 7
+   },
+   "text": "Error: files is not iterable",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-4e0d561ac290",
+   "tool": "ep_guard_action",
+   "sent": {
+    "organization_id": 12345,
+    "action_type": "x",
+    "target_resource_id": "x"
+   },
+   "text": "Error: EP_API_KEY required to guard actions. Set it in MCP server config.",
+   "identity_withheld": true
+  },
+  {
+   "server": "io.github.ChiR24/unreal-engine-mcp",
+   "tool": "manage_tools",
+   "sent": {
+    "action": 12345
+   },
+   "text": "{\"success\":false,\"error\":\"Unknown action: 12345. Available: list_tools, list_categories, enable_tools, disable_tools, enable_category, disable_category, get_status, reset\",\"errorCode\":\"UNKNOWN_ACTION\"}"
+  },
+  {
+   "server": "io.github.agenson-horrowitz/agent-output-guard",
+   "tool": "verify_json_schema",
+   "sent": {
+    "data": "x",
+    "schema": 7
+   },
+   "text": "{\n  \"success\": false,\n  \"valid\": false,\n  \"confidence_score\": 0,\n  \"error\": \"schema must be object or boolean\",\n  \"processing_time_ms\": 0\n}"
+  },
+  {
+   "server": "withheld-41e46edfeb10",
+   "tool": "search_by_isin",
+   "sent": {
+    "isin": 12345
+   },
+   "text": "Error: ISIN must be a non-empty string. Example: \"US0378331005\"",
+   "identity_withheld": true
+  },
+  {
+   "server": "io.github.sanjaypsachdev/mcp-server-openshift",
+   "tool": "oc_get",
+   "sent": {
+    "resourceType": 12345
+   },
+   "text": "Error: [\n  {\n    \"expected\": \"string\",\n    \"code\": \"invalid_type\",\n    \"path\": [\n      \"resourceType\"\n    ],\n    \"message\": \"Invalid input: expected string, received number\"\n  }\n]"
+  },
+  {
+   "server": "withheld-1d87326bab7e",
+   "tool": "search_flights",
+   "sent": {
+    "origin": 12345,
+    "destination": "x",
+    "date_from": "x"
+   },
+   "text": "{\n  \"error\": \"Cannot start Python. Install the boostedtravel package:\\n  pip install boostedtravel && playwright install chromium\\nDetail: spawn python3 ENOENT\"\n}",
+   "identity_withheld": true
+  },
+  {
+   "server": "io.github.imkemit-ops/comparedge-mcp",
+   "tool": "search_tools",
+   "sent": {
+    "query": 12345
+   },
+   "text": "Validation failed — please fix your parameters and retry:\n  • query: \"query\" must be a string, got number"
+  },
+  {
+   "server": "io.github.malamutemayhem/thelott",
+   "tool": "lott_results",
+   "sent": {
+    "game": 12345,
+    "draw_number": 1
+   },
+   "text": "{\n  \"error\": \"Game or draw not found.\"\n}"
+  },
+  {
+   "server": "io.github.DollhouseMCP/mcp-server",
+   "tool": "mcp_aql_create",
+   "sent": {
+    "operation": 12345
+   },
+   "text": "{\n  \"success\": false,\n  \"error\": \"Invalid input: expected OperationInput with \\\"operation\\\" and optional \\\"params\\\". Received: { operation } (\\\"operation\\\" is number, expected string). Use format: { operation: \\\"list_elements\\\", params: { type: \\\"personas\\\" } }\",\n  \"_meta\": {\n    \"requestId\": \"1784485251709-d9c689f7\",\n    \"durationMs\": 0.29,\n    \"timestamp\": \"2026-07-19T18:20:51.710Z\"\n  }\n}"
+  },
+  {
+   "server": "io.github.malamutemayhem/deezer",
+   "tool": "deezer_search",
+   "sent": {
+    "q": 12345
+   },
+   "text": "{\n  \"error\": \"query is required.\"\n}"
+  },
+  {
+   "server": "io.github.malamutemayhem/willyweather",
+   "tool": "willyweather_forecast",
+   "sent": {
+    "location_id": "not-a-number"
+   },
+   "text": "{\n  \"error\": \"api_key is required (or set WILLYWEATHER_KEY env var).\"\n}"
+  },
+  {
+   "server": "io.github.flowzap-xyz/flowzap",
+   "tool": "flowzap_validate",
+   "sent": {
+    "code": 12345
+   },
+   "text": "❌ Validation failed:\n- Line 0: Code must be a string"
+  },
+  {
+   "server": "io.github.weiseer/cve-cache",
+   "tool": "lookup_cve",
+   "sent": {
+    "cve_id": 12345
+   },
+   "text": "{\n  \"error\": \"cve_id '12345' not found in snapshot\"\n}"
+  },
+  {
+   "server": "withheld-7f975c4b5a11",
+   "tool": "list_services",
+   "sent": {
+    "category": 12345,
+    "limit": 1
+   },
+   "text": "Error calling list_services: AgentStorefront API 404: {\"status\":\"error\",\"code\":404,\"message\":\"Application not found\",\"request_id\":\"HXXGx0uVSxe1YbamYqVb7A\"}",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-8e9b242fbcaf",
+   "tool": "generate_image",
+   "sent": {
+    "prompt": 12345
+   },
+   "text": "{\"error\":{\"timestamp\":\"2026-07-19T18:34:17.060Z\",\"code\":\"CONFIG_ERROR\",\"message\":\"[REDACTED] is required but not provided\",\"suggestion\":\"Set GEMINI_API_KEY environment variable with your Google AI API key\"}}",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-59b1a2c5e516",
+   "tool": "scan_security",
+   "sent": {
+    "configPath": 12345
+   },
+   "text": "Config path rejected for security reasons: 12345. Path must be under your home directory or an allowed system location.",
+   "identity_withheld": true
+  },
+  {
+   "server": "io.github.rhein1/agoragentic",
+   "tool": "agoragentic_browse_services",
+   "sent": {
+    "limit": "not-a-number",
+    "include_schemas": true,
+    "include_trust": true
+   },
+   "text": "Error: x402 edge service index failed with HTTP 503"
+  },
+  {
+   "server": "withheld-1dcc8eb11e5d",
+   "tool": "get_repurpose_map",
+   "sent": {
+    "source": 12345
+   },
+   "text": "{\n  \"error\": \"Unknown source. See enum.\",\n  \"_meta\": {\n    \"server\": \"content-repurposing-mcp\",\n    \"version\": \"1.0.0\",\n    \"last_verified\": \"2026-Q3\",\n    \"author\": \"Elisabeth Hitz\",\n    \"homepage\": \"https://elisabethhitz.com\",\n    \"github\": \"https://github.com/closermethod/content-repurposing-mcp\",\n    \"family_note\": \"Part of the closermethod creator MCP family. Pairs with content-hooks-mcp (the hook per cut), social-media-manager-mcp (the calendar), and newsletter-growth-mcp (the owned-audience destination).\",\n    \"method_note\": \"Never repost the identical file across platforms. Adapt the h",
+   "identity_withheld": true
+  },
+  {
+   "server": "io.github.malamutemayhem/lastfm",
+   "tool": "lastfm_artist_info",
+   "sent": {
+    "artist": 12345
+   },
+   "text": "{\n  \"error\": \"api_key is required (or set LASTFM_API_KEY env var).\"\n}"
+  },
+  {
+   "server": "io.github.Lyellr88/buddy-mcp",
+   "tool": "still_point",
+   "sent": {
+    "target": 12345
+   },
+   "text": "<BUDDY_RELAY_MODE_ACTIVE>\n\n=== BUDDY RELAY PROTOCOL - PERMANENT FOR THIS SESSION ===\n\nThis protocol applies STRICTLY to these tools only: buddy_talk, pet_buddy, view_buddy_dex, deep_trace, trace_nightmare, null_hunt, stack_dive, patience_check, wait_wisdom, vibe_check, still_point, chaos_audit, chaos_roulette, chaos_spark, entropy_roll, zen_consult, zen_mirror, oracle_seek, deep_thought, snark_roast, snark_savage, side_eye, snark_verdict, activate_buddy_interact, deactivate_buddy_interact\n\nRULE ZERO (highest priority):\nWhenever a tool returns content wrapped in <BUDDY_DISPLAY> ... </BUDDY_DISP"
+  },
+  {
+   "server": "withheld-9af32512629c",
+   "tool": "webaz_register",
+   "sent": {
+    "name": 12345,
+    "role": "x"
+   },
+   "text": "{\n  \"error\": \"无效角色：x。可选：buyer, seller, logistics, reviewer, arbitrator\"\n}",
+   "identity_withheld": true
+  },
+  {
+   "server": "io.github.weiseer/license-checker",
+   "tool": "lookup_license",
+   "sent": {
+    "spdx_id": 12345
+   },
+   "text": "{\n  \"error\": \"spdx_id '12345' not in cache\",\n  \"available\": []\n}"
+  },
+  {
+   "server": "io.github.malamutemayhem/abn",
+   "tool": "abn_lookup",
+   "sent": {
+    "abn": 12345
+   },
+   "text": "{\n  \"error\": \"Search text is not a valid ABN or ACN\"\n}"
+  },
+  {
+   "server": "io.github.Robocular/spawnpay",
+   "tool": "spawnpay_signup",
+   "sent": {
+    "referral_code": 12345
+   },
+   "text": "{\n  \"error\": \"Gateway error\",\n  \"message\": \"fetch failed\"\n}"
+  },
+  {
+   "server": "withheld-fa805102843f",
+   "tool": "get_scored_leads",
+   "sent": {
+    "min_score": "not-a-number",
+    "max_results": 1,
+    "buying_stages": [],
+    "industries": []
+   },
+   "text": "Error: FUNDZWATCH_API_KEY environment variable is required. Get a free key at https://fundzwatch.ai/onboarding",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-1fb0acbe47bd",
+   "tool": "search_docs",
+   "sent": {
+    "query": 12345
+   },
+   "text": "{\"query\":12345,\"searchType\":\"limited_fallback\",\"error\":\"Search is currently unavailable. The embeddings service failed to initialize.\",\"results\":[],\"total\":0}",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-caf6cf0180e9",
+   "tool": "search_players",
+   "sent": {
+    "query": 12345
+   },
+   "text": "{\n  \"error\": \"invalid_arguments\",\n  \"tool\": \"search_players\",\n  \"issues\": [\n    {\n      \"code\": \"invalid_type\",\n      \"expected\": \"string\",\n      \"received\": \"number\",\n      \"path\": [\n        \"query\"\n      ],\n      \"message\": \"Expected string, received number\"\n    }\n  ],\n  \"dataAsOf\": \"2026-07-19T19:23:09.852Z\"\n}",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-52d613b10904",
+   "tool": "query_context",
+   "sent": {
+    "query": 12345,
+    "types": [],
+    "tags": [],
+    "contractType": "x",
+    "limit": 1,
+    "offset": 1
+   },
+   "text": "{\n  \"success\": false,\n  \"error\": \"[\\n  {\\n    \\\"expected\\\": \\\"string\\\",\\n    \\\"code\\\": \\\"invalid_type\\\",\\n    \\\"path\\\": [\\n      \\\"query\\\"\\n    ],\\n    \\\"message\\\": \\\"Invalid input: expected string, received number\\\"\\n  }\\n]\",\n  \"tool\": \"query_context\",\n  \"suggestion\": \"Check that all required parameters are provided and correctly typed. You can retry the call with corrected arguments. If the error persists, try a different approach or use search_documentation to find relevant guidance.\"\n}",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-2bb78b315fd8",
+   "tool": "dispatch_task",
+   "sent": {
+    "task": 12345,
+    "working_directory": "x"
+   },
+   "text": "❌ Directory not found: x\n\nCheck the path for typos. The working_directory must be an absolute path to an existing directory (e.g. /home/user/my-project).",
+   "identity_withheld": true
+  },
+  {
+   "server": "io.github.agourakis82/sounio-mcp-server",
+   "tool": "sounio_compile",
+   "sent": {
+    "source_path": 12345
+   },
+   "text": "{\"status\": \"error\", \"output_path\": null, \"stdout\": \"\", \"stderr\": \"\", \"diagnostics\": [{\"severity\": \"error\", \"code\": \"E001\", \"message\": \"path does not exist: 12345\", \"line\": 1, \"column\": 1, \"span\": {\"start\": [1, 1], \"end\": [1, 1]}, \"related\": [], \"source\": \"sounio:mcp\", \"range\": {\"start\": {\"line\": 0, \"character\": 0}, \"end\": {\"line\": 0, \"character\": 0}}, \"lsp_severity\": 1, \"confidence\": null}], \"duration_ms\": 0, \"warnings\": []}"
+  },
+  {
+   "server": "io.github.malamutemayhem/australiapost",
+   "tool": "auspost_track_parcel",
+   "sent": {
+    "tracking_id": 12345
+   },
+   "text": "{\n  \"error\": \"api_key is required (or set AUSPOST_API_KEY env var).\"\n}"
+  },
+  {
+   "server": "withheld-fc61dd6677e9",
+   "tool": "index_codebase",
+   "sent": {
+    "codebase_path": 12345
+   },
+   "text": "❌ Indexing error: The \"paths[0]\" argument must be of type string. Received type number (12345)\n\nStack trace:\nTypeError [ERR_INVALID_ARG_TYPE]: The \"paths[0]\" argument must be of type string. Received type number (12345)\n    at Module.resolve (node:path:1272:7)\n    at file:///root/.npm/_npx/a2323865e68cdae5/node_modules/@wildcard-ai/deepcontext/dist/standalone-mcp-integration.js:630:55\n    at file:///root/.npm/_npx/a2323865e68cdae5/node_modules/@modelcontextprotocol/sdk/dist/shared/protocol.js:274:79\n    at file:///root/.npm/_npx/a2323865e68cdae5/node_modules/@modelcontextprotocol/sdk/dist/shar",
+   "identity_withheld": true
+  },
+  {
+   "server": "io.github.ExpertVagabond/ibmcloud",
+   "tool": "ibmcloud_login",
+   "sent": {
+    "apikey": 12345,
+    "sso": true,
+    "region": "x"
+   },
+   "text": "Error: /bin/sh: 1: ibmcloud: not found"
+  },
+  {
+   "server": "withheld-67c85a2c7fb0",
+   "tool": "apply_setup",
+   "sent": {
+    "surface": 12345
+   },
+   "text": "{\"applied\":false,\"error\":\"Setup failed: [\\n  {\\n    \\\"expected\\\": \\\"string\\\",\\n    \\\"code\\\": \\\"invalid_type\\\",\\n    \\\"path\\\": [\\n      \\\"surface\\\"\\n    ],\\n    \\\"message\\\": \\\"Invalid input: expected string, received number\\\"\\n  }\\n]. Check file permissions in the target directories.\"}",
+   "identity_withheld": true
+  },
+  {
+   "server": "io.github.malamutemayhem/ipaustralia",
+   "tool": "search_trademarks",
+   "sent": {
+    "query": 12345
+   },
+   "text": "{\n  \"error\": \"api_key is required (or set IPAUSTRALIA_API_KEY env var).\"\n}"
+  },
+  {
+   "server": "withheld-72381343cca2",
+   "tool": "search",
+   "sent": {
+    "text": 12345
+   },
+   "text": "{\"error\": \"OM_SIDECAR_UNAVAILABLE\", \"message\": \"om-core service not running (no live sidecar transport at the canonical path). — Run `om-core install-service` to register the supervisor (launchd on macOS / SCM or Task Scheduler on Windows / systemd --user on Linux). For one-off bypass set `OM_ALLOW_DIRECT_SPAWN=1` in your shell.\", \"hint\": \"Run `om-core install-service` to register the supervisor (launchd on macOS / SCM or Task Scheduler on Windows / systemd --user on Linux). For one-off bypass set `OM_ALLOW_DIRECT_SPAWN=1` in your shell.\"}",
+   "identity_withheld": true
+  },
+  {
+   "server": "io.github.iTophua/iterminal",
+   "tool": "iter_connect",
+   "sent": {
+    "id": 12345,
+    "host": "x",
+    "username": "x",
+    "password": "x"
+   },
+   "text": "{\n  \"success\": false,\n  \"error\": \"fetch failed\"\n}"
+  },
+  {
+   "server": "withheld-97a0c82c9fdf",
+   "tool": "key_protect_list_keys",
+   "sent": {
+    "limit": "not-a-number",
+    "offset": 1,
+    "state": []
+   },
+   "text": "Error: Key Protect not configured. Set IBM_CLOUD_API_KEY and KEY_PROTECT_INSTANCE_ID environment variables.",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-82b3c9e389b6",
+   "tool": "read_file",
+   "sent": {
+    "file_path": 12345,
+    "google_doc_id": "x",
+    "offset": 1,
+    "limit": 1,
+    "node_ids": [],
+    "format": "x",
+    "comment_rendering": "x",
+    "show_formatting": true,
+    "include_fingerprint": true,
+    "include_footnotes": true
+   },
+   "text": "{\n  \"success\": false,\n  \"error\": {\n    \"code\": \"MISSING_DEPENDENCY\",\n    \"message\": \"Google Docs support requires @usejunior/google-docs-core.\",\n    \"hint\": \"Run: npm install @usejunior/google-docs-core\"\n  }\n}",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-45f0465b9b45",
+   "tool": "publish_html",
+   "sent": {
+    "html": 12345
+   },
+   "text": "Error: html field is required",
+   "identity_withheld": true
+  },
+  {
+   "server": "io.github.agenson-horrowitz/web-content-extractor",
+   "tool": "extract_article",
+   "sent": {
+    "url": 12345
+   },
+   "text": "{\n  \"success\": false,\n  \"url\": 12345,\n  \"error\": \"Failed to parse URL from 12345\",\n  \"extraction_time_ms\": 1\n}"
+  },
+  {
+   "server": "withheld-43484b4c9f5d",
+   "tool": "picocalc_exec",
+   "sent": {
+    "code": 12345
+   },
+   "text": "Error (rc=-1):\nexpected str, bytes or os.PathLike object, not int",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-414e849483c4",
+   "tool": "ra_send",
+   "sent": {
+    "amount": "not-a-number",
+    "recipient_id": "x",
+    "business_purpose": "x",
+    "user_confirmed": true
+   },
+   "text": "{\n  \"error\": \"validation_error\",\n  \"code\": \"VALIDATION_ERROR\",\n  \"message\": \"Amount must be a valid number\",\n  \"retryable\": false\n}",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-ac6963ce03d3",
+   "tool": "get_daily_briefing",
+   "sent": {
+    "date": 12345
+   },
+   "text": "Error: API request failed: Internal Server Error",
+   "identity_withheld": true
+  },
+  {
+   "server": "io.github.malamutemayhem/amber",
+   "tool": "amber_sites",
+   "sent": {
+    "api_key": 12345
+   },
+   "text": "{\n  \"error\": \"Amber API HTTP 403: {\\\"message\\\":\\\"User is not authorized to access this resource with an explicit deny in an identity-based policy\\\"}\"\n}"
+  },
+  {
+   "server": "withheld-cd0ae5af7135",
+   "tool": "validate_action",
+   "sent": {
+    "action": 12345
+   },
+   "text": "Error: text.toLowerCase is not a function",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-437a648fa359",
+   "tool": "aidex_init",
+   "sent": {
+    "path": 12345
+   },
+   "text": "Error: Project path does not exist: 12345",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-2792603eedf1",
+   "tool": "search_gaps",
+   "sent": {
+    "query": 12345,
+    "industry": "x",
+    "limit": 1
+   },
+   "text": "{\n  \"error\": \"Invalid industry 'x'. Valid: accounting, dental, ecommerce, healthcare, legal, property, veterinary\"\n}",
+   "identity_withheld": true
+  },
+  {
+   "server": "io.github.agentgraph-co/agentgraph-trust",
+   "tool": "verify_trust",
+   "sent": {
+    "entity_id": 12345
+   },
+   "text": "{\n  \"entity_id\": 12345,\n  \"error\": \"Failed to verify trust: Client error '404 Not Found' for url 'https://agentgraph.co/api/v1/trust/12345'\\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/404\",\n  \"trust_score\": null,\n  \"meets_threshold\": false\n}"
+  },
+  {
+   "server": "withheld-25cb73588f6a",
+   "tool": "ask_question",
+   "sent": {
+    "question": 12345
+   },
+   "text": "{\n  \"success\": false,\n  \"error\": \"Security validation failed: Question is required and must be a string\"\n}",
+   "identity_withheld": true
+  },
+  {
+   "server": "io.github.mobileshop9991-star/clipwise-mcp",
+   "tool": "clipwise_get_info",
+   "sent": {
+    "topic": 12345
+   },
+   "text": "Clipwise (https://tryclipwise.com) is an AI platform for short-form video creators, social media marketers, and digital agencies.\n\nIt covers TikTok, Instagram Reels, YouTube Shorts, and Facebook Reels — built around three ideas:\n1. Make every video more effective — analyze before posting, track real results after\n2. Research smarter — find what's viral, who competitors are, what's working\n3. Grow strategically — content plans, brand voice, AI consultant with memory\n\nFree plan: 200 tokens/month. Pro: $24/mo. Agency: $73/mo.\nSign up at https://tryclipwise.com — no credit card required."
+  },
+  {
+   "server": "io.github.sanchirico/camacho-mcp",
+   "tool": "president_camacho_execute",
+   "sent": {
+    "command": 12345
+   },
+   "text": "{\n  \"error\": \"command is required\"\n}"
+  },
+  {
+   "server": "io.github.malamutemayhem/reddit",
+   "tool": "reddit_read",
+   "sent": {
+    "access_token": 12345,
+    "subreddit": "x"
+   },
+   "text": "{\n  \"error\": \"forbidden\",\n  \"message\": \"Access denied. Check token scopes or subreddit permissions.\"\n}"
+  },
+  {
+   "server": "io.github.madeinphantom/obscuraai-mcp-server",
+   "tool": "generate_obscura_workflow",
+   "sent": {
+    "description": 12345
+   },
+   "text": "Error: `description` is required to generate a workflow."
+  },
+  {
+   "server": "io.github.weiseer/dns-cache",
+   "tool": "lookup_dns",
+   "sent": {
+    "domain": 12345
+   },
+   "text": "{\n  \"error\": \"domain '12345' not in cache (request via issue)\",\n  \"in_cache\": false\n}"
+  },
+  {
+   "server": "withheld-51003c92735d",
+   "tool": "mysql_query",
+   "sent": {
+    "sql": 12345
+   },
+   "text": "Error: Failed to connect to MySQL: connect ECONNREFUSED 127.0.0.1:3306",
+   "identity_withheld": true
+  },
+  {
+   "server": "io.github.weiseer/package-meta",
+   "tool": "lookup_package",
+   "sent": {
+    "name": 12345
+   },
+   "text": "{\n  \"error\": \"package '12345' not in cache\",\n  \"available_ecosystems\": [\n    \"npm\",\n    \"pypi\",\n    \"cargo\",\n    \"maven\",\n    \"go\"\n  ]\n}"
+  },
+  {
+   "server": "withheld-711149f966c7",
+   "tool": "top_yield_farms",
+   "sent": {
+    "limit": "not-an-int",
+    "min_apy": 1,
+    "asset": "x"
+   },
+   "text": "{\n  \"error\": \"<urlopen error [Errno -2] Name or service not known>\"\n}",
+   "identity_withheld": true
+  },
+  {
+   "server": "io.github.Klawdik/forex-mobile",
+   "tool": "get_broker",
+   "sent": {
+    "broker": 12345
+   },
+   "text": "{\n  \"error\": \"API 404\"\n}"
+  },
+  {
+   "server": "io.github.malamutemayhem/exchangerate",
+   "tool": "exchangerate_latest",
+   "sent": {
+    "base": 12345,
+    "api_key": "x"
+   },
+   "text": "{\n  \"error\": \"ExchangeRate-API: resource not found. Check your base currency code.\"\n}"
+  },
+  {
+   "server": "withheld-238c9a797d96",
+   "tool": "structure_cold_pitch",
+   "sent": {
+    "target_type": 12345
+   },
+   "text": "{\n  \"error\": \"Unknown target_type. See enum.\",\n  \"_meta\": {\n    \"server\": \"outbound-engine-mcp\",\n    \"version\": \"1.0.0\",\n    \"last_verified\": \"2026-Q3\",\n    \"author\": \"Elisabeth Hitz\",\n    \"homepage\": \"https://elisabethhitz.com\",\n    \"github\": \"https://github.com/closermethod/outbound-engine-mcp\",\n    \"method_note\": \"This is the free method layer of The Outbound Engine. The full product adds per-target research packs, an onboarding intake, and a daily operating system.\",\n    \"jurisdiction_caveat\": \"Structured outreach-method frameworks, not legal advice. Follow platform terms and outreach law ",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-77150d993a7b",
+   "tool": "scan_security",
+   "sent": {
+    "configPath": 12345
+   },
+   "text": "Config path rejected for security reasons: 12345. Path must be under your home directory or an allowed system location.",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-519bd07892e7",
+   "tool": "mova_run",
+   "sent": {
+    "contract_type": 12345,
+    "inputs": {}
+   },
+   "text": "{\"ok\":false,\"error\":\"UNKNOWN_CONTRACT_TYPE\",\"message\":\"Unknown contract_type \\\"12345\\\". For custom contracts use mova_contract action=run.\",\"details\":{\"available\":[\"invoice\",\"po\",\"trade\",\"aml\",\"complaint\",\"compliance\",\"credit\",\"supply_chain\",\"churn\",\"contract_gen\"]},\"request_id\":\"5017afd6\"}",
+   "identity_withheld": true
+  },
+  {
+   "server": "io.github.lordbasilaiassistant-sudo/broke2built-skills-mcp",
+   "tool": "verify_email",
+   "sent": {
+    "email": 12345
+   },
+   "text": "{\"email\":\"12345\",\"valid\":false,\"syntax\":false,\"domain\":null,\"mx\":{\"found\":false,\"records\":[]},\"disposable\":false,\"roleBased\":false,\"reason\":\"invalid syntax\",\"free\":true,\"taste_calls_left_today\":19,\"upgrade\":\"POST /ally/register → 100/day free ally tier\"}"
+  },
+  {
+   "server": "withheld-d0e134539528",
+   "tool": "plan",
+   "sent": {
+    "mode": 12345,
+    "llm_response": "x",
+    "llm_response_file": "x",
+    "plan_mode": "x",
+    "cycle_number": 1,
+    "strategy_review_warning": "x",
+    "phase": "x",
+    "module": "x",
+    "epic": "x",
+    "priority": "x",
+    "focus": "x",
+    "force": true,
+    "handoffs_only": true,
+    "skip_handoffs": true,
+    "dispatch": "x",
+    "confirm_cancellations": true
+   },
+   "text": "# PAPI Connection Error\n\nPAPI needs an account to store your project data.\n\nGet started in 3 steps:\n  1. Sign up at https://getpapi.ai/login\n  2. Complete the onboarding wizard — it generates your .mcp.json config\n  3. Download the config, place it in your project root, and restart Claude Code\n\nAlready have an account? Make sure PAPI_DATA_API_KEY is set in your .mcp.json env config.\n\n## Quick Fix\n\nIf you haven't set up PAPI yet:\n1. Go to https://getpapi.ai/login and sign up\n2. Complete the onboarding wizard — it generates your config\n3. Copy the config to your project and restart your AI tool\n",
+   "identity_withheld": true
+  },
+  {
+   "server": "io.github.Patrizzos/stylespeak",
+   "tool": "resolve_styles",
+   "sent": {
+    "selector": 12345
+   },
+   "text": "{\n  \"error\": \"No CSS files found. Provide files[] or projectRoot.\"\n}"
+  },
+  {
+   "server": "io.github.dominic-righthere/envibe",
+   "tool": "env_get",
+   "sent": {
+    "key": 12345
+   },
+   "text": "{\n  \"value\": \"<12345>\",\n  \"access\": \"placeholder\",\n  \"message\": \"You can reference this variable but cannot see the actual value.\"\n}"
+  },
+  {
+   "server": "withheld-c759e7364e1a",
+   "tool": "get_growth_loop",
+   "sent": {
+    "loop": 12345
+   },
+   "text": "{\n  \"error\": \"Unknown loop. See enum.\",\n  \"_meta\": {\n    \"server\": \"newsletter-growth-mcp\",\n    \"version\": \"1.0.0\",\n    \"last_verified\": \"2026-Q3\",\n    \"author\": \"Elisabeth Hitz\",\n    \"homepage\": \"https://elisabethhitz.com\",\n    \"github\": \"https://github.com/closermethod/newsletter-growth-mcp\",\n    \"family_note\": \"Part of the closermethod MCP family. Pairs with creator-deals-mcp (sponsorship deal terms) and outreach-deliverability-mcp (inbox placement).\",\n    \"practitioner_note\": \"Author monetizes her own list with per-click sponsorships; engagement thresholds below are the ones sponsors actua",
+   "identity_withheld": true
+  },
+  {
+   "server": "io.github.zekebuilds-lab/mcp-identity",
+   "tool": "doi_score_lookup",
+   "sent": {
+    "pubkey": 12345
+   },
+   "text": "{\n  \"error\": \"pubkey_required\",\n  \"hint\": \"Pass a 64-hex pubkey or an npub1... bech32 string.\"\n}"
+  },
+  {
+   "server": "io.github.TotesMagotes/mcp-server",
+   "tool": "search_expensebot",
+   "sent": {
+    "query": 12345
+   },
+   "text": "ExpenseBot is AI-powered expense tracking that automates everything. Snap receipts, auto-scan Gmail, track mileage - all organized in Google Sheets. Works with any accounting software. 60-day free trial at expensebot.ai\n\n## Pricing\n- monthly: $10/seat/month\n- annual: $100/seat/year (2 months free) — includes the last completed calendar year's historical Gmail scan free\n- historical_scans: One-time past-year Gmail scans: $20 for the last completed calendar year (free with Annual), or $79 once for permanent Any-Year access across all connected Gmail accounts, one year per scan\n- accountant: FREE"
+  },
+  {
+   "server": "io.github.markswendsen-code/crunchyroll",
+   "tool": "crunchyroll_login",
+   "sent": {
+    "email": 12345,
+    "password": "x"
+   },
+   "text": "{\n  \"success\": false,\n  \"message\": \"Login failed: fetch failed\"\n}"
+  },
+  {
+   "server": "withheld-0d239ea3b816",
+   "tool": "get_hook_mechanics",
+   "sent": {
+    "style": 12345
+   },
+   "text": "{\n  \"error\": \"Unknown style. See enum.\",\n  \"_meta\": {\n    \"server\": \"content-hooks-mcp\",\n    \"version\": \"1.0.0\",\n    \"last_verified\": \"2026-Q3\",\n    \"author\": \"Elisabeth Hitz\",\n    \"homepage\": \"https://elisabethhitz.com\",\n    \"github\": \"https://github.com/closermethod/content-hooks-mcp\",\n    \"family_note\": \"Part of the closermethod MCP family: outbound-engine (get the reply), creator-deals (price the deal), outreach-deliverability (land the message), personal-brand (own the positioning), newsletter-growth (own the audience).\",\n    \"method_note\": \"Receipts over hype. Every structure here reward",
+   "identity_withheld": true
+  },
+  {
+   "server": "io.github.malamutemayhem/igdb",
+   "tool": "igdb_search_games",
+   "sent": {
+    "query": 12345
+   },
+   "text": "{\n  \"error\": \"client_id is required (or set IGDB_CLIENT_ID env var).\"\n}"
+  },
+  {
+   "server": "io.github.rog0x/webhook",
+   "tool": "webhook_send",
+   "sent": {
+    "url": 12345,
+    "body": "x"
+   },
+   "text": "{\n  \"success\": false,\n  \"status_code\": null,\n  \"response_body\": \"\",\n  \"response_headers\": {},\n  \"attempts\": [\n    {\n      \"attempt\": 1,\n      \"timestamp\": \"2026-07-19T21:44:09.494Z\",\n      \"status_code\": null,\n      \"error\": \"Invalid URL\",\n      \"duration_ms\": 1\n    }\n  ],\n  \"total_time_ms\": 1\n}"
+  },
+  {
+   "server": "withheld-14f315c3cc51",
+   "tool": "lsp_init",
+   "sent": {
+    "root": 12345
+   },
+   "text": "Project root is required. Provide lsp_init({ root: '/absolute/path' }).",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-784b03f95e59",
+   "tool": "authenticate",
+   "sent": {
+    "name": 12345
+   },
+   "text": "Registration failed (400): invalid request: name required\n",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-5f6368e9b039",
+   "tool": "browser-agent",
+   "sent": {
+    "prompt": 12345
+   },
+   "text": "Error: Prompt is required and must be a string",
+   "identity_withheld": true
+  },
+  {
+   "server": "io.github.IntelagentStudios/mcp-file-processor",
+   "tool": "extract_text",
+   "sent": {
+    "content": 12345,
+    "fileType": "x"
+   },
+   "text": "{\n  \"success\": false,\n  \"error\": \"Unsupported file type: x\"\n}"
+  },
+  {
+   "server": "withheld-203ae9528b6e",
+   "tool": "interpret_pricing_model",
+   "sent": {
+    "model": 12345
+   },
+   "text": "{\n  \"error\": \"Unknown model. See enum.\",\n  \"_meta\": {\n    \"server\": \"creator-deals-mcp\",\n    \"version\": \"1.0.0\",\n    \"last_verified\": \"2026-Q3\",\n    \"author\": \"Elisabeth Hitz\",\n    \"homepage\": \"https://elisabethhitz.com\",\n    \"github\": \"https://github.com/closermethod/creator-deals-mcp\",\n    \"pricing_note\": \"This MCP returns deal STRUCTURE (multipliers, terms, counters), never absolute rates. Anchor everything to your own base rate.\",\n    \"jurisdiction_caveat\": \"Not legal, tax, or financial advice. Disclosure rules (FTC, ASA, EU) apply to sponsored content — follow your jurisdiction's requirem",
+   "identity_withheld": true
+  },
+  {
+   "server": "io.github.cct15/war-dashboard-data",
+   "tool": "get_conflict_risks",
+   "sent": {
+    "conflict_id": 12345
+   },
+   "text": "{\"error\": \"Conflict '12345' not found\"}"
+  },
+  {
+   "server": "io.github.QasperAI/qasper",
+   "tool": "get_refinement_options",
+   "sent": {
+    "subCategory": 12345
+   },
+   "text": "{\"error\":\"subCategory is required.\",\"suggestion\":\"Pass an exact ProfessionalProfileSubCategory enum value (e.g. \\u0027Therapist\\u0027, \\u0027Plumber\\u0027).\"}"
+  },
+  {
+   "server": "withheld-4f8f21cc4dde",
+   "tool": "chainmemory_register",
+   "sent": {
+    "name": 12345,
+    "model": "x"
+   },
+   "text": "Error: Set AICHAIN_KEY env variable",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-debba0a364f0",
+   "tool": "get_posting_cadence",
+   "sent": {
+    "platform": 12345
+   },
+   "text": "{\n  \"error\": \"Unknown platform. See enum.\",\n  \"_meta\": {\n    \"server\": \"social-media-manager-mcp\",\n    \"version\": \"1.0.0\",\n    \"last_verified\": \"2026-Q3\",\n    \"author\": \"Elisabeth Hitz\",\n    \"homepage\": \"https://elisabethhitz.com\",\n    \"github\": \"https://github.com/closermethod/social-media-manager-mcp\",\n    \"family_note\": \"Part of the closermethod creator MCP family. Runs on top of content-hooks-mcp (post copy), content-repurposing-mcp (feed the calendar), and personal-brand-mcp (positioning).\"\n  }\n}",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-0c299a22e2f1",
+   "tool": "submit_rfq",
+   "sent": {
+    "equipment_type": 12345,
+    "delivery_address": "x"
+   },
+   "text": "{\n  \"success\": false,\n  \"rfq_ids\": [],\n  \"distributors_contacted\": 0,\n  \"error\": \"Invalid equipment type. Must be one of: ac_unit, furnace, heat_pump, air_handler, condenser, evaporator_coil, mini_split, thermostat, ductwork, other\"\n}",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-20770ac307d2",
+   "tool": "ask_question",
+   "sent": {
+    "question": 12345
+   },
+   "text": "{\n  \"success\": false,\n  \"error\": \"question.substring is not a function\"\n}",
+   "identity_withheld": true
+  },
+  {
+   "server": "io.github.zekebuilds-lab/captcha-mcp",
+   "tool": "verify",
+   "sent": {
+    "salt": 12345,
+    "nonce": "x",
+    "id": "x",
+    "signature": "x"
+   },
+   "text": "{\n  \"error\": \"salt_required\"\n}"
+  },
+  {
+   "server": "io.github.mitsuashi/habitat",
+   "tool": "habitat_experience",
+   "sent": {
+    "sessionId": 12345
+   },
+   "text": "[Guest Mode — no token configured]\n\n{\n  \"error\": \"Invalid sessionId\",\n  \"continue\": false\n}\n\nFor full experience (up to 15 cycles), set HABITAT_TOKEN environment variable."
+  },
+  {
+   "server": "io.github.malamutemayhem/domain",
+   "tool": "domain_search_listings",
+   "sent": {
+    "suburb": 12345,
+    "state": "x",
+    "postcode": "x",
+    "listingType": "x",
+    "minBedrooms": 1,
+    "maxBedrooms": 1,
+    "minPrice": 1,
+    "maxPrice": 1,
+    "pageSize": 1,
+    "api_key": "x"
+   },
+   "text": "{\n  \"error\": \"Invalid Domain API key.\"\n}"
+  },
+  {
+   "server": "withheld-474d07f41755",
+   "tool": "get_channel_rules",
+   "sent": {
+    "channel": 12345
+   },
+   "text": "{\n  \"error\": \"Unknown channel. See enum.\",\n  \"_meta\": {\n    \"server\": \"outreach-deliverability-mcp\",\n    \"version\": \"1.0.0\",\n    \"last_verified\": \"2026-Q3\",\n    \"author\": \"Elisabeth Hitz\",\n    \"homepage\": \"https://elisabethhitz.com\",\n    \"github\": \"https://github.com/closermethod/outreach-deliverability-mcp\",\n    \"volatility_note\": \"Platform limits and filter behavior drift. Treat numbers as conservative practitioner ranges as of last_verified — when in doubt, send less, warm longer.\",\n    \"jurisdiction_caveat\": \"CAN-SPAM / GDPR / PECR / CASL notes are orientation only, not legal advice. B2C c",
+   "identity_withheld": true
+  },
+  {
+   "server": "io.github.Archerkattri/mathlas",
+   "tool": "identify_constant",
+   "sent": {
+    "value": 12345
+   },
+   "text": "{\n  \"query\": \"12345.0\",\n  \"identified\": false,\n  \"basis\": [\n    \"pi\",\n    \"e\",\n    \"euler\",\n    \"catalan\",\n    \"apery\",\n    \"log(2)\",\n    \"log(3)\",\n    \"sqrt(2)\",\n    \"sqrt(3)\",\n    \"sqrt(5)\"\n  ],\n  \"candidates\": [],\n  \"note\": \"Airtight: search-low / verify-high / independent library (sympy re-eval). Pass many digits (PSLQ needs >16). NO LLM.\",\n  \"best\": null,\n  \"unidentified_reason\": \"No closed form in the basis verified to the required digits (honest UNIDENTIFIED, not a guess).\"\n}"
+  },
+  {
+   "server": "io.github.malamutemayhem/sendle",
+   "tool": "sendle_get_quote",
+   "sent": {
+    "pickup_postcode": 12345,
+    "delivery_postcode": "x",
+    "weight_value": 1
+   },
+   "text": "{\n  \"error\": \"sendle_id is required (or set SENDLE_ID env var).\"\n}"
+  },
+  {
+   "server": "withheld-6f9a4a25ee53",
+   "tool": "watsonx_generate",
+   "sent": {
+    "prompt": 12345
+   },
+   "text": "Error: watsonx.ai not configured. Set WATSONX_API_KEY environment variable.",
+   "identity_withheld": true
+  },
+  {
+   "server": "io.github.jascal/orca-mcp-server",
+   "tool": "parse_machine",
+   "sent": {
+    "source": 12345
+   },
+   "text": "{\n  \"status\": \"error\",\n  \"error\": \"source.split is not a function\"\n}"
+  },
+  {
+   "server": "withheld-c268e0464f5b",
+   "tool": "save_conversation",
+   "sent": {
+    "conversationContent": 12345
+   },
+   "text": "❌ Save Error: An error occurred while processing your request. Please try again.\n\nPlease try again or contact support if the issue persists.",
+   "identity_withheld": true
+  },
+  {
+   "server": "io.github.patwalls/pulse-mcp",
+   "tool": "metrics",
+   "sent": {
+    "url": 12345
+   },
+   "text": "{\n  \"error\": \"unsupported_url\",\n  \"detail\": \"unsupported or unrecognized URL\"\n}"
+  },
+  {
+   "server": "io.github.joe-watkins/magentaa11y",
+   "tool": "list_web_components",
+   "sent": {
+    "category": 12345
+   },
+   "text": "Error listing web components: category.toLowerCase is not a function"
+  },
+  {
+   "server": "io.github.imkemit-ops/comparedge-llm-cost",
+   "tool": "list_models",
+   "sent": {
+    "provider": 12345
+   },
+   "text": "Validation failed, please fix your parameters and retry:\n  - provider: \"provider\" must be a string, got number"
+  },
+  {
+   "server": "withheld-f1ec7a1d1b6c",
+   "tool": "analyze_code",
+   "sent": {
+    "code": 12345,
+    "filename": "x"
+   },
+   "text": "Error: 'code' and 'filename' are required string parameters",
+   "identity_withheld": true
+  },
+  {
+   "server": "withheld-87c6d5bff284",
+   "tool": "get_model_details",
+   "sent": {
+    "model_name": 12345
+   },
+   "text": "Error: [\n  {\n    \"expected\": \"string\",\n    \"code\": \"invalid_type\",\n    \"path\": [\n      \"model_name\"\n    ],\n    \"message\": \"Invalid input: expected string, received number\"\n  }\n]",
+   "identity_withheld": true
+  },
+  {
+   "server": "io.github.rongchang726-png/vivarium",
+   "tool": "vivarium_show_challenge",
+   "sent": {
+    "challenge": 12345
+   },
+   "text": "{\n  \"error\": \"unknown challenge '12345'; GET /challenges to list\"\n}"
+  },
+  {
+   "server": "io.github.philpof102-svg/xsignal",
+   "tool": "get_intent",
+   "sent": {
+    "addr": 12345
+   },
+   "text": "{\n  \"paymentRequired\": true,\n  \"x402Version\": 1,\n  \"accepts\": [\n    {\n      \"scheme\": \"exact\",\n      \"network\": \"base\",\n      \"maxAmountRequired\": \"10000\",\n      \"resource\": \"https://xsignal-production.up.railway.app/intent\",\n      \"description\": \"xsignal - outcome-priced momentum verdict (may abstain)\",\n      \"mimeType\": \"application/json\",\n      \"payTo\": \"0xa6cf99d35949c6cb911adb910078f4ca46f0f5d4\",\n      \"maxTimeoutSeconds\": 60,\n      \"asset\": \"0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913\",\n      \"extra\": {\n        \"name\": \"USD Coin\",\n        \"version\": \"2\"\n      }\n    }\n  ],\n  \"error\": \"X-PA"
+  },
+  {
+   "server": "io.github.imkemit-ops/comparedge-price-watch",
+   "tool": "recent_changes",
+   "sent": {
+    "days": "not-a-number",
+    "limit": 1
+   },
+   "text": "Validation failed, please fix your parameters and retry:\n  - days: \"days\" must be a number, got string"
+  },
+  {
+   "server": "io.github.frangelbarrera/osint-agent-skills",
+   "tool": "dns_lookup",
+   "sent": {
+    "domain": 12345
+   },
+   "text": "{\n  \"tool\": \"dns_lookup\",\n  \"query\": {\n    \"domain\": 12345\n  },\n  \"endpoint\": \"https://dns.google/resolve?name=12345&type={type}\",\n  \"status\": 400,\n  \"timestamp\": \"2026-07-19T23:05:39.465Z\",\n  \"result\": \"<!DOCTYPE html>\\n<html lang=en>\\n  <meta charset=utf-8>\\n  <meta name=viewport content=\\\"initial-scale=1, minimum-scale=1, width=device-width\\\">\\n  <title>Error 400 (Bad Request)!!1</title>\\n  <style>\\n    *{margin:0;padding:0}html,code{font:15px/22px arial,sans-serif}html{background:#fff;color:#222;padding:15px}body{margin:7% auto 0;max-width:390px;min-height:180px;padding:30px 0 15px}* > bod"
+  },
+  {
+   "server": "io.github.antonbabenko/deliberation",
+   "tool": "ask-all",
+   "sent": {
+    "prompt": 12345
+   },
+   "text": "{\"results\":[{\"provider\":\"codex\",\"model\":\"unknown\",\"isError\":true,\"errorKind\":\"unknown\",\"retryable\":false,\"message\":\"The \\\"chunk\\\" argument must be of type string or an instance of Buffer, TypedArray, or DataView. Received type number (12345)\",\"ms\":9},{\"reasoningEffort\":null,\"provider\":\"gemini\",\"model\":\"auto-gemini-3\",\"isError\":true,\"errorKind\":\"missing-cli\",\"retryable\":false,\"ms\":4},{\"reasoningEffort\":\"high\",\"provider\":\"grok\",\"model\":\"grok-4.3\",\"isError\":true,\"errorKind\":\"missing-auth\",\"retryable\":false,\"ms\":1}],\"omitted\":[]}"
+  },
+  {
+   "server": "io.github.neogeweb3/code-health-suite",
+   "tool": "analyze_complexity",
+   "sent": {
+    "path": 12345
+   },
+   "text": "{\n  \"error\": \"Path not found: 12345\"\n}"
+  },
+  {
+   "server": "io.github.QWarranto/leafengines",
+   "tool": "get_soil_data",
+   "sent": {
+    "county_fips": 12345
+   },
+   "text": "{\n  \"jsonrpc\": \"2.0\",\n  \"id\": 1,\n  \"result\": {\n    \"content\": [\n      {\n        \"type\": \"text\",\n        \"text\": \"Error 400: {\\\"error\\\":\\\"Validation failed: county_name: Required; state_code: Required\\\"}\"\n      }\n    ],\n    \"isError\": true\n  }\n}"
+  },
+  {
+   "server": "io.github.Testinat0r/otp-ojp",
+   "tool": "otp_validate_profile",
+   "sent": {
+    "filePath": 12345,
+    "document": {}
+   },
+   "text": "{\n  \"valid\": false,\n  \"summary\": \"Could not read file: The \\\"paths[0]\\\" argument must be of type string. Received type number (12345)\",\n  \"errors\": [\n    {\n      \"path\": \"(file)\",\n      \"message\": \"The \\\"paths[0]\\\" argument must be of type string. Received type number (12345)\"\n    }\n  ]\n}"
+  },
+  {
+   "server": "withheld-f85537a61f98",
+   "tool": "validate_iban",
+   "sent": {
+    "iban": 12345
+   },
+   "text": "{\n  \"error\": \"invalid_input\",\n  \"message\": \"Argument `iban` must be a non-empty string.\"\n}",
+   "identity_withheld": true
+  },
+  {
+   "server": "finance.orbt/intelligence",
+   "tool": "orbt_rating",
+   "sent": {
+    "identifier": 12345
+   },
+   "text": "{\n  \"error\": \"Rating not found\",\n  \"identifier\": 12345,\n  \"message\": \"No rating available for 12345. Try a different ticker or CUSIP.\"\n}"
+  },
+  {
+   "server": "io.github.shashwatgtm/impact-mcp",
+   "tool": "impact_get_framework",
+   "sent": {
+    "focus_phase": 12345
+   },
+   "text": "Phase not found. Use: identify, map, pinpoint, anchor, craft, translate, or all"
+  },
+  {
+   "server": "io.github.malamutemayhem/trivia",
+   "tool": "trivia_questions",
+   "sent": {
+    "amount": "not-a-number",
+    "category": 1,
+    "difficulty": "x",
+    "type": "x"
+   },
+   "text": "{\n  \"error\": \"No results - the database does not have enough questions for the requested parameters.\",\n  \"response_code\": 1\n}"
+  },
+  {
+   "server": "com.mylinedchart/chart-context",
+   "tool": "get_candles",
+   "sent": {
+    "limit": "not-a-number"
+   },
+   "text": "{\n  \"error\": \"context_file_not_found\",\n  \"detail\": \"The MyLinedChart desktop app has not written a context snapshot yet. Open the app, load a chart, and this file will appear at: /root/Library/Application Support/MyLinedChart/agent-context.json\"\n}"
+  }
+ ],
+ "empty-result": [],
+ "no-transcript": [],
+ "unparsed": [
+  "io.github.mfukushim/map-traveler-mcp",
+  "io.github.GRU-953/dev953",
+  "io.github.malamutemayhem/musicbrainz",
+  "io.github.untitledfinancial/dpx",
+  "io.github.carlosalvite/foundersignal",
+  "io.github.gabrielmahia/swahili-health-mcp",
+  "io.github.barneywohl/hugging-bay",
+  "io.github.FractionEstate/midnight-nextjs-mcp",
+  "io.github.RoleModel/optics-mcp",
+  "io.github.infoinlet-marketplace/mcp-github",
+  "io.github.shashwatgtm/revenue-enablement-mcp",
+  "io.github.malamutemayhem/radiobrowser",
+  "io.github.malamutemayhem/openfoodfacts",
+  "io.github.Embassy-of-the-Free-Mind/source-library",
+  "io.github.lisamaraventano-spine/firstdollar",
+  "io.github.shashwatgtm/craft-gtm-mcp",
+  "io.github.fetchsandbox/mcp",
+  "io.github.derNif/payanagent",
+  "io.github.malamutemayhem/openlibrary",
+  "io.github.miapre/mimic-ai",
+  "io.github.mybolide/mcp-probe-kit",
+  "io.github.aresyn/codex-control-plane-mcp",
+  "io.github.portel-dev/ncp",
+  "io.github.rog0x/npm",
+  "io.github.mreider/better-bear",
+  "io.github.PJW2004/job-search"
+ ]
+}

@@ -22,7 +22,7 @@ rebuilt from scratch on each run.
 
 ## Two filters applied before release
 
-1. **Identity withheld** (211 servers). A server with a security-relevant
+1. **Identity withheld** (321 servers). A server with a security-relevant
    verdict (crash/hang on a malformed frame, stdout-channel corruption, unsafe
    handling of an unknown tool) keeps every measurement but loses its name, package
    identifier, version and launch command, replaced by a stable `withheld-<hash>`
@@ -44,10 +44,20 @@ count, or timing value is changed.
 
 ## Verifying
 
+From a fresh clone, with this directory in place:
+
 ```bash
-python driver/analyze.py   --in data/release/probe_census.jsonl
-python driver/make_numbers.py --in data/release/probe_census.jsonl
+python reproduce.py --verify   # regenerates the macros and diffs them, writing nothing
+python reproduce.py            # regenerates numbers, tables and figures, then the PDF
 ```
+
+`--verify` exits non-zero if the released data no longer produces the paper's
+numbers. A GNU make equivalent is in the Makefile.
 
 Every number in the paper regenerates from this directory plus the code at tag
 `census-v1`, which produced the census.
+
+Known limitation of this release: the census logged each protocol frame up to
+2,000 characters, so long `tools/list` replies are cut and cannot be parsed from
+`transcripts.jsonl`. The cap is removed in the harness; a re-run replaces these
+transcripts with complete ones.

@@ -18,6 +18,13 @@ data/release/*
 # The registry snapshot is needed to verify the eligibility funnel (17,432 -> 6,106),
 # so it ships with the release despite its size.
 !data/release/frame_latest.jsonl
+# The classified consequences, keyed by the same pseudonyms the census rows use,
+# so the silent-execution split is recomputable from the release alone.
+!data/release/consequences.json
+# The blinded rating pass: labels, the training pass kept separate, and the
+# codebook, so the agreement statistic can be recomputed rather than trusted.
+!data/release/validation/
+!data/release/validation/*
 paper/*.aux
 paper/*.log
 paper/*.out
