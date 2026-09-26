@@ -48,9 +48,23 @@ Twenty servers, about a minute. Before going further, confirm in the output rows
 
 ## 4. Full run
 
+Start it inside tmux. A browser terminal closes when the tab does, and the run dies
+with it.
+
 ```bash
+sudo apt-get install -y tmux
+tmux new -s census
 WORKERS=8 bash ops/run_census.sh full
 ```
+
+Detach with Ctrl+B then D. Reattach later with `tmux attach -t census`.
+
+### On a small instance
+
+A free-plan account may only offer 2 vCPU types such as m7i-flex.large. The run still
+works: use `WORKERS=3`, expect 12 to 18 hours instead of 5, and leave it overnight.
+Flex instance types throttle toward a CPU baseline under sustained load, so more
+workers buy little. Cost stays near a dollar.
 
 Expect about 1,300 servers per hour. Watch for:
 
