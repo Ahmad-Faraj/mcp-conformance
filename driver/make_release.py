@@ -520,6 +520,46 @@ def main():
                 ep_ok += 1 if obj.get("handshake_ok") else 0
                 g.write(json.dumps(obj, ensure_ascii=False) + "\n")
 
+    # Re-probe of the servers the census launched without their registry-declared
+    # arguments. It replaces the census outcome for those servers in the corrected
+    # handshake figure, so it ships, under the same pseudonyms and redaction.
+    args_released = args_ok = 0
+    src_args = DATA / "args_reprobe.jsonl"
+    if src_args.exists():
+        with src_args.open(encoding="utf-8") as f, \
+             (out / "args_reprobe.jsonl").open("w", encoding="utf-8") as g:
+            for line in f:
+                obj, _ = redact_any(json.loads(line))
+                real = obj.get("server_name")
+                # The re-probe ran in September, after the Python SDK's 2.0 release
+                # and after some packages were withdrawn. A failure from either says
+                # nothing about the server's launch arguments, so it is labelled here,
+                # before withholding strips the output that shows it.
+                _blob = "\n".join(obj.get("stderr_tail") or [])
+                if obj.get("handshake_ok"):
+                    obj["drift_cause"] = None
+                elif (re.search(r"This is mcp 2\.x", _blob)
+                      or re.search(r"'(Low[Ll]evel)?Server' object has no attribute", _blob)):
+                    obj["drift_cause"] = "python-sdk-2"
+                elif obj.get("failure_class") in ("install-not-found", "install-error"):
+                    obj["drift_cause"] = "install"
+                else:
+                    obj["drift_cause"] = None
+                if real in withheld:
+                    obj["server_name"] = withheld[real]
+                    obj["identifier"] = withheld[real]
+                    obj["identity_withheld"] = True
+                    for k in ("cmd", "stderr_tail", "stdout_noise", "server_info",
+                              "server_version", "launch_args", "transcript"):
+                        obj.pop(k, None)
+                    for c in obj.get("checks", []):
+                        if "detail" in c:
+                            c["detail"] = scrub_detail(c["detail"])
+                obj.pop("transcript", None)
+                args_released += 1
+                args_ok += 1 if obj.get("handshake_ok") else 0
+                g.write(json.dumps(obj, ensure_ascii=False) + "\n")
+
     # Raw JSON-RPC transcripts. The paper claims every number is regenerable from
     # them, and the consequences analysis is computed from them, so they have to
     # ship. Emitted as one JSON object per line rather than 6,000 files, with the
@@ -548,11 +588,39 @@ def main():
 
     # DATASET.md and LICENSE.txt are GENERATED, not hand-maintained: this directory
     # is rebuilt from scratch on every run, so anything hand-placed here is lost.
-    hs = sum(1 for r in released if r.get("handshake_ok"))
+    # Rates on the card use the paper's denominator: runs our own probe broke carry
+    # no verdict about the server and are excluded, as they are from every rate in
+    # the paper. Using all attempted rows printed 60.4 where the paper says 60.5.
+    graded = [r for r in released
+              if not (r.get("batch_error") or r.get("handshake_ok") is None)]
+    hs = sum(1 for r in graded if r.get("handshake_ok"))
     n_opt_out = len(withheld) - n_sensitive
+    # The corrected handshake count, by the same rule the paper uses: a server in the
+    # launch-argument re-probe takes that outcome, and otherwise the census outcome
+    # or an entry-point recovery.
+    def _read(path):
+        if not path.exists():
+            return []
+        with path.open(encoding="utf-8") as fh:
+            return [json.loads(x) for x in fh]
+    _ep_ok = {r.get("server_name") for r in _read(out / "entrypoint_reprobe.jsonl")
+              if r.get("handshake_ok")}
+    _args_rows = {r.get("server_name"): r for r in _read(out / "args_reprobe.jsonl")}
+
+    def _corr_ok(r):
+        a = _args_rows.get(r.get("server_name"))
+        if a is not None:
+            # A drift failure keeps the July outcome; see make_numbers.
+            return bool(a.get("handshake_ok")) or (bool(r.get("handshake_ok"))
+                                                   and bool(a.get("drift_cause")))
+        return bool(r.get("handshake_ok")) or r.get("server_name") in _ep_ok
+
+    corr = sum(1 for r in graded if _corr_ok(r))
     (out / "DATASET.md").write_text(_dataset_doc(
         len(released), hs, n_sensitive, redactions + frame_redactions,
-        ep_released, ep_ok, tr_n, n_opt_out), encoding="utf-8")
+        ep_released, ep_ok, tr_n, n_opt_out, args_released, args_ok, corr,
+        len(graded)),
+        encoding="utf-8")
     (out / "LICENSE.txt").write_text(_license_text(), encoding="utf-8")
 
     print(f"wrote {out}")
@@ -563,8 +631,11 @@ def main():
     print(f"  transcripts           : {tr_n} rows")
 
 
-def _dataset_doc(n, hs, withheld, redactions, ep_n, ep_ok, tr_n=0, opt_out=0):
-    corr = hs + ep_ok
+def _dataset_doc(n, hs, withheld, redactions, ep_n, ep_ok, tr_n=0, opt_out=0,
+                 args_released=0, args_ok=0, corr=None, n_graded=None):
+    n_graded = n_graded or n
+    if corr is None:
+        corr = hs + ep_ok
     return f"""# Dataset: execution-based conformance census of the MCP server ecosystem
 
 Companion artifact to *"Does Your MCP Server Actually Follow the Protocol?"*
@@ -576,15 +647,21 @@ rebuilt from scratch on each run.
 | File | Rows | What it is |
 |---|---|---|
 | `probe_census.jsonl` | {n:,} | One record per eligible server: verdicts for all 8 conformance checks, negotiated protocol version, timing, failure classification. |
-| `entrypoint_reprobe.jsonl` | {ep_n:,} | Re-probe of PyPI servers the census never launched because `uvx <pkg>` requires the console script to match the package name. {ep_ok} recovered. Needed to reproduce the corrected runnability figure. |
-| `transcripts.jsonl` | {tr_n:,} | Raw JSON-RPC exchange for each probed server, one object per line: every frame sent and received, with timings. The consequences analysis is computed from these. |
-| `sdk_attribution.csv` | n/a | SDK family per responding server, from npm/PyPI dependency metadata. |
-| `frame_latest.jsonl` | n/a | Registry snapshot defining the sampling frame; lets you re-derive the eligibility funnel. |
+| `probe_census_sept.jsonl` | {n:,} | The same frame re-probed on 26 September 2026, with each lost server's break cause attached before withholding. |
+| `entrypoint_reprobe.jsonl` | {ep_n:,} | Re-probe of PyPI servers the census never launched because `uvx <pkg>` requires the console script to match the package name. {ep_ok} recovered. |
+| `args_reprobe.jsonl` | {args_released:,} | Re-probe of servers the census launched without the arguments their registry entry declares. {args_ok} complete a handshake. |
+| `transcripts.jsonl` | {tr_n:,} | Raw JSON-RPC exchange for each probed server that is not withheld. |
+| `consequences.json` | n/a | Classified replies to the invalid-argument check. Withheld servers appear under their pseudonyms with their own identifiers removed from the reply text. |
+| `sdk_attribution.csv` | n/a | SDK family per responding server, from the resolved dependency graph. |
+| `repo_languages.csv`, `residual_languages.csv` | n/a | Repository language for the malformed-frame failures and for the no-known-SDK residual. |
+| `pin_experiment.csv` | n/a | Servers lost in September, re-launched with the Python SDK constrained below 2.0. |
+| `validation/` | n/a | Blinded rating labels, the training pass kept separate, and the codebook. |
+| `frame_latest.jsonl` | n/a | Registry snapshot defining the sampling frame, under the same pseudonyms as the census. |
 | `summary.json` | n/a | Aggregate counts. |
 
 ## Headline numbers reproducible from these files
 
-- Handshake yield: {hs:,}/{n:,} = {100*hs/n:.1f}% raw; {corr:,}/{n:,} = {100*corr/n:.1f}% after the entry-point correction.
+- Handshake yield, over the {n_graded:,} graded servers (runs our own probe broke are excluded): {hs:,} = {100*hs/n_graded:.1f}% raw; {corr:,} = {100*corr/n_graded:.1f}% after the entry-point and launch-argument corrections.
 - error-as-result divergence and the per-SDK breakdown: `probe_census.jsonl` + `sdk_attribution.csv`.
 
 ## Two filters applied before release

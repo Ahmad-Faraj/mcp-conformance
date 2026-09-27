@@ -230,11 +230,39 @@ def main():
     # A server counts as runnable once the entry-point artifact is corrected.
     _recovered = {r.get("server_name") for r in reprobe if r.get("handshake_ok")}
 
+    # The launch-argument re-probe. For those servers the launch their registry
+    # entry specifies is the right one, so its outcome replaces the census outcome
+    # in either direction: a server that starts only with its arguments counts, and
+    # one that stops starting when given them counts against.
+    _args_p = _beside(args.inp, "args_reprobe.jsonl")
+    args_rows = load(_args_p) if _args_p.exists() else []
+    _census_ok = {r.get("server_name"): bool(r.get("handshake_ok")) for r in rows}
+    _raw_ok = {r.get("server_name"): bool(r.get("handshake_ok")) for r in args_rows}
+    _drift = {r.get("server_name"): r.get("drift_cause") for r in args_rows}
+    # The re-probe ran after the Python SDK's 2.0 release. A server that started in
+    # July and fails now for that reason, or because its package was withdrawn,
+    # tells us nothing about its launch arguments, so its July outcome stands. Only
+    # a failure the arguments themselves cause counts against it. Recoveries need no
+    # such care: drift makes servers fail, not start.
+    _args_ok = {k: (v or (_census_ok.get(k, False) and bool(_drift.get(k))))
+                for k, v in _raw_ok.items()}
+    args_recovered = sum(1 for k, v in _raw_ok.items() if v and not _census_ok.get(k))
+    args_newly_failed = sum(1 for k, v in _raw_ok.items()
+                            if not v and _census_ok.get(k) and not _drift.get(k))
+    args_drift_kept = sum(1 for k, v in _raw_ok.items()
+                          if not v and _census_ok.get(k) and _drift.get(k))
+    args_drift_unknown = sum(1 for k, v in _raw_ok.items()
+                             if not v and not _census_ok.get(k)
+                             and _drift.get(k) == "python-sdk-2")
+
     def corrected_ok(r):
-        return bool(r.get("handshake_ok")) or r.get("server_name") in _recovered
+        name = r.get("server_name")
+        if name in _args_ok:
+            return _args_ok[name]
+        return bool(r.get("handshake_ok")) or name in _recovered
     ep_n = len(reprobe)
     ep_ok = sum(1 for r in reprobe if r.get("handshake_ok"))
-    hs_corr = hs + ep_ok
+    hs_corr = sum(1 for r in rows if corrected_ok(r))
 
     def reg_split(reg):
         sub = [r for r in rows if r.get("registry_type") == reg]
@@ -244,7 +272,10 @@ def main():
     pypi_n, pypi_hs = reg_split("pypi")
     npm_p = 100 * npm_hs / npm_n if npm_n else 0
     pypi_p = 100 * pypi_hs / pypi_n if pypi_n else 0
-    pypi_p_corr = 100 * (pypi_hs + ep_ok) / pypi_n if pypi_n else 0
+    pypi_p_corr = (100 * sum(1 for r in rows if r.get("registry_type") == "pypi"
+                             and corrected_ok(r)) / pypi_n if pypi_n else 0)
+    npm_p_corr = (100 * sum(1 for r in rows if r.get("registry_type") == "npm"
+                            and corrected_ok(r)) / npm_n if npm_n else 0)
 
     # SDK attribution of the silent-execution population (Section 4.3). The
     # unknown-tool divergence tracks the SDK (Table 4); this checks whether the
@@ -484,7 +515,17 @@ def main():
         "PypiRateCorr": clustered([r for r in rows if r.get("registry_type") == "pypi"],
                                   corrected_ok) if pypi_n else "-",
         "GapRaw": f"{npm_p - pypi_p:.1f}",
-        "GapCorr": f"{npm_p - pypi_p_corr:.1f}",
+        "GapCorr": f"{npm_p_corr - pypi_p_corr:.1f}",
+        "NpmRateCorr": f"{npm_p_corr:.1f}" + chr(92) + "%",
+        "NArgsReprobed": f"{len(args_rows):,}",
+        "NArgsRecovered": f"{args_recovered:,}",
+        "NArgsNewlyFailed": f"{args_newly_failed:,}",
+        "ArgsJulyRate": (f"{100*sum(1 for k in _raw_ok if _census_ok.get(k))/len(_raw_ok):.1f}"
+                         + chr(92) + "%") if _raw_ok else "-",
+        "ArgsReprobeRate": (f"{100*sum(_raw_ok.values())/len(_raw_ok):.1f}"
+                            + chr(92) + "%") if _raw_ok else "-",
+        "NArgsDriftKept": f"{args_drift_kept:,}",
+        "NArgsDriftUnknown": f"{args_drift_unknown:,}",
     }
 
     # Consequence decomposition: of the servers that fail to reject a wrong-typed

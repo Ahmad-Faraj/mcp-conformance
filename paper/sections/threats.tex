@@ -156,19 +156,27 @@ table.
 A registry entry can declare arguments a client passes at launch, such as a
 subcommand that starts the server. The census read those declarations only to
 exclude servers whose arguments are required and have no default, and it passed none
-of the rest. \NArgsDeclared{} servers in the frame declare arguments, and for
-\NArgsChanged{} of them a client following the registry would have launched a
-different command. Those servers completed a handshake at \ArgsChangedRate{}, against
-\ArgsRestRate{} for the rest of the frame. A server whose entry says to run it with
-\texttt{serve} was started without it, printed its usage and exited, and was counted
-as failing to start. The handshake yield we report is therefore understated by the
-instrument. If every affected server had started as often as the rest do, the
-census figure would rise by \ArgsBoundPP{} percentage points. The true effect is
-smaller, since some of these servers fail for other reasons. The harness now renders declared
-arguments as the registry's reference describes, and the affected servers can be
-re-probed through the same code path. Conformance rates are less exposed, because they
-are computed only on servers that started, but a server that started without its
-arguments may have run in a different mode from the one its entry specifies.
+of the rest. \NArgsDeclared{} servers in the frame declare arguments. A server whose
+entry says to run it with \texttt{serve} was started without it, printed its usage
+and exited, and was counted as failing to start.
+
+We re-probed the \NArgsReprobed{} servers whose launch command changes when the
+arguments are rendered as the registry's reference describes, through the census's
+own code path. In July \ArgsJulyRate{} of them completed a handshake; launched as
+their entries specify, \ArgsReprobeRate{} do. \NArgsRecovered{} start that did not
+before, and \NArgsNewlyFailed{} that started without their arguments no longer start
+with them.
+
+The re-probe ran on the date of the September re-run, after the Python SDK's breaking
+release and after some packages had been withdrawn, so its failures mix two causes.
+\NArgsDriftKept{} servers that started in July fail in the re-probe for one of those
+reasons; that says nothing about their arguments, and they keep their July outcome.
+Only failures the arguments themselves cause count against a server, and recoveries count in full, since drift stops servers rather than starting them. The
+headline figure is corrected by that rule. It remains a lower bound: \NArgsDriftUnknown{} servers
+that did not start in July fail in the re-probe on the SDK's signature, and whether
+their declared arguments would have started them in July cannot be recovered. Conformance rates are computed on the
+servers that started in July and are not recomputed; a server that started without
+its arguments may have run in a different mode from the one its entry specifies.
 
 \paragraph{Interrupted probes}
 \NInterrupted{} probes (\NInterruptedPct{}) ended for reasons that may lie outside the

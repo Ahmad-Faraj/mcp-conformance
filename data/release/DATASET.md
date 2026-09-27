@@ -9,15 +9,21 @@ rebuilt from scratch on each run.
 | File | Rows | What it is |
 |---|---|---|
 | `probe_census.jsonl` | 6,106 | One record per eligible server: verdicts for all 8 conformance checks, negotiated protocol version, timing, failure classification. |
-| `entrypoint_reprobe.jsonl` | 462 | Re-probe of PyPI servers the census never launched because `uvx <pkg>` requires the console script to match the package name. 44 recovered. Needed to reproduce the corrected runnability figure. |
-| `transcripts.jsonl` | 6,088 | Raw JSON-RPC exchange for each probed server, one object per line: every frame sent and received, with timings. The consequences analysis is computed from these. |
-| `sdk_attribution.csv` | n/a | SDK family per responding server, from npm/PyPI dependency metadata. |
-| `frame_latest.jsonl` | n/a | Registry snapshot defining the sampling frame; lets you re-derive the eligibility funnel. |
+| `probe_census_sept.jsonl` | 6,106 | The same frame re-probed on 26 September 2026, with each lost server's break cause attached before withholding. |
+| `entrypoint_reprobe.jsonl` | 462 | Re-probe of PyPI servers the census never launched because `uvx <pkg>` requires the console script to match the package name. 44 recovered. |
+| `args_reprobe.jsonl` | 490 | Re-probe of servers the census launched without the arguments their registry entry declares. 250 complete a handshake. |
+| `transcripts.jsonl` | 6,088 | Raw JSON-RPC exchange for each probed server that is not withheld. |
+| `consequences.json` | n/a | Classified replies to the invalid-argument check. Withheld servers appear under their pseudonyms with their own identifiers removed from the reply text. |
+| `sdk_attribution.csv` | n/a | SDK family per responding server, from the resolved dependency graph. |
+| `repo_languages.csv`, `residual_languages.csv` | n/a | Repository language for the malformed-frame failures and for the no-known-SDK residual. |
+| `pin_experiment.csv` | n/a | Servers lost in September, re-launched with the Python SDK constrained below 2.0. |
+| `validation/` | n/a | Blinded rating labels, the training pass kept separate, and the codebook. |
+| `frame_latest.jsonl` | n/a | Registry snapshot defining the sampling frame, under the same pseudonyms as the census. |
 | `summary.json` | n/a | Aggregate counts. |
 
 ## Headline numbers reproducible from these files
 
-- Handshake yield: 3,685/6,106 = 60.4% raw; 3,729/6,106 = 61.1% after the entry-point correction.
+- Handshake yield, over the 6,089 graded servers (runs our own probe broke are excluded): 3,685 = 60.5% raw; 3,864 = 63.5% after the entry-point and launch-argument corrections.
 - error-as-result divergence and the per-SDK breakdown: `probe_census.jsonl` + `sdk_attribution.csv`.
 
 ## Two filters applied before release

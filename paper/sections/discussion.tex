@@ -51,14 +51,14 @@ this check across \Nprobed{} servers, so it is feasible at registry scale.
 \paragraph{What running the servers shows that reading them cannot}
 Studies that analyze MCP servers from source or
 metadata~\cite{mcpfirstglance,mcplandscape} cannot observe any of these failures.
-Observing them needs execution. In line with Ait et al. on Hugging Face
-Hub~\cite{huggingfacehub}, the registry as a data source is also less reliable than it
-looks: our own launcher undercounted PyPI by about two percentage points until we
-corrected the entry-point problem (\PypiRateRaw{} uncorrected against \PypiRateCorr{}
-after).
+Observing them needs execution. In line with Ait et al. on Hugging Face Hub~\cite{huggingfacehub}, the registry as a
+data source is also less reliable than it looks. Our own launcher undercounted
+runnability until we corrected the entry-point problem and passed the launch arguments
+that registry entries declare: on PyPI, \PypiRateRaw{} uncorrected against
+\PypiRateCorr{} after.
 
 The two package registries separate the two questions. Runnability differs by
-\GapCorr{} percentage points, \NpmRate{} against \PypiRateCorr{}, while conformance
+\GapCorr{} percentage points, \NpmRateCorr{} against \PypiRateCorr{}, while conformance
 among the servers that do run does not. Packaging is per-ecosystem. Protocol behavior
 is per-SDK. Improving conformance means fixing a few libraries and improving
 runnability means fixing thousands of packages, which are very different amounts of

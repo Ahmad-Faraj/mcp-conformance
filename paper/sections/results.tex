@@ -6,11 +6,11 @@ runs with no verdict about the server. We report them with the funnel and exclud
 from every denominator, which leaves \Nprobed{} graded servers.
 
 \subsection{RQ1: Runnability and the startup funnel}
-Once the entry-point artifact described in Section~\ref{sec:rq5} is corrected,
-\HandshakeCountCorr{} of \Nprobed{} servers complete the MCP handshake, a rate of
-\HandshakeRateCorr{}, against an uncorrected census figure of \HandshakeRateCl{}. Both
-are lower bounds, because the census did not pass the launch arguments some registry
-entries declare (Section~\ref{sec:threats}). Roughly two in
+Once two launcher artifacts are corrected, the entry-point problem described in
+Section~\ref{sec:rq5} and the launch arguments described in
+Section~\ref{sec:threats}, \HandshakeCountCorr{} of \Nprobed{} servers complete the MCP
+handshake, a rate of \HandshakeRateCorr{}, against an uncorrected census figure of
+\HandshakeRateCl{}. Roughly two in
 five never serve the protocol, and Figure~\ref{fig:failures} classifies those
 failures by cause.
 
@@ -273,10 +273,11 @@ re-probe covers \NEntrypointBlocked{} of them, and \NEntrypointUnreprobed{} were
 missed. We re-probed those servers with the entry point resolved from the installed
 package metadata. \EntrypointRecovered{} (\EntrypointRecoveryRate{}) then completed a
 handshake, and the rest failed for reasons unrelated to naming (Python exceptions,
-hangs, undeclared configuration). Correcting for this raises PyPI runnability from
-\PypiRateRaw{} to \PypiRateCorr{} and the overall census figure to
-\HandshakeRateCorr{}, which we report as the headline throughout. The npm--PyPI gap
-narrows from \GapRaw{} to \GapCorr{} percentage points but stays large.
+hangs, undeclared configuration). Correcting for this and for the launch arguments
+(Section~\ref{sec:threats}) raises runnability to \NpmRateCorr{} on npm and
+\PypiRateCorr{} on PyPI, and the overall census figure to \HandshakeRateCorr{}, which
+we report as the headline throughout. The npm--PyPI gap moves from \GapRaw{} to
+\GapCorr{} percentage points and stays large.
 
 The entry-point problem is also a finding about the ecosystem. Registry metadata does
 not record a server's entry point, and a client working from the registry and nothing
