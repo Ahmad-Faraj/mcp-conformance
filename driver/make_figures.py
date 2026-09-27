@@ -185,7 +185,9 @@ def hbar_figure(labels, values, colors, xmax, xlabel, value_texts, height,
 
 def save(fig, name):
     FIG.mkdir(parents=True, exist_ok=True)
-    fig.savefig(FIG / name)
+    # No creation date, so an unchanged figure rebuilds to identical bytes and a
+    # diff shows only real changes. The figure standard requires it.
+    fig.savefig(FIG / name, metadata={"CreationDate": None})
     plt.close(fig)
 
 
