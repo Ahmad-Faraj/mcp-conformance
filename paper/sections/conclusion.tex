@@ -4,11 +4,11 @@ launched each in a disposable sandbox, and tested whether it follows the protoco
 
 \HandshakeRateCorr{} complete a handshake. The rest never serve the protocol, for the
 reasons broken down in Figure~\ref{fig:failures}. Of the servers that respond,
-\ErrAsResultRate{} report an unknown tool in the same way, and the cause is the SDKs
+\ErrAsResultRateCl{} report an unknown tool in the same way, and the cause is the SDKs
 they are built on as a direct dependency or through a third-party wrapper.
 An open proposal would change the specification to match this behavior, and our
 numbers show how much of the ecosystem it already describes. A smaller group,
-\SilentExecRate{}, run a tool on input their own schema rejects and return an answer
+\SilentExecRateCl{}, run a tool on input their own schema rejects and return an answer
 with no sign that anything is wrong. One was asked to scan an integer for package
 imports and reported it clean, and the specification makes input validation a
 requirement these servers do not meet.

@@ -8,7 +8,7 @@ from every denominator, which leaves \Nprobed{} graded servers.
 \subsection{RQ1: Runnability and the startup funnel}
 \HandshakeCountCorr{} of \Nprobed{} servers (\HandshakeRateCorr{}) complete the MCP
 handshake once the entry-point artifact described in Section~\ref{sec:rq5} is
-corrected, against an uncorrected census figure of \HandshakeRate{}. Roughly two in
+corrected, against an uncorrected census figure of \HandshakeRateCl{}. Roughly two in
 five never serve the protocol, and Figure~\ref{fig:failures} classifies those
 failures by cause.
 
@@ -42,10 +42,10 @@ single snapshot cannot settle.
 Table~\ref{tab:verdicts} reports the verdict distribution for each check over the
 \Nresponders{} responding servers, with 95\% Wilson confidence intervals. Lifecycle
 and tool-listing conformance are high, and the discriminating checks are error handling,
-argument type enforcement, and malformed-input survival. \NoTypecheckRate{} of
+argument type enforcement, and malformed-input survival. \NoTypecheckRateCl{} of
 responders failed to reject a wrong-typed required argument, which
 Section~\ref{sec:consequences} decomposes into the servers that reported the problem
-anyway and the smaller class that did not. \MalformedDiesRate{} failed to recover from a
+anyway and the smaller class that did not. \MalformedDiesRateCl{} failed to recover from a
 malformed frame, which we classify as a robustness and conformance failure. The
 security reading does not survive the transport: under stdio the client is the parent
 process and the sole writer to the server's standard input, and a party able to
@@ -83,7 +83,7 @@ problem in the result text. The server noticed, and a client willing to parse pr
 could too. \NSilentExec{} (\SilentExecShare{}) executed the tool and returned a
 result with no indication that anything was wrong. For \NUnclassifiable{} the
 response could not be classified from the transcript. The hazard class is
-\SilentExecRate{} of responding servers, smaller than the \NoTypecheckRate{} of the
+\SilentExecRateCl{} of responding servers, smaller than the \NoTypecheckRateCl{} of the
 raw verdict, and we report the smaller figure.
 
 Splitting the two takes a classifier, and ours is a keyword rule over an English
@@ -162,7 +162,7 @@ have caught the call and then left it unenforced.
 \input{tables/consequences}
 
 \subsection{RQ4: Where practice and specification disagree, and which one moved}
-\ErrAsResultRate{} of responding servers answered a call to a tool that does not exist
+\ErrAsResultRateCl{} of responding servers answered a call to a tool that does not exist
 with an \texttt{isError} tool-execution result instead of a JSON-RPC protocol error. The
 specification's error-handling section lists ``unknown tool'' under \emph{Protocol
 Errors} and illustrates it with a \texttt{-32602} example~\cite{mcpspec}, and attaches
@@ -176,7 +176,7 @@ self-correct from an error it can see~\cite{sep1303}. SEP-2145, open at the time
 writing, proposes the same move for tool resolution failures, covering unknown and
 disabled tools. Its stated rationale is that the change ``aligns specification with existing
 Python and TypeScript SDK behavior''~\cite{sep2145}. We can say how much of
-the deployed ecosystem that alignment already describes: \ErrAsResultRate{} of
+the deployed ecosystem that alignment already describes: \ErrAsResultRateCl{} of
 responding servers. (Aggregate figures from this census were posted to the
 proposal's discussion thread while it was open.) The other \NotErrAsResultPct{} do
 not form one population: \UnknownProtoErrCount{} servers emit a protocol error coded
@@ -218,9 +218,9 @@ dependency. Reading each residual server's repository language finds
 
 They behave as a family, and not as the rest of the population does. \NGoMalformedFail{}
 of the \NGoResponding{} fail the malformed-frame check, a rate of \GoMalformedRate{}
-against \MalformedDiesRate{} across all responders. On the unknown-tool check every
+against \MalformedDiesRateCl{} across all responders. On the unknown-tool check every
 one of the \NGoResponding{} returns the JSON-RPC protocol error, where
-\ErrAsResultRate{} of responders return \texttt{isError}. Under the population rate
+\ErrAsResultRateCl{} of responders return \texttt{isError}. Under the population rate
 for that response, eleven consecutive protocol errors would arise by chance with
 probability below \(10^{-15}\).
 

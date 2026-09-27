@@ -2,7 +2,7 @@
 For whoever decides SEP-2145, accepting it would mostly document practice that
 already exists. SEP-1303 reclassified input validation failures as tool execution
 errors, arguing that a model can only correct an error it sees~\cite{sep1303}, and
-SEP-2145 proposes the same for unknown tools~\cite{sep2145}. \ErrAsResultRate{} of
+SEP-2145 proposes the same for unknown tools~\cite{sep2145}. \ErrAsResultRateCl{} of
 responding servers already return \texttt{isError} for an unknown tool. Rejecting the
 proposal would leave nine in ten responding servers non-conformant by example, and we
 do not expect \ErrAsResultCount{} servers to be changed by hand. The remaining
@@ -12,7 +12,7 @@ the failure only in the text of a successful result.
 
 The behavior tracks the SDK rather than the author. The official TypeScript and
 Python SDKs and the third-party wrappers built on them all default to
-\texttt{isError}. So \ErrAsResultRate{} should not be read as consensus among server
+\texttt{isError}. So \ErrAsResultRateCl{} should not be read as consensus among server
 authors. It measures SDK adoption. The practical consequence is that the lever is a
 small number of libraries, and a change there reaches thousands of servers at once.
 The limit of that lever is visible here too: the unknown-tool fix recorded on the

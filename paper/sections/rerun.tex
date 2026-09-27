@@ -8,14 +8,19 @@ sixty-nine days later, with the harness unchanged.
 
 \paragraph{What the re-run found}
 \NSeptHandshake{} of \NSeptGraded{} graded servers complete a handshake,
-\SeptHandshakeRate{} against \HandshakeRate{} in July. \NLost{} servers that
+\SeptHandshakeRate{} against \HandshakeRatePoint{} in July. \NLost{} servers that
 answered in July no longer answer, and \NGained{} that did not answer now do.
 
-Conformance among the servers that still answer is unchanged.
-Error-as-result moved from \ErrAsResultRate{} to \SeptErrAsResult{}, silent type
-non-enforcement from \NoTypecheckRate{} to \SeptNoTypecheck{}, and failure to recover
-from a malformed frame from \MalformedDiesRate{} to \SeptMalformedDies{}. The
-instrument reports the same ecosystem. What changed is how much of it starts.
+Conformance did not change. On the \NPaired{} servers that answered in both runs,
+error-as-result was \PairedEarBefore{} in July and \PairedEarAfter{} in September, silent
+type non-enforcement \PairedTypeBefore{} and \PairedTypeAfter{}, and failure to recover
+from a malformed frame \PairedMalBefore{} and \PairedMalAfter{}. Rates computed over each
+run's own responders move slightly more, type non-enforcement from
+\NoTypecheckRateCl{} to \SeptNoTypecheck{}, but that is a change in who answers rather
+than in how they answer: the servers September lost had a type non-enforcement rate of
+\LostTypeRate{} in July, so removing them raises the rate among those that remain. The
+instrument reports the same behavior from the same servers. What changed is how many of
+them start.
 
 \paragraph{One dependency release accounts for most of the loss}
 Of the \NLost{} servers that stopped answering, \NLostUnchanged{} were probed at the

@@ -58,8 +58,9 @@ command, including the base-image tag.
 Our population is self-contained, locally-installable servers distributed on npm and
 PyPI using the stdio transport. This excludes remote-only servers (which we cannot
 execute without provisioning hosted infrastructure) and servers requiring
-credentials (which we exclude for both ethics and reproducibility). We report the
-size of each excluded class and confine all rates to the stated frame.
+credentials (which we exclude for both ethics and reproducibility). Section~\ref{sec:frame} gives the size of each excluded class, and every
+rate is confined to the stated frame. The largest exclusion is the \NFunnelRemote{}
+remote-only servers, which outnumber the frame itself.
 Whether remote and credentialed servers behave the same way is untested here. Agent
 clients mostly launch local stdio servers, and we studied this population first.
 
@@ -73,8 +74,11 @@ namespaces, and the distribution is heavy-tailed: the largest single publisher
 accounts for \TopPublisherN{} servers (\TopPublisherPct{} of the census) and the ten
 largest for \TopTenPct{}. Servers from one publisher frequently share a template and
 behave near-identically; a binomial interval that treats them as independent trials
-is therefore too narrow. Every interval in this paper comes from a bootstrap
-over publishers rather than over servers. The widening is substantial: the handshake
+is therefore too narrow. Every interval
+reported in the text comes from a bootstrap over publishers rather than over servers.
+Table~\ref{tab:verdicts} and Figure~\ref{fig:sdk} show Wilson intervals, which are
+narrower, and serve to read the per-check and per-family distributions rather than to
+support an inference. The widening is substantial: the handshake
 interval is \HandshakeDesignEffect{} times wider than the binomial one
 (\HandshakeRateCl{} against \HandshakeRate{}). Error-as-result becomes
 \ErrAsResultRateCl{} and silent type non-enforcement \NoTypecheckRateCl{}. As a second
@@ -133,7 +137,7 @@ process stayed alive while its parser absorbed the frames that followed, and the
 \texttt{ping} timed out. Our harness records a single verdict for
 ``did not answer after a malformed frame'' and does not distinguish a terminated
 process from a desynchronized one. Both are conformance failures, but they are
-different failures with different fixes, and \MalformedDiesRate{} aggregates
+different failures with different fixes, and \MalformedDiesRateCl{} aggregates
 the two. Separating them requires per-server process-state tracking that the released
 transcripts support but the current verdict does not encode.
 

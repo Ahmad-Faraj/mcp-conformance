@@ -197,7 +197,7 @@ def fig_pipeline(rows, n_frame):
         ("Eligibility filter", f"{len(rows):,} self-contained stdio servers"),
         ("Sandboxed execution", "one disposable container per server"),
         ("Conformance probe", "8 checks over stdio"),
-        ("Verdicts", "graded per negotiated version"),
+        ("Verdicts", "negotiated version recorded"),
     ]
     row_h, gap = 0.235, 0.085
     H = len(stages) * row_h + (len(stages) - 1) * gap + 0.02

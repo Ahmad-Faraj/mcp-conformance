@@ -145,6 +145,25 @@ def main():
     inv_k, inv_n = rate(g_after, "tools-call-invalid-args", "fail")
     mal_k, mal_n = rate(g_after, "malformed-json", "fail")
 
+    # Conformance on the servers that answered in both runs. The unpaired rates
+    # compare two different populations: the servers September lost were almost
+    # all Python-SDK servers, which had almost no type non-enforcement, so losing
+    # them raises that rate without any server changing its behaviour.
+    both = [k for k in common
+            if before[k].get("handshake_ok") and after[k].get("handshake_ok")]
+
+    def paired(check, want, run):
+        rows = before if run == "before" else after
+        return sum(1 for k in both if verdict(rows[k], check) == want)
+
+    lost_type = sum(1 for k in lost
+                    if verdict(before[k], "tools-call-invalid-args") == "fail")
+
+    # How often the poisoned property was optional. Only the September rows record
+    # it, because the harness began recording it after the July census.
+    pois = [r.get("poisoned_required") for r in after.values()
+            if r.get("handshake_ok") and "poisoned_required" in r]
+
     # The pinning experiment, if it has been run.
     pin_n = pin_restored = 0
     if Path(args.pin).exists():
@@ -182,6 +201,15 @@ def main():
         "SeptErrAsResult": pct(ear_k, ear_n),
         "SeptNoTypecheck": pct(inv_k, inv_n),
         "SeptMalformedDies": pct(mal_k, mal_n),
+        "NPaired": f"{len(both):,}",
+        "PairedEarBefore": pct(paired("tools-call-unknown", "error-as-result", "before"), len(both)),
+        "PairedEarAfter": pct(paired("tools-call-unknown", "error-as-result", "after"), len(both)),
+        "PairedTypeBefore": pct(paired("tools-call-invalid-args", "fail", "before"), len(both)),
+        "PairedTypeAfter": pct(paired("tools-call-invalid-args", "fail", "after"), len(both)),
+        "PairedMalBefore": pct(paired("malformed-json", "fail", "before"), len(both)),
+        "PairedMalAfter": pct(paired("malformed-json", "fail", "after"), len(both)),
+        "LostTypeRate": pct(lost_type, len(lost)),
+        "PoisonOptionalPct": pct(sum(1 for x in pois if x is False), len(pois), 0),
         "NPinTested": f"{pin_n:,}",
         "NPinRestored": f"{pin_restored:,}",
     }

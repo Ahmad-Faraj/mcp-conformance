@@ -140,6 +140,33 @@ def main():
     with open(args.frame, encoding="utf-8") as _f:
         frame_n = sum(1 for _ in _f)
 
+    # Each excluded class, in the order the eligibility filter applies them.
+    from run_batch import eligible_packages, requires_input
+    funnel = {"inactive": 0, "remote": 0, "nostdio": 0, "otherreg": 0,
+              "env": 0, "arg": 0, "eligible": 0}
+    with open(args.frame, encoding="utf-8") as _f:
+        for _line in _f:
+            _e = json.loads(_line)
+            if _e["meta"].get("status") != "active":
+                funnel["inactive"] += 1
+                continue
+            _srv = _e["server"]
+            _pk = _srv.get("packages") or []
+            _stdio = [q for q in _pk if (q.get("transport") or {}).get("type") == "stdio"]
+            _np = [q for q in _stdio if q.get("registryType") in ("npm", "pypi")]
+            if not _pk:
+                funnel["remote"] += 1
+            elif not _stdio:
+                funnel["nostdio"] += 1
+            elif not _np:
+                funnel["otherreg"] += 1
+            elif not [q for q in _np if not requires_input(q.get("environmentVariables"))]:
+                funnel["env"] += 1
+            elif not list(eligible_packages(_srv)):
+                funnel["arg"] += 1
+            else:
+                funnel["eligible"] += 1
+
     # Publisher clustering. Registry names are "namespace/server", and a single
     # publisher can account for hundreds of servers that share a template and
     # behave near-identically -- so they are not independent trials and the Wilson
@@ -316,6 +343,13 @@ def main():
 
     macros = {
         "Nframe": f"{frame_n:,}",
+        "NFunnelInactive": f"{funnel['inactive']:,}",
+        "NFunnelRemote": f"{funnel['remote']:,}",
+        "NFunnelNoStdio": f"{funnel['nostdio']:,}",
+        "NFunnelOtherReg": f"{funnel['otherreg']:,}",
+        "NFunnelEnv": f"{funnel['env']:,}",
+        "NFunnelArg": f"{funnel['arg']:,}",
+        "NFunnelEligible": f"{funnel['eligible']:,}",
         "Nattempted": f"{n_attempted:,}",
         "NHarnessError": f"{len(harness_rows):,}",
         "NHarnessErrorPct": f"{100*len(harness_rows)/n_attempted:.1f}\\%",
@@ -362,6 +396,7 @@ def main():
         "HandshakeDesignEffect": f"{design_effect([(publisher(r), r.get('handshake_ok')) for r in rows]):.1f}",
         "Nresponders": f"{n_resp:,}",
         "HandshakeRate": pctci(hs, n),
+        "HandshakeRatePoint": f"{100*hs/n:.1f}" + chr(92) + "%",
         "HandshakeCount": str(hs),
         "ErrAsResultRate": err_as_result,
         "ErrAsResultCount": f"{err_as_result_k:,}",
@@ -437,6 +472,10 @@ def main():
             "NSilentIntPoison": f"{int_poison:,}",
             "SilentExecShare": f"{100*silent/tot:.0f}\\%" if tot else "-",
             "SilentExecRate": pctci(silent, n_resp),
+            "SilentExecRateCl": clustered(
+                responders,
+                lambda r, _s={x["server"] for x in cons.get("silent-execution", [])
+                              if isinstance(x, dict)}: r.get("server_name") in _s),
             "NInBandError": f"{inband:,}",
             "InBandShare": f"{100*inband/tot:.0f}\\%" if tot else "-",
             "NUnclassifiable": f"{unclass:,}",

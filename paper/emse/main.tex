@@ -65,10 +65,10 @@ isolated sandbox and driven through a conformance harness. The harness checks th
 initialization lifecycle and declared-schema validity across every tool a server
 lists, then sends an unknown tool name, an argument of the wrong type and a
 malformed protocol frame. Only \HandshakeRateCorr{} of installable servers start
-and complete a handshake, and \ErrAsResultRate{} of those that respond report an
+and complete a handshake, and \ErrAsResultRateCl{} of those that respond report an
 unknown tool the same way, which differs from the error reporting the
 specification illustrates. We trace this to SDK defaults, and an open
-specification proposal would make it the specified behavior. \SilentExecRate{}
+specification proposal would make it the specified behavior. \SilentExecRateCl{}
 execute a tool on an argument their own declared schema rejects, although the
 specification requires servers to validate all tool inputs. The result is
 well-formed, and a client cannot tell it apart from a correct answer. Both

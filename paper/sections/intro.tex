@@ -31,17 +31,17 @@ only shows in an example.
 Only \HandshakeRateCorr{} of installable servers get as far as a completed protocol
 handshake. The rest fail in ways we classify into a startup-failure taxonomy, from
 install errors to silent exits to hangs. Among servers that do respond,
-\ErrAsResultRate{} report a call to a non-existent tool as a ``successful''
+\ErrAsResultRateCl{} report a call to a non-existent tool as a ``successful''
 tool-execution error (\texttt{isError: true}) instead of the JSON-RPC protocol error
 the specification illustrates. We trace this divergence to the default
 behavior of the official SDKs, which is inherited by the servers built on
 them. An open proposal would reclassify unknown-tool failures to match what the SDKs
 already do~\cite{sep2145}, and our census measures how much of the ecosystem already
-behaves that way. Separately, \SilentExecRate{} of responding servers run a tool on input that
+behaves that way. Separately, \SilentExecRateCl{} of responding servers run a tool on input that
 violates the schema they publish, and return a well-formed result. In one
 case a tool that scans code for package imports was handed an integer and replied
 \texttt{CLEAN}, with neither an error code nor an \texttt{isError} flag a client could
-act on. The specification requires servers to validate all tool inputs. A further \MalformedDiesRate{} fail to recover from a malformed frame and
+act on. The specification requires servers to validate all tool inputs. A further \MalformedDiesRateCl{} fail to recover from a malformed frame and
 answer nothing further, although JSON-RPC 2.0 requires a reply to every request.
 
 We organize the study around five research questions:

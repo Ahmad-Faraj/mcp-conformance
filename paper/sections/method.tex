@@ -7,12 +7,12 @@ reproducible.
   \centering
   \includegraphics[width=\linewidth]{figures/pipeline.pdf}
   \caption{Measurement pipeline. Every eligible server is installed and executed in
-  its own disposable container, then driven through the conformance probe and graded
-  against the protocol version it negotiates.}
+  its own disposable container, then driven through the conformance probe. The protocol version each server
+  negotiates is recorded with its verdicts, and no check depends on it.}
   \label{fig:pipeline}
 \end{figure}
 
-\subsection{Sampling frame}
+\subsection{Sampling frame}\label{sec:frame}
 We crawl the official MCP registry (\texttt{registry.modelcontextprotocol.io})
 via its cursor-paginated API, retaining the latest published version of each
 server, which yields \Nframe{} unique servers. Each server declares zero or more
@@ -23,11 +23,23 @@ distributed on npm or PyPI (the two dominant registries), and (iv)
 \emph{self-contained}: they declare no required environment variable or argument
 that lacks a default. Criterion (iv) restricts us to servers that a client could
 launch without provisioning secrets, which limits what mass execution can do to
-third-party systems and keeps the population reproducible. We report the exclusion of
-remote-only and credential-requiring servers (Section~\ref{sec:threats})
-and treat the resulting frame as the denominator for all rates. We probe the
-\emph{entire} frame (all \Nprobed{} eligible servers), which makes the measurement a
-census of the eligible population.
+third-party systems and keeps the population reproducible.
+
+Applied in order, the criteria remove \NFunnelInactive{} entries whose registry status
+is not active, \NFunnelRemote{} that declare no package and are reachable only as a
+hosted endpoint, \NFunnelNoStdio{} whose packages use another transport,
+\NFunnelOtherReg{} whose stdio packages are published outside npm and PyPI (OCI images,
+NuGet, MCP bundles), \NFunnelEnv{} that require an environment variable with no default,
+and \NFunnelArg{} that require a launch argument with no default. \NFunnelEligible{}
+servers remain. The frame is the denominator for every rate, and we launch all of it,
+which makes the measurement a census of the eligible population rather than a sample.
+
+We validated the filter in two ways. A second implementation, written from the four
+criteria as stated here and sharing no code with the harness, reaches the same
+decision on all \Nframe{} registry entries. A stratified sample of entries from each
+exclusion class and from the eligible set, with the fields each decision rests on, was
+read against the registry record, and each decision follows from its fields. The
+script and the sample are released.
 
 \subsection{Conformance harness}
 The harness, \texttt{mcpprobe}, is a minimal, hand-written JSON-RPC
