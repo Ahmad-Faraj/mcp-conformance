@@ -97,6 +97,52 @@ def eligible_packages(server: dict):
         yield p
 
 
+TEMPLATE = re.compile(r"\{[^}]+\}")
+
+
+def render_args(items) -> list[str]:
+    """Render registry-declared arguments the way a registry client would.
+
+    The census originally used runtimeArguments and packageArguments only to
+    exclude servers with required input, and never passed the rest at launch. A
+    server whose entry says "run me with serve" was started bare, printed its help
+    and exited, and was graded as failing to start. 523 servers declare arguments,
+    and they completed a handshake at 27% against 63.5% for the rest.
+
+    Rendering follows the registry's server.json reference: a positional argument
+    contributes its value, or its default; a named argument contributes its name
+    followed by its value, or by its default; an argument with neither is optional
+    user input and is left out. A value that still holds an unresolved {template}
+    after substituting variable defaults is also left out, since only a user can
+    supply it. Repeated arguments are rendered once.
+    """
+    out = []
+    for a in items or []:
+        if not isinstance(a, dict):
+            continue
+        val = a.get("value")
+        if val is None:
+            val = a.get("default")
+        if isinstance(val, str) and TEMPLATE.search(val):
+            for name, var in (a.get("variables") or {}).items():
+                if isinstance(var, dict) and var.get("default") is not None:
+                    val = val.replace("{" + name + "}", str(var["default"]))
+            if TEMPLATE.search(val):
+                continue
+        kind = a.get("type") or ("named" if a.get("name") else "positional")
+        if kind == "named":
+            if not a.get("name"):
+                continue
+            if val is None:
+                continue
+            out += [a["name"], str(val)]
+        else:
+            if val is None:
+                continue
+            out.append(str(val))
+    return out
+
+
 def _pkg_spec(pkg: dict) -> str:
     ident, version = pkg["identifier"], pkg.get("version")
     if pkg["registryType"] == "npm":
@@ -170,7 +216,8 @@ def prime_cmd(pkg: dict) -> list[str]:
                    "uvx", "--from", _pkg_spec(pkg), "python", "-c", "0"]
 
 
-def docker_cmd(pkg: dict, offline: bool = False, entrypoint: str | None = None) -> list[str]:
+def docker_cmd(pkg: dict, offline: bool = False, entrypoint: str | None = None,
+               with_args: bool = True) -> list[str]:
     base = (["docker", "run", "--rm", "-i", "--init", "--label", CENSUS_LABEL]
             + HARDENING)
     if offline:
@@ -180,13 +227,16 @@ def docker_cmd(pkg: dict, offline: bool = False, entrypoint: str | None = None) 
     # deliberately omit it so each --rm container is fully ephemeral and disk usage
     # stays flat -- essential for a full-ecosystem census on a fixed-size volume.
     cache = offline
+    rt_args = render_args(pkg.get("runtimeArguments")) if with_args else []
+    pk_args = render_args(pkg.get("packageArguments")) if with_args else []
     if pkg["registryType"] == "npm":
-        run = ["npx", "-y"] + (["--offline"] if offline else []) + [_pkg_spec(pkg)]
+        run = (["npx", "-y"] + (["--offline"] if offline else []) + rt_args
+               + [_pkg_spec(pkg)] + pk_args)
         vol = ["-v", "mcpprobe-npm:/root/.npm"] if cache else []
         return base + vol + [NODE_IMAGE] + run
     spec = _pkg_spec(pkg)
     launch = ["--from", spec, entrypoint] if entrypoint else [spec]
-    run = ["uvx"] + (["--offline"] if offline else []) + launch
+    run = ["uvx"] + (["--offline"] if offline else []) + rt_args + launch + pk_args
     vol = ["-v", "mcpprobe-uv:/root/.cache/uv"] if cache else []
     return base + vol + [UV_IMAGE] + run
 
@@ -287,7 +337,19 @@ def main():
                     help="two-phase: online install pass, then probe with --network=none")
     ap.add_argument("--skip-done", action="store_true",
                     help="skip servers already present in probe_results.jsonl (resume)")
+    ap.add_argument("--only", default=None,
+                    help="JSON list of server names; probe only these (a targeted "
+                         "re-probe through the same code path as the census)")
+    ap.add_argument("--out", default=None,
+                    help="write results here instead of data/probe_results.jsonl")
+    ap.add_argument("--no-args", action="store_true",
+                    help="launch without registry-declared arguments, as the July "
+                         "census did; for reproducing that run")
     args = ap.parse_args()
+
+    global OUT
+    if args.out:
+        OUT = Path(args.out)
 
     # Twice the longest legitimate container life (install budget plus probe),
     # so a slow-but-live container is never taken for an orphan.
@@ -312,6 +374,10 @@ def main():
             if pkgs:
                 candidates.append({"name": s["name"], "version": s.get("version"),
                                    "pkg": pkgs[0]})
+    if args.only:
+        wanted = set(json.loads(Path(args.only).read_text(encoding="utf-8")))
+        candidates = [c for c in candidates if c["name"] in wanted]
+        print(f"restricted to {len(candidates)} of {len(wanted)} listed servers")
     print(f"eligible candidates in frame: {len(candidates)}")
     random.Random(args.seed).shuffle(candidates)
     if done_names:
@@ -346,7 +412,8 @@ def main():
                                        "detail": (proc.stderr or "")[-300:]}]}
                     res.update(_tag(c, primed))
                     return res
-            res = probe(docker_cmd(c["pkg"], offline=args.offline_probe), args.timeout)
+            res = probe(docker_cmd(c["pkg"], offline=args.offline_probe,
+                                        with_args=not args.no_args), args.timeout)
             # A launch failure whose stderr looks like an engine fault is retried too.
             launch_err = next((ch for ch in res.get("checks", [])
                                if ch["id"] == "launch"), None)
@@ -364,6 +431,7 @@ def main():
                 ep = uvx_entrypoint(stderr_text(res), c["pkg"]["identifier"])
                 if ep:
                     retry = probe(docker_cmd(c["pkg"], offline=args.offline_probe,
+                                                 with_args=not args.no_args,
                                              entrypoint=ep), args.timeout)
                     retry["entrypoint_mismatch"] = True
                     retry["entrypoint_resolved"] = ep
@@ -389,6 +457,11 @@ def main():
                 "request_timeout_s": args.timeout,
                 "max_frame_chars": mcpprobe.MAX_FRAME_CHARS,
                 "image_digests": digests,
+                # The July census launched without registry-declared arguments.
+                # Recorded so the two launch conditions stay distinguishable.
+                "launch_args": ([] if args.no_args else
+                                render_args(c["pkg"].get("runtimeArguments"))
+                                + render_args(c["pkg"].get("packageArguments"))),
                 "run_started_at": run_started,
                 "probed_at": dt.datetime.now(dt.timezone.utc).isoformat()}
 

@@ -12,6 +12,7 @@ server to the SDK default to the ones that break.
     python fake_server.py crash            Python traceback before initialize
     python fake_server.py needs-config     exits asking for an API key
     python fake_server.py hang             never answers initialize
+    python fake_server.py needs-serve      exits with usage unless given "serve"
 """
 
 import json
@@ -56,6 +57,10 @@ def main():
     if MODE == "needs-config":
         sys.stderr.write("Error: the environment variable EXAMPLE_API_KEY is not set\n")
         sys.exit(1)
+    if MODE == "needs-serve" and "serve" not in sys.argv[2:]:
+        # What a real CLI-hosted server does when launched without its subcommand.
+        sys.stderr.write("usage: fake [serve|version]\n")
+        sys.exit(0)
     if MODE == "noisy":
         sys.stdout.write("Server starting up, hello!\n")
         sys.stdout.flush()
