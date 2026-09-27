@@ -47,6 +47,9 @@ def regenerate(numbers_out=None):
     if numbers_out:
         return
     run(["python", "driver/make_tables.py", "--in", CENSUS], stdout=subprocess.DEVNULL)
+    run(["python", "driver/make_examples_table.py",
+         "--cons", str(ROOT / "data" / "release" / "consequences.json")],
+        stdout=subprocess.DEVNULL)
     sept = ROOT / "data" / "release" / "probe_census_sept.jsonl"
     if sept.exists():
         run(["python", "driver/compare_runs.py", "--before", CENSUS,
