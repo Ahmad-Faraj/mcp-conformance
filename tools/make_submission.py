@@ -32,9 +32,9 @@ def main():
     src = out / "emse-source"
     if src.exists():
         shutil.rmtree(src)
-    (src / "sections").mkdir(parents=True)
-    (src / "tables").mkdir()
-    (src / "figures").mkdir()
+    # Flat: Editorial Manager rejects a zip that contains any subfolder. Tables and
+    # figures get a prefix so a table and a figure sharing a name stay distinct.
+    src.mkdir(parents=True)
 
     bs = "\\"
     lines = (EMSE / "main.tex").read_text(encoding="utf-8").split("\n")
@@ -48,18 +48,28 @@ def main():
                 out_lines.pop()
             continue
         # Paths one level up in the repository sit beside main.tex in the bundle.
-        out_lines.append(line.replace("{../", "{"))
+        line = line.replace("{../", "{")
+        line = line.replace("{sections/", "{")
+        out_lines.append(line)
     tex = "\n".join(out_lines)
+    tex = tex.replace(chr(92) + "graphicspath{{figures/}}", "")
     code = "\n".join(l.split("%", 1)[0] for l in out_lines)
     assert "../" not in code and "input@path" not in code, "a parent path survived"
     (src / "main.tex").write_text(tex, encoding="utf-8")
 
+    def flat(text):
+        text = re.sub(r"\\input\{tables/([^}]+)\}", r"\\input{tab-\1}", text)
+        text = re.sub(r"\\includegraphics(\[[^\]]*\])?\{figures/([^}]+)\}",
+                      r"\\includegraphics\1{fig-\2}", text)
+        return text
+
     for f in (PAPER / "sections").glob("*.tex"):
-        shutil.copy2(f, src / "sections" / f.name)
+        (src / f.name).write_text(flat(f.read_text(encoding="utf-8")), encoding="utf-8")
     for f in (PAPER / "tables").glob("*.tex"):
-        shutil.copy2(f, src / "tables" / f.name)
+        (src / ("tab-" + f.name)).write_text(flat(f.read_text(encoding="utf-8")),
+                                             encoding="utf-8")
     for f in (EMSE / "figures").glob("*.pdf"):
-        shutil.copy2(f, src / "figures" / f.name)
+        shutil.copy2(f, src / ("fig-" + f.name))
     for name in ("numbers.tex", "validation_numbers.tex", "disclosure_numbers.tex",
                  "comparison_numbers.tex", "refs.bib"):
         shutil.copy2(PAPER / name, src / name)
@@ -100,6 +110,10 @@ def main():
     shutil.copy2(src / "main.pdf", pdf)
     (src / "main.pdf").unlink()
 
+    nested = [f for f in src.rglob("*") if f.is_dir()]
+    if nested:
+        print("bundle has subfolders:", nested)
+        return 1
     zpath = out / "emse-source.zip"
     with zipfile.ZipFile(zpath, "w", zipfile.ZIP_DEFLATED) as z:
         for f in sorted(src.rglob("*")):
