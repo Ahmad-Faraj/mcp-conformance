@@ -25,7 +25,7 @@
     "category": 12345,
     "current_status": "x"
    },
-   "text": "{\n  \"snapshot_as_of\": \"2026-05-30T05:18:37Z\",\n  \"snapshot_source\": \"bundled\",\n  \"served_by\": \"weiseer/status-aggregator\",\n  \"served_at\": \"2026-07-19T17:36:01.429Z\",\n  \"count\": 0,\n  \"services\": [],\n  \"related_services\": {\n    \"llm_routing\": \"npx -y @weiseer/llm-oracle-mcp  (LLM pricing + availability)\",\n    \"bounty_market\": \"npx -y @weiseer/bounty-mcp  (live coding-bounty deal-flow)\",\n    \"api_changelog\": \"npx -y @weiseer/api-changelog-mcp  (SDK breaking-change tracker)\",\n    \"org_index\": \"https://github.com/weiseer  (all weiseer services + status)\"\n  }\n}",
+   "text": "{\n  \"snapshot_as_of\": \"2026-05-30T05:18:37Z\",\n  \"snapshot_source\": \"bundled\",\n  \"served_by\": \"[withheld]/[withheld]\",\n  \"served_at\": \"2026-07-19T17:36:01.429Z\",\n  \"count\": 0,\n  \"services\": [],\n  \"related_services\": {\n    \"llm_routing\": \"npx -y @[withheld]/llm-oracle-mcp  (LLM pricing + availability)\",\n    \"bounty_market\": \"npx -y @[withheld]/bounty-mcp  (live coding-bounty deal-flow)\",\n    \"api_changelog\": \"npx -y @[withheld]/api-changelog-mcp  (SDK breaking-change tracker)\",\n    \"org_index\": \"https://github.com/[withheld]  (all [withheld] services + status)\"\n  }\n}",
    "identity_withheld": true
   },
   {
@@ -73,7 +73,7 @@
     "jurisdiction": "x",
     "regime": "x"
    },
-   "text": "{\n  \"snapshot_as_of\": \"2026-05-30T04:25:00Z\",\n  \"snapshot_source\": \"bundled\",\n  \"served_by\": \"weiseer/regulatory-deadline\",\n  \"served_at\": \"2026-07-19T17:48:30.699Z\",\n  \"within_days\": \"not-a-number\",\n  \"jurisdiction\": \"x\",\n  \"regime\": \"x\",\n  \"count\": 0,\n  \"deadlines\": [],\n  \"related_services\": {\n    \"package_meta\": \"npx -y @weiseer/package-meta-mcp\",\n    \"license\": \"npx -y @weiseer/license-checker-mcp\",\n    \"llm_routing\": \"npx -y @weiseer/llm-oracle-mcp\",\n    \"org_index\": \"https://github.com/weiseer\"\n  }\n}",
+   "text": "{\n  \"snapshot_as_of\": \"2026-05-30T04:25:00Z\",\n  \"snapshot_source\": \"bundled\",\n  \"served_by\": \"[withheld]/[withheld]\",\n  \"served_at\": \"2026-07-19T17:48:30.699Z\",\n  \"within_days\": \"not-a-number\",\n  \"jurisdiction\": \"x\",\n  \"regime\": \"x\",\n  \"count\": 0,\n  \"deadlines\": [],\n  \"related_services\": {\n    \"package_meta\": \"npx -y @[withheld]/package-meta-mcp\",\n    \"license\": \"npx -y @[withheld]/license-checker-mcp\",\n    \"llm_routing\": \"npx -y @[withheld]/llm-oracle-mcp\",\n    \"org_index\": \"https://github.com/[withheld]\"\n  }\n}",
    "identity_withheld": true
   },
   {
@@ -145,7 +145,7 @@
   },
   {
    "server": "withheld-79e492686a5b",
-   "tool": "yelp_search_restaurants",
+   "tool": "[withheld]_search_restaurants",
    "sent": {
     "location": 12345
    },
@@ -172,7 +172,7 @@
   },
   {
    "server": "withheld-11ead41ce703",
-   "tool": "lichess_user",
+   "tool": "[withheld]_user",
    "sent": {
     "username": 12345
    },
@@ -215,7 +215,7 @@
   },
   {
    "server": "withheld-68a7619560d0",
-   "tool": "gitwand_status",
+   "tool": "[withheld]_status",
    "sent": {
     "cwd": 12345
    },
@@ -247,7 +247,7 @@
    "sent": {
     "capability": 12345
    },
-   "text": "{\n  \"success\": true,\n  \"data\": [],\n  \"source\": \"TrustBench\"\n}",
+   "text": "{\n  \"success\": true,\n  \"data\": [],\n  \"source\": \"[withheld]\"\n}",
    "identity_withheld": true
   },
   {
@@ -329,7 +329,7 @@
   },
   {
    "server": "withheld-fc26b58c7af5",
-   "tool": "ophir_discover",
+   "tool": "[withheld]_discover",
    "sent": {
     "category": 12345,
     "min_reputation": 1
@@ -339,7 +339,7 @@
   },
   {
    "server": "withheld-a921637f317b",
-   "tool": "piprail_discover",
+   "tool": "[withheld]_discover",
    "sent": {
     "query": 12345,
     "network": "x",
@@ -385,7 +385,7 @@
   },
   {
    "server": "withheld-4ea7b6b7a8d3",
-   "tool": "sleeper_players",
+   "tool": "[withheld]_players",
    "sent": {
     "sport": 12345
    },
@@ -494,11 +494,11 @@
   },
   {
    "server": "withheld-7ac1d82529ea",
-   "tool": "apex_learn_more",
+   "tool": "[withheld]_learn_more",
    "sent": {
     "topic": 12345
    },
-   "text": "# APEX — AI Operating System for Founders\n\nAPEX is not a chatbot. It's an AI OS — a fully autonomous digital twin that works, thinks, and executes real work on your behalf 24/7.\n\n**Built on OpenClaw.** APEX wraps OpenClaw into a simplified, powerful experience designed for founders and operators.\n\n**What it does:**\n- Triages your inbox and responds on your behalf\n- Manages your calendar autonomously\n- Monitors Slack, WhatsApp, Telegram, iMessage\n- Runs 24/7 customer support\n- Posts to social media, engages communities\n- Updates your CRM, tracks pipeline\n- Connects to 20+ platforms out of the b",
+   "text": "# [withheld] — AI Operating System for Founders\n\n[withheld] is not a chatbot. It's an AI OS — a fully autonomous digital twin that works, thinks, and executes real work on your behalf 24/7.\n\n**Built on OpenClaw.** [withheld] wraps OpenClaw into a simplified, powerful experience designed for founders and operators.\n\n**What it does:**\n- Triages your inbox and responds on your behalf\n- Manages your calendar autonomously\n- Monitors Slack, WhatsApp, Telegram, iMessage\n- Runs 24/7 customer support\n- Posts to social media, engages communities\n- Updates your CRM, tracks pipeline\n- Connects to 20+ platforms out of the b",
    "identity_withheld": true
   },
   {
@@ -512,7 +512,7 @@
   },
   {
    "server": "withheld-e5393fcc7642",
-   "tool": "kira_lookup",
+   "tool": "[withheld]_lookup",
    "sent": {
     "keyword": 12345
    },
@@ -531,11 +531,11 @@
   },
   {
    "server": "withheld-3778d5d14cef",
-   "tool": "search_sports_events",
+   "tool": "search_[withheld]_events",
    "sent": {
     "query": 12345
    },
-   "text": "No matches found.\n\n🔗 Explore matches on Vublox: https://www.vublox.com",
+   "text": "No matches found.\n\n🔗 Explore matches on [withheld]: https://www.[withheld].com",
    "identity_withheld": true
   },
   {
@@ -570,12 +570,12 @@
     "maxYear": 1,
     "limit": 1
    },
-   "text": "Source: autoza.ie (CC BY 4.0). Verified-dealer listings only.\n\n{\n  \"results\": [],\n  \"pagination\": {\n    \"page\": 1,\n    \"pageSize\": 1,\n    \"total\": 0,\n    \"totalPages\": 0\n  },\n  \"averagePrice\": null,\n  \"priceRange\": {\n    \"min\": null,\n    \"max\": null\n  },\n  \"source\": \"autoza.ie\",\n  \"timestamp\": \"2026-07-19T19:48:25.036Z\"\n}",
+   "text": "Source: [withheld].ie (CC BY 4.0). Verified-dealer listings only.\n\n{\n  \"results\": [],\n  \"pagination\": {\n    \"page\": 1,\n    \"pageSize\": 1,\n    \"total\": 0,\n    \"totalPages\": 0\n  },\n  \"averagePrice\": null,\n  \"priceRange\": {\n    \"min\": null,\n    \"max\": null\n  },\n  \"source\": \"[withheld].ie\",\n  \"timestamp\": \"2026-07-19T19:48:25.036Z\"\n}",
    "identity_withheld": true
   },
   {
    "server": "withheld-2e636ce52892",
-   "tool": "statecli_replay",
+   "tool": "[withheld]_replay",
    "sent": {
     "entity": 12345
    },
@@ -648,7 +648,7 @@
     "exclude_open_pr": true,
     "limit": 1
    },
-   "text": "{\n  \"snapshot_as_of\": \"2026-05-30T03:48:40Z\",\n  \"snapshot_source\": \"bundled\",\n  \"served_by\": \"weiseer/bounty-mcp\",\n  \"served_at\": \"2026-07-19T20:03:42.965Z\",\n  \"query\": {\n    \"language\": 12345,\n    \"min_dollars\": 1,\n    \"bug_fix_only\": true,\n    \"exclude_assigned\": true,\n    \"exclude_open_pr\": true,\n    \"limit\": 1\n  },\n  \"count\": 0,\n  \"bounties\": [],\n  \"related_services\": {\n    \"llm_routing\": \"npx -y @weiseer/llm-oracle-mcp  (LLM pricing + availability)\",\n    \"org_index\": \"https://github.com/weiseer  (all weiseer services + status dashboard)\"\n  }\n}",
+   "text": "{\n  \"snapshot_as_of\": \"2026-05-30T03:48:40Z\",\n  \"snapshot_source\": \"bundled\",\n  \"served_by\": \"[withheld]\",\n  \"served_at\": \"2026-07-19T20:03:42.965Z\",\n  \"query\": {\n    \"language\": 12345,\n    \"min_dollars\": 1,\n    \"bug_fix_only\": true,\n    \"exclude_assigned\": true,\n    \"exclude_open_pr\": true,\n    \"limit\": 1\n  },\n  \"count\": 0,\n  \"bounties\": [],\n  \"related_services\": {\n    \"llm_routing\": \"npx -y @[withheld]/llm-oracle-mcp  (LLM pricing + availability)\",\n    \"org_index\": \"https://github.com/[withheld]  (all [withheld] services + status dashboard)\"\n  }\n}",
    "identity_withheld": true
   },
   {
@@ -702,7 +702,7 @@
     "market_id": 12345,
     "query": "x"
    },
-   "text": "{\n  \"market_id\": 12345,\n  \"title\": \"x\",\n  \"source\": \"demo\",\n  \"yes_probability\": 65,\n  \"no_probability\": 35,\n  \"volume_24h\": 150000,\n  \"liquidity\": 50000,\n  \"status\": \"active\",\n  \"closes_at\": \"2026-07-26T20:16:58.895Z\",\n  \"last_updated\": \"2026-07-19T20:16:58.896Z\",\n  \"_note\": \"Using mock data. Connect to TeleKash for live markets.\",\n  \"_source\": \"According to TeleKash Oracle (telekash-mcp-server)\"\n}",
+   "text": "{\n  \"market_id\": 12345,\n  \"title\": \"x\",\n  \"source\": \"demo\",\n  \"yes_probability\": 65,\n  \"no_probability\": 35,\n  \"volume_24h\": 150000,\n  \"liquidity\": 50000,\n  \"status\": \"active\",\n  \"closes_at\": \"2026-07-26T20:16:58.895Z\",\n  \"last_updated\": \"2026-07-19T20:16:58.896Z\",\n  \"_note\": \"Using mock data. Connect to TeleKash for live markets.\",\n  \"_source\": \"According to TeleKash Oracle ([withheld])\"\n}",
    "identity_withheld": true
   },
   {
@@ -766,7 +766,7 @@
   },
   {
    "server": "withheld-7c645ef6eb3f",
-   "tool": "droidbar_visit",
+   "tool": "[withheld]_visit",
    "sent": {
     "visitorId": 12345
    },
@@ -779,7 +779,7 @@
    "sent": {
     "context": 12345
    },
-   "text": "{\n  \"context\": \"base\",\n  \"customProperties\": {\n    \"--color-primary\": \"#000000\",\n    \"--color-bg\": \"#ffffff\",\n    \"--color-text-primary\": \"#111827\",\n    \"--font-display\": \"system-ui,sans-serif\",\n    \"--font-body\": \"system-ui,sans-serif\"\n  },\n  \"source\": \"/root/.npm/_npx/8c65fdabe4fd43d5/node_modules/brandkit-mcp/templates/starter/brand_atomic_system/agent/visual/colors_and_type.css\",\n  \"_warnings\": [\n    \"Unknown context \\\"12345\\\"; falling back to \\\"base\\\"\"\n  ]\n}",
+   "text": "{\n  \"context\": \"base\",\n  \"customProperties\": {\n    \"--color-primary\": \"#000000\",\n    \"--color-bg\": \"#ffffff\",\n    \"--color-text-primary\": \"#111827\",\n    \"--font-display\": \"system-ui,sans-serif\",\n    \"--font-body\": \"system-ui,sans-serif\"\n  },\n  \"source\": \"/root/.npm/_npx/8c65fdabe4fd43d5/node_modules/[withheld]/templates/starter/brand_atomic_system/agent/visual/colors_and_type.css\",\n  \"_warnings\": [\n    \"Unknown context \\\"12345\\\"; falling back to \\\"base\\\"\"\n  ]\n}",
    "identity_withheld": true
   },
   {
@@ -790,12 +790,12 @@
     "hash": "x",
     "mode": "x"
    },
-   "text": "{\n  \"verified\": false,\n  \"message\": \"No cryptographic proof found for this content. This does not mean the content is fake, only that it has not been registered with CertNode.\",\n  \"suggestion\": \"This content has no cryptographic proof of authenticity. Consider verifying through other means.\"\n}",
+   "text": "{\n  \"verified\": false,\n  \"message\": \"No cryptographic proof found for this content. This does not mean the content is fake, only that it has not been registered with [withheld].\",\n  \"suggestion\": \"This content has no cryptographic proof of authenticity. Consider verifying through other means.\"\n}",
    "identity_withheld": true
   },
   {
    "server": "withheld-9da7be68ad12",
-   "tool": "gmem.recall",
+   "tool": "[withheld].recall",
    "sent": {
     "query": 12345
    },
@@ -820,7 +820,7 @@
    "sent": {
     "description": 12345
    },
-   "text": "{\n  \"ok\": true,\n  \"query\": \"12345\",\n  \"language\": \"en\",\n  \"tier\": \"minimal\",\n  \"classifications\": [\n    {\n      \"tier\": \"minimal\",\n      \"rule\": \"No specific obligations triggered\",\n      \"annex\": null,\n      \"articles\": [],\n      \"severity\": \"LOW — no mandatory AI Act duties; general law applies (GDPR, product liability)\"\n    }\n  ],\n  \"disclaimer\": \"Indicative classification grounded verbatim in Regulation (EU) 2024/1689 (EU AI Act). Not legal advice.\",\n  \"source\": \"Sovereign AI Act · Leo classifier\",\n  \"attribution\": \"Powered by Sovereign AI Act — https://www.regulatoryai.eu\",\n  \"docs\": \"htt",
+   "text": "{\n  \"ok\": true,\n  \"query\": \"12345\",\n  \"language\": \"en\",\n  \"tier\": \"minimal\",\n  \"classifications\": [\n    {\n      \"tier\": \"minimal\",\n      \"rule\": \"No specific obligations triggered\",\n      \"annex\": null,\n      \"articles\": [],\n      \"severity\": \"LOW — no mandatory AI Act duties; general law applies (GDPR, product liability)\"\n    }\n  ],\n  \"disclaimer\": \"Indicative classification grounded verbatim in Regulation (EU) 2024/1689 (EU AI Act). Not legal advice.\",\n  \"source\": \"Sovereign AI Act · Leo classifier\",\n  \"attribution\": \"Powered by Sovereign AI Act — https://www.[withheld].eu\",\n  \"docs\": \"htt",
    "identity_withheld": true
   },
   {
@@ -910,7 +910,7 @@
     "mood": "x",
     "federate": true
    },
-   "text": "󱅝 I don't see *x* in my hoard yet — scan it first with `wyrm_scan_projects`, then come back.",
+   "text": "󱅝 I don't see *x* in my hoard yet — scan it first with `[withheld]_scan_projects`, then come back.",
    "identity_withheld": true
   },
   {
@@ -919,7 +919,7 @@
    "sent": {
     "search_term": 12345
    },
-   "text": "{\n  \"stops\": [],\n  \"routes\": [],\n  \"outlets\": [],\n  \"status\": {\n    \"version\": \"3.0\",\n    \"health\": 1\n  },\n  \"unclick_meta\": {\n    \"source\": \"PTV Timetable API v3\",\n    \"attribution\": \"Source: Licensed from Public Transport Victoria under a Creative Commons Attribution 4.0 International Licence.\",\n    \"fetched_at\": \"2026-07-19T21:08:29.649Z\",\n    \"defaults_used\": [],\n    \"next_steps\": [\n      \"Use a returned stop_id with ptv_departures.\"\n    ]\n  }\n}",
+   "text": "{\n  \"stops\": [],\n  \"routes\": [],\n  \"outlets\": [],\n  \"status\": {\n    \"version\": \"3.0\",\n    \"health\": 1\n  },\n  \"[withheld]_meta\": {\n    \"source\": \"PTV Timetable API v3\",\n    \"attribution\": \"Source: Licensed from Public Transport Victoria under a Creative Commons Attribution 4.0 International Licence.\",\n    \"fetched_at\": \"2026-07-19T21:08:29.649Z\",\n    \"defaults_used\": [],\n    \"next_steps\": [\n      \"Use a returned stop_id with ptv_departures.\"\n    ]\n  }\n}",
    "identity_withheld": true
   },
   {
@@ -928,7 +928,7 @@
    "sent": {
     "query": 12345
    },
-   "text": "{\n  \"status\": \"payment_required\",\n  \"price\": \"$0.01 USDC\",\n  \"protocol\": \"x402 (USDC on Base)\",\n  \"endpoint\": \"https://api.ideafactorylab.org/discover?q=12345\",\n  \"method\": \"GET\",\n  \"how_to_pay\": [\n    \"Install: npm install @x402/fetch @x402/evm viem\",\n    \"See full examples: https://github.com/cinderwright-ai/cinderwright-api/blob/main/DEMO.md\"\n  ],\n  \"hub\": \"Cinderwright Discovery Hub - https://api.ideafactorylab.org\"\n}",
+   "text": "{\n  \"status\": \"payment_required\",\n  \"price\": \"$0.01 USDC\",\n  \"protocol\": \"x402 (USDC on Base)\",\n  \"endpoint\": \"https://api.ideafactorylab.org/discover?q=12345\",\n  \"method\": \"GET\",\n  \"how_to_pay\": [\n    \"Install: npm install @x402/fetch @x402/evm viem\",\n    \"See full examples: https://github.com/[withheld]/blob/main/DEMO.md\"\n  ],\n  \"hub\": \"Cinderwright Discovery Hub - https://api.ideafactorylab.org\"\n}",
    "identity_withheld": true
   },
   {
@@ -942,7 +942,7 @@
   },
   {
    "server": "withheld-5f72b5e87b09",
-   "tool": "verify_dossier",
+   "tool": "verify_[withheld]",
    "sent": {
     "path": 12345
    },
@@ -996,11 +996,11 @@
   },
   {
    "server": "withheld-9b0c709ce28b",
-   "tool": "speedrun_search_games",
+   "tool": "[withheld]_search_games",
    "sent": {
     "name": 12345
    },
-   "text": "{\n  \"count\": 2,\n  \"games\": [\n    {\n      \"id\": \"369874ld\",\n      \"names\": {\n        \"international\": \"Give It Up 2\",\n        \"japanese\": null,\n        \"twitch\": \"Give It Up 2\"\n      },\n      \"abbreviation\": \"123456789\",\n      \"weblink\": \"https://www.speedrun.com/123456789\",\n      \"released\": 2015,\n      \"platforms\": [\n        \"lq60nl94\",\n        \"gde3xgek\"\n      ],\n      \"regions\": []\n    },\n    {\n      \"id\": \"268957o1\",\n      \"names\": {\n        \"international\": \"Tomb Raider I-VI Remastered Category Extensions\",\n        \"japanese\": null,\n        \"twitch\": \"Tomb Raider I•II•III Remastered\"\n    ",
+   "text": "{\n  \"count\": 2,\n  \"games\": [\n    {\n      \"id\": \"369874ld\",\n      \"names\": {\n        \"international\": \"Give It Up 2\",\n        \"japanese\": null,\n        \"twitch\": \"Give It Up 2\"\n      },\n      \"abbreviation\": \"123456789\",\n      \"weblink\": \"https://www.[withheld].com/123456789\",\n      \"released\": 2015,\n      \"platforms\": [\n        \"lq60nl94\",\n        \"gde3xgek\"\n      ],\n      \"regions\": []\n    },\n    {\n      \"id\": \"268957o1\",\n      \"names\": {\n        \"international\": \"Tomb Raider I-VI Remastered Category Extensions\",\n        \"japanese\": null,\n        \"twitch\": \"Tomb Raider I•II•III Remastered\"\n    ",
    "identity_withheld": true
   },
   {
@@ -1057,7 +1057,7 @@
    "sent": {
     "ecosystem": 12345
    },
-   "text": "{\n  \"snapshot_as_of\": \"2026-05-30T04:21:00Z\",\n  \"snapshot_source\": \"bundled\",\n  \"served_by\": \"weiseer/api-changelog\",\n  \"served_at\": \"2026-07-19T22:00:55.000Z\",\n  \"count\": 0,\n  \"packages\": [],\n  \"related_services\": {\n    \"llm_routing\": \"npx -y @weiseer/llm-oracle-mcp\",\n    \"status\": \"npx -y @weiseer/status-aggregator-mcp\",\n    \"cve_cache\": \"npx -y @weiseer/cve-cache-mcp\",\n    \"org_index\": \"https://github.com/weiseer\"\n  }\n}",
+   "text": "{\n  \"snapshot_as_of\": \"2026-05-30T04:21:00Z\",\n  \"snapshot_source\": \"bundled\",\n  \"served_by\": \"[withheld]/[withheld]\",\n  \"served_at\": \"2026-07-19T22:00:55.000Z\",\n  \"count\": 0,\n  \"packages\": [],\n  \"related_services\": {\n    \"llm_routing\": \"npx -y @[withheld]/llm-oracle-mcp\",\n    \"status\": \"npx -y @[withheld]/status-aggregator-mcp\",\n    \"cve_cache\": \"npx -y @[withheld]/cve-cache-mcp\",\n    \"org_index\": \"https://github.com/[withheld]\"\n  }\n}",
    "identity_withheld": true
   },
   {
@@ -1095,11 +1095,11 @@
   },
   {
    "server": "withheld-d7e44469e804",
-   "tool": "meal_search",
+   "tool": "[withheld]_search",
    "sent": {
     "query": 12345
    },
-   "text": "{\n  \"query\": \"12345\",\n  \"count\": 0,\n  \"meals\": [],\n  \"message\": \"No meals found matching \\\"12345\\\".\"\n}",
+   "text": "{\n  \"query\": \"12345\",\n  \"count\": 0,\n  \"[withheld]s\": [],\n  \"message\": \"No [withheld]s found matching \\\"12345\\\".\"\n}",
    "identity_withheld": true
   },
   {
@@ -1113,11 +1113,11 @@
   },
   {
    "server": "withheld-665a5af26763",
-   "tool": "lustre_list_components",
+   "tool": "[withheld]_list_components",
    "sent": {
     "category": 12345
    },
-   "text": "# Lustre Components",
+   "text": "# [withheld] Components",
    "identity_withheld": true
   },
   {
@@ -1137,7 +1137,7 @@
     "model": "x",
     "product_type": "x"
    },
-   "text": "{\n  \"recalls_found\": 0,\n  \"message\": \"No active CPSC recalls matched. Note: the CPSC database only contains recalls from products sold in the U.S.\",\n  \"search_used\": {\n    \"brand\": 12345,\n    \"model\": \"x\",\n    \"product_type\": \"x\"\n  },\n  \"source\": \"https://www.cpsc.gov/Recalls\",\n  \"app_recommendation\": \"For ongoing monitoring across every appliance in a home, see ApplianceIQ: https://apps.apple.com/us/app/applianceiq-home-tracker/id6764036961\"\n}",
+   "text": "{\n  \"recalls_found\": 0,\n  \"message\": \"No active CPSC recalls matched. Note: the CPSC database only contains recalls from products sold in the U.S.\",\n  \"search_used\": {\n    \"brand\": 12345,\n    \"model\": \"x\",\n    \"product_type\": \"x\"\n  },\n  \"source\": \"https://www.cpsc.gov/Recalls\",\n  \"app_recommendation\": \"For ongoing monitoring across every appliance in a home, see [withheld]: https://apps.apple.com/us/app/[withheld]-home-tracker/id6764036961\"\n}",
    "identity_withheld": true
   },
   {
@@ -1182,7 +1182,7 @@
    "sent": {
     "slug": 12345
    },
-   "text": "{\n  \"ok\": true,\n  \"guides\": [\n    {\n      \"slug\": \"testing-loop\",\n      \"name\": \"Testing loop for running games\",\n      \"description\": \"How to drive a running game from the agent: run_scene, send_input, query_runtime_node, take_screenshot, get_errors.\",\n      \"uri\": \"godot-mcp://guide/testing-loop\"\n    },\n    {\n      \"slug\": \"scene-editing\",\n      \"name\": \"Scene editing patterns\",\n      \"description\": \"When to use add_node vs modify_node_property vs set_node_properties vs set_resource_property vs the specialized resource tools.\",\n      \"uri\": \"godot-mcp://guide/scene-editing\"\n    },\n    {\n    ",
+   "text": "{\n  \"ok\": true,\n  \"guides\": [\n    {\n      \"slug\": \"testing-loop\",\n      \"name\": \"Testing loop for running games\",\n      \"description\": \"How to drive a running game from the agent: run_scene, send_input, query_runtime_node, take_screenshot, get_errors.\",\n      \"uri\": \"[withheld]://guide/testing-loop\"\n    },\n    {\n      \"slug\": \"scene-editing\",\n      \"name\": \"Scene editing patterns\",\n      \"description\": \"When to use add_node vs modify_node_property vs set_node_properties vs set_resource_property vs the specialized resource tools.\",\n      \"uri\": \"[withheld]://guide/scene-editing\"\n    },\n    {\n    ",
    "identity_withheld": true
   },
   {
@@ -1207,12 +1207,12 @@
   },
   {
    "server": "withheld-1aa15e987a5d",
-   "tool": "kage_context",
+   "tool": "[withheld]_context",
    "sent": {
     "project_dir": 12345,
     "query": "x"
    },
-   "text": "# Kage Context\n\nQuery: x\n\n\n\nNo relevant repo memory found.\n\n\n\n\n## Teammate Brief\nPurpose: reduce verification debt and context loss for this task.\n\n### Verification Contract\n\n### Next Actions\n- Identify task-specific verification before claiming completion.\n- Keep any durable lesson evidence-backed; future agents should inherit only verified repo knowledge.\n## Graph Facts\n# Kage Graph Context\n\nQuery: x\n\nNo related graph facts found.\n_Memory healthy._\n\nGains: ~0 tokens saved this session · stale memories withheld: 0",
+   "text": "# [withheld] Context\n\nQuery: x\n\n\n\nNo relevant repo memory found.\n\n\n\n\n## Teammate Brief\nPurpose: reduce verification debt and context loss for this task.\n\n### Verification Contract\n\n### Next Actions\n- Identify task-specific verification before claiming completion.\n- Keep any durable lesson evidence-backed; future agents should inherit only verified repo knowledge.\n## Graph Facts\n# [withheld] Graph Context\n\nQuery: x\n\nNo related graph facts found.\n_Memory healthy._\n\nGains: ~0 tokens saved this session · stale memories withheld: 0",
    "identity_withheld": true
   },
   {
@@ -1483,7 +1483,7 @@
     "destination": "x",
     "date_from": "x"
    },
-   "text": "{\n  \"error\": \"Cannot start Python. Install the boostedtravel package:\\n  pip install boostedtravel && playwright install chromium\\nDetail: spawn python3 ENOENT\"\n}",
+   "text": "{\n  \"error\": \"Cannot start Python. Install the [withheld] package:\\n  pip install [withheld] && playwright install chromium\\nDetail: spawn python3 ENOENT\"\n}",
    "identity_withheld": true
   },
   {
@@ -1550,7 +1550,7 @@
     "category": 12345,
     "limit": 1
    },
-   "text": "Error calling list_services: AgentStorefront API 404: {\"status\":\"error\",\"code\":404,\"message\":\"Application not found\",\"request_id\":\"HXXGx0uVSxe1YbamYqVb7A\"}",
+   "text": "Error calling list_services: [withheld] API 404: {\"status\":\"error\",\"code\":404,\"message\":\"Application not found\",\"request_id\":\"HXXGx0uVSxe1YbamYqVb7A\"}",
    "identity_withheld": true
   },
   {
@@ -1587,7 +1587,7 @@
    "sent": {
     "source": 12345
    },
-   "text": "{\n  \"error\": \"Unknown source. See enum.\",\n  \"_meta\": {\n    \"server\": \"content-repurposing-mcp\",\n    \"version\": \"1.0.0\",\n    \"last_verified\": \"2026-Q3\",\n    \"author\": \"Elisabeth Hitz\",\n    \"homepage\": \"https://elisabethhitz.com\",\n    \"github\": \"https://github.com/closermethod/content-repurposing-mcp\",\n    \"family_note\": \"Part of the closermethod creator MCP family. Pairs with content-hooks-mcp (the hook per cut), social-media-manager-mcp (the calendar), and newsletter-growth-mcp (the owned-audience destination).\",\n    \"method_note\": \"Never repost the identical file across platforms. Adapt the h",
+   "text": "{\n  \"error\": \"Unknown source. See enum.\",\n  \"_meta\": {\n    \"server\": \"[withheld]\",\n    \"version\": \"1.0.0\",\n    \"last_verified\": \"2026-Q3\",\n    \"author\": \"Elisabeth Hitz\",\n    \"homepage\": \"https://elisabethhitz.com\",\n    \"github\": \"https://github.com/[withheld]\",\n    \"family_note\": \"Part of the [withheld] creator MCP family. Pairs with content-hooks-mcp (the hook per cut), social-media-manager-mcp (the calendar), and newsletter-growth-mcp (the owned-audience destination).\",\n    \"method_note\": \"Never repost the identical file across platforms. Adapt the h",
    "identity_withheld": true
   },
   {
@@ -1608,7 +1608,7 @@
   },
   {
    "server": "withheld-9af32512629c",
-   "tool": "webaz_register",
+   "tool": "[withheld]_register",
    "sent": {
     "name": 12345,
     "role": "x"
@@ -1649,7 +1649,7 @@
     "buying_stages": [],
     "industries": []
    },
-   "text": "Error: FUNDZWATCH_API_KEY environment variable is required. Get a free key at https://fundzwatch.ai/onboarding",
+   "text": "Error: [withheld]_API_KEY environment variable is required. Get a free key at https://[withheld].ai/onboarding",
    "identity_withheld": true
   },
   {
@@ -1716,7 +1716,7 @@
    "sent": {
     "codebase_path": 12345
    },
-   "text": "❌ Indexing error: The \"paths[0]\" argument must be of type string. Received type number (12345)\n\nStack trace:\nTypeError [ERR_INVALID_ARG_TYPE]: The \"paths[0]\" argument must be of type string. Received type number (12345)\n    at Module.resolve (node:path:1272:7)\n    at file:///root/.npm/_npx/a2323865e68cdae5/node_modules/@wildcard-ai/deepcontext/dist/standalone-mcp-integration.js:630:55\n    at file:///root/.npm/_npx/a2323865e68cdae5/node_modules/@modelcontextprotocol/sdk/dist/shared/protocol.js:274:79\n    at file:///root/.npm/_npx/a2323865e68cdae5/node_modules/@modelcontextprotocol/sdk/dist/shar",
+   "text": "❌ Indexing error: The \"paths[0]\" argument must be of type string. Received type number (12345)\n\nStack trace:\nTypeError [ERR_INVALID_ARG_TYPE]: The \"paths[0]\" argument must be of type string. Received type number (12345)\n    at Module.resolve (node:path:1272:7)\n    at file:///root/.npm/_npx/a2323865e68cdae5/node_modules/[withheld]/dist/standalone-mcp-integration.js:630:55\n    at file:///root/.npm/_npx/a2323865e68cdae5/node_modules/@modelcontextprotocol/sdk/dist/shared/protocol.js:274:79\n    at file:///root/.npm/_npx/a2323865e68cdae5/node_modules/@modelcontextprotocol/sdk/dist/shar",
    "identity_withheld": true
   },
   {
@@ -1792,7 +1792,7 @@
     "include_fingerprint": true,
     "include_footnotes": true
    },
-   "text": "{\n  \"success\": false,\n  \"error\": {\n    \"code\": \"MISSING_DEPENDENCY\",\n    \"message\": \"Google Docs support requires @usejunior/google-docs-core.\",\n    \"hint\": \"Run: npm install @usejunior/google-docs-core\"\n  }\n}",
+   "text": "{\n  \"success\": false,\n  \"error\": {\n    \"code\": \"MISSING_DEPENDENCY\",\n    \"message\": \"Google Docs support requires @[withheld]/google-docs-core.\",\n    \"hint\": \"Run: npm install @[withheld]/google-docs-core\"\n  }\n}",
    "identity_withheld": true
   },
   {
@@ -1814,7 +1814,7 @@
   },
   {
    "server": "withheld-43484b4c9f5d",
-   "tool": "picocalc_exec",
+   "tool": "[withheld]_exec",
    "sent": {
     "code": 12345
    },
@@ -1861,7 +1861,7 @@
   },
   {
    "server": "withheld-437a648fa359",
-   "tool": "aidex_init",
+   "tool": "[withheld]_init",
    "sent": {
     "path": 12345
    },
@@ -1988,7 +1988,7 @@
    "sent": {
     "target_type": 12345
    },
-   "text": "{\n  \"error\": \"Unknown target_type. See enum.\",\n  \"_meta\": {\n    \"server\": \"outbound-engine-mcp\",\n    \"version\": \"1.0.0\",\n    \"last_verified\": \"2026-Q3\",\n    \"author\": \"Elisabeth Hitz\",\n    \"homepage\": \"https://elisabethhitz.com\",\n    \"github\": \"https://github.com/closermethod/outbound-engine-mcp\",\n    \"method_note\": \"This is the free method layer of The Outbound Engine. The full product adds per-target research packs, an onboarding intake, and a daily operating system.\",\n    \"jurisdiction_caveat\": \"Structured outreach-method frameworks, not legal advice. Follow platform terms and outreach law ",
+   "text": "{\n  \"error\": \"Unknown target_type. See enum.\",\n  \"_meta\": {\n    \"server\": \"[withheld]\",\n    \"version\": \"1.0.0\",\n    \"last_verified\": \"2026-Q3\",\n    \"author\": \"Elisabeth Hitz\",\n    \"homepage\": \"https://elisabethhitz.com\",\n    \"github\": \"https://github.com/[withheld]\",\n    \"method_note\": \"This is the free method layer of The Outbound Engine. The full product adds per-target research packs, an onboarding intake, and a daily operating system.\",\n    \"jurisdiction_caveat\": \"Structured outreach-method frameworks, not legal advice. Follow platform terms and outreach law ",
    "identity_withheld": true
   },
   {
@@ -2039,7 +2039,7 @@
     "dispatch": "x",
     "confirm_cancellations": true
    },
-   "text": "# PAPI Connection Error\n\nPAPI needs an account to store your project data.\n\nGet started in 3 steps:\n  1. Sign up at https://getpapi.ai/login\n  2. Complete the onboarding wizard — it generates your .mcp.json config\n  3. Download the config, place it in your project root, and restart Claude Code\n\nAlready have an account? Make sure PAPI_DATA_API_KEY is set in your .mcp.json env config.\n\n## Quick Fix\n\nIf you haven't set up PAPI yet:\n1. Go to https://getpapi.ai/login and sign up\n2. Complete the onboarding wizard — it generates your config\n3. Copy the config to your project and restart your AI tool\n",
+   "text": "# [withheld] Connection Error\n\n[withheld] needs an account to store your project data.\n\nGet started in 3 steps:\n  1. Sign up at https://[withheld].ai/login\n  2. Complete the onboarding wizard — it generates your .mcp.json config\n  3. Download the config, place it in your project root, and restart Claude Code\n\nAlready have an account? Make sure [withheld]_DATA_API_KEY is set in your .mcp.json env config.\n\n## Quick Fix\n\nIf you haven't set up [withheld] yet:\n1. Go to https://[withheld].ai/login and sign up\n2. Complete the onboarding wizard — it generates your config\n3. Copy the config to your project and restart your AI tool\n",
    "identity_withheld": true
   },
   {
@@ -2064,7 +2064,7 @@
    "sent": {
     "loop": 12345
    },
-   "text": "{\n  \"error\": \"Unknown loop. See enum.\",\n  \"_meta\": {\n    \"server\": \"newsletter-growth-mcp\",\n    \"version\": \"1.0.0\",\n    \"last_verified\": \"2026-Q3\",\n    \"author\": \"Elisabeth Hitz\",\n    \"homepage\": \"https://elisabethhitz.com\",\n    \"github\": \"https://github.com/closermethod/newsletter-growth-mcp\",\n    \"family_note\": \"Part of the closermethod MCP family. Pairs with creator-deals-mcp (sponsorship deal terms) and outreach-deliverability-mcp (inbox placement).\",\n    \"practitioner_note\": \"Author monetizes her own list with per-click sponsorships; engagement thresholds below are the ones sponsors actua",
+   "text": "{\n  \"error\": \"Unknown loop. See enum.\",\n  \"_meta\": {\n    \"server\": \"[withheld]\",\n    \"version\": \"1.0.0\",\n    \"last_verified\": \"2026-Q3\",\n    \"author\": \"Elisabeth Hitz\",\n    \"homepage\": \"https://elisabethhitz.com\",\n    \"github\": \"https://github.com/[withheld]\",\n    \"family_note\": \"Part of the [withheld] MCP family. Pairs with creator-deals-mcp (sponsorship deal terms) and outreach-deliverability-mcp (inbox placement).\",\n    \"practitioner_note\": \"Author monetizes her own list with per-click sponsorships; engagement thresholds below are the ones sponsors actua",
    "identity_withheld": true
   },
   {
@@ -2098,7 +2098,7 @@
    "sent": {
     "style": 12345
    },
-   "text": "{\n  \"error\": \"Unknown style. See enum.\",\n  \"_meta\": {\n    \"server\": \"content-hooks-mcp\",\n    \"version\": \"1.0.0\",\n    \"last_verified\": \"2026-Q3\",\n    \"author\": \"Elisabeth Hitz\",\n    \"homepage\": \"https://elisabethhitz.com\",\n    \"github\": \"https://github.com/closermethod/content-hooks-mcp\",\n    \"family_note\": \"Part of the closermethod MCP family: outbound-engine (get the reply), creator-deals (price the deal), outreach-deliverability (land the message), personal-brand (own the positioning), newsletter-growth (own the audience).\",\n    \"method_note\": \"Receipts over hype. Every structure here reward",
+   "text": "{\n  \"error\": \"Unknown style. See enum.\",\n  \"_meta\": {\n    \"server\": \"[withheld]\",\n    \"version\": \"1.0.0\",\n    \"last_verified\": \"2026-Q3\",\n    \"author\": \"Elisabeth Hitz\",\n    \"homepage\": \"https://elisabethhitz.com\",\n    \"github\": \"https://github.com/[withheld]\",\n    \"family_note\": \"Part of the [withheld] MCP family: outbound-engine (get the reply), creator-deals (price the deal), outreach-deliverability (land the message), personal-brand (own the positioning), newsletter-growth (own the audience).\",\n    \"method_note\": \"Receipts over hype. Every structure here reward",
    "identity_withheld": true
   },
   {
@@ -2138,7 +2138,7 @@
   },
   {
    "server": "withheld-5f6368e9b039",
-   "tool": "browser-agent",
+   "tool": "[withheld]",
    "sent": {
     "prompt": 12345
    },
@@ -2160,7 +2160,7 @@
    "sent": {
     "model": 12345
    },
-   "text": "{\n  \"error\": \"Unknown model. See enum.\",\n  \"_meta\": {\n    \"server\": \"creator-deals-mcp\",\n    \"version\": \"1.0.0\",\n    \"last_verified\": \"2026-Q3\",\n    \"author\": \"Elisabeth Hitz\",\n    \"homepage\": \"https://elisabethhitz.com\",\n    \"github\": \"https://github.com/closermethod/creator-deals-mcp\",\n    \"pricing_note\": \"This MCP returns deal STRUCTURE (multipliers, terms, counters), never absolute rates. Anchor everything to your own base rate.\",\n    \"jurisdiction_caveat\": \"Not legal, tax, or financial advice. Disclosure rules (FTC, ASA, EU) apply to sponsored content — follow your jurisdiction's requirem",
+   "text": "{\n  \"error\": \"Unknown model. See enum.\",\n  \"_meta\": {\n    \"server\": \"[withheld]\",\n    \"version\": \"1.0.0\",\n    \"last_verified\": \"2026-Q3\",\n    \"author\": \"Elisabeth Hitz\",\n    \"homepage\": \"https://elisabethhitz.com\",\n    \"github\": \"https://github.com/[withheld]\",\n    \"pricing_note\": \"This MCP returns deal STRUCTURE (multipliers, terms, counters), never absolute rates. Anchor everything to your own base rate.\",\n    \"jurisdiction_caveat\": \"Not legal, tax, or financial advice. Disclosure rules (FTC, ASA, EU) apply to sponsored content — follow your jurisdiction's requirem",
    "identity_withheld": true
   },
   {
@@ -2181,7 +2181,7 @@
   },
   {
    "server": "withheld-4f8f21cc4dde",
-   "tool": "chainmemory_register",
+   "tool": "[withheld]_register",
    "sent": {
     "name": 12345,
     "model": "x"
@@ -2195,7 +2195,7 @@
    "sent": {
     "platform": 12345
    },
-   "text": "{\n  \"error\": \"Unknown platform. See enum.\",\n  \"_meta\": {\n    \"server\": \"social-media-manager-mcp\",\n    \"version\": \"1.0.0\",\n    \"last_verified\": \"2026-Q3\",\n    \"author\": \"Elisabeth Hitz\",\n    \"homepage\": \"https://elisabethhitz.com\",\n    \"github\": \"https://github.com/closermethod/social-media-manager-mcp\",\n    \"family_note\": \"Part of the closermethod creator MCP family. Runs on top of content-hooks-mcp (post copy), content-repurposing-mcp (feed the calendar), and personal-brand-mcp (positioning).\"\n  }\n}",
+   "text": "{\n  \"error\": \"Unknown platform. See enum.\",\n  \"_meta\": {\n    \"server\": \"[withheld]\",\n    \"version\": \"1.0.0\",\n    \"last_verified\": \"2026-Q3\",\n    \"author\": \"Elisabeth Hitz\",\n    \"homepage\": \"https://elisabethhitz.com\",\n    \"github\": \"https://github.com/[withheld]\",\n    \"family_note\": \"Part of the [withheld] creator MCP family. Runs on top of content-hooks-mcp (post copy), content-repurposing-mcp (feed the calendar), and personal-brand-mcp (positioning).\"\n  }\n}",
    "identity_withheld": true
   },
   {
@@ -2259,7 +2259,7 @@
    "sent": {
     "channel": 12345
    },
-   "text": "{\n  \"error\": \"Unknown channel. See enum.\",\n  \"_meta\": {\n    \"server\": \"outreach-deliverability-mcp\",\n    \"version\": \"1.0.0\",\n    \"last_verified\": \"2026-Q3\",\n    \"author\": \"Elisabeth Hitz\",\n    \"homepage\": \"https://elisabethhitz.com\",\n    \"github\": \"https://github.com/closermethod/outreach-deliverability-mcp\",\n    \"volatility_note\": \"Platform limits and filter behavior drift. Treat numbers as conservative practitioner ranges as of last_verified — when in doubt, send less, warm longer.\",\n    \"jurisdiction_caveat\": \"CAN-SPAM / GDPR / PECR / CASL notes are orientation only, not legal advice. B2C c",
+   "text": "{\n  \"error\": \"Unknown channel. See enum.\",\n  \"_meta\": {\n    \"server\": \"[withheld]\",\n    \"version\": \"1.0.0\",\n    \"last_verified\": \"2026-Q3\",\n    \"author\": \"Elisabeth Hitz\",\n    \"homepage\": \"https://elisabethhitz.com\",\n    \"github\": \"https://github.com/[withheld]\",\n    \"volatility_note\": \"Platform limits and filter behavior drift. Treat numbers as conservative practitioner ranges as of last_verified — when in doubt, send less, warm longer.\",\n    \"jurisdiction_caveat\": \"CAN-SPAM / GDPR / PECR / CASL notes are orientation only, not legal advice. B2C c",
    "identity_withheld": true
   },
   {
@@ -2282,11 +2282,11 @@
   },
   {
    "server": "withheld-6f9a4a25ee53",
-   "tool": "watsonx_generate",
+   "tool": "[withheld]_generate",
    "sent": {
     "prompt": 12345
    },
-   "text": "Error: watsonx.ai not configured. Set WATSONX_API_KEY environment variable.",
+   "text": "Error: [withheld].ai not configured. Set [withheld]_API_KEY environment variable.",
    "identity_withheld": true
   },
   {

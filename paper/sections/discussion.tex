@@ -14,7 +14,10 @@ The behavior tracks the SDK rather than the author. The official TypeScript and
 Python SDKs and the third-party wrappers built on them all default to
 \texttt{isError}. So \ErrAsResultRateCl{} should not be read as consensus among server
 authors. It measures SDK adoption. The practical consequence is that the lever is a
-small number of libraries, and a change there reaches thousands of servers at once.
+small number of libraries, and a change there reaches thousands of servers at once,
+in either direction. Section~\ref{sec:rerun-top} shows the other direction: one breaking
+release of the Python SDK stopped \PySDKLostRate{} of the servers built on it, none of
+whose authors changed anything.
 The limit of that lever is visible here too: the unknown-tool fix recorded on the
 TypeScript SDK's tracker in March 2026 did not move the rate, and the error still
 arrives inside a successful response.
@@ -22,7 +25,7 @@ arrives inside a successful response.
 \paragraph{Silent execution is a different kind of finding}
 The unknown-tool case is a disagreement about the error channel, and the client is
 still told the call failed. Here the client is told nothing. Input validation is an
-explicit \textsc{must} in the specification with no pending proposal to relax it, so
+explicit MUST in the specification with no pending proposal to relax it, so
 this cannot be framed as the specification lagging practice. \SilentExecTS{} of the
 \NSilentExec{} are built on the official TypeScript SDK, whose low-level
 \texttt{Server} API publishes a tool's \texttt{inputSchema} and does not enforce it
@@ -30,9 +33,9 @@ this cannot be framed as the specification lagging practice. \SilentExecTS{} of 
 \NSilentExec{} separate author mistakes.
 
 The client can no longer tell the result apart from a correct one. There is no error
-code, no \texttt{isError} flag, nothing to branch on. \texttt{CLEAN}, returned for a
-scan of the integer \texttt{12345}, is indistinguishable from a real clean scan, so
-there is no retry, no argument repair, and no warning to the user. \NSilentExec{} is a
+code, no \texttt{isError} flag, nothing to branch on. An empty feed, returned for top
+stories with a limit of \texttt{"not-a-number"}, is indistinguishable from a day with
+no stories, so there is no retry, no argument repair, and no warning to the user. \NSilentExec{} is a
 lower bound: we counted any error-like token in a reply as a report.
 
 \paragraph{Startup failure and what a registry could do about it}

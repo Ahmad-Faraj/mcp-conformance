@@ -22,8 +22,8 @@ self-contained, locally-installable server, launch each in an isolated sandbox, 
 drive it through a conformance harness. The harness exercises the initialization
 lifecycle, tool listing and declared-schema validity. It then sends three inputs that
 come up in ordinary agent sessions: a call to an unknown tool, a call with a
-wrong-typed argument, and a malformed protocol frame. Every check covers a requirement that all
-observed revisions state in the same terms, and the version each server negotiates is
+wrong-typed argument, and a malformed protocol frame. Every check tests behavior that all
+observed revisions describe in the same terms, and the version each server negotiates is
 recorded with its result. Requirements stated with an RFC-2119 keyword
 (\textsf{MUST}/\textsf{SHOULD}) are graded apart from behavior the specification
 only shows in an example.
@@ -38,11 +38,19 @@ behavior of the official SDKs, which is inherited by the servers built on
 them. An open proposal would reclassify unknown-tool failures to match what the SDKs
 already do~\cite{sep2145}, and our census measures how much of the ecosystem already
 behaves that way. Separately, \SilentExecRateCl{} of responding servers run a tool on input that
-violates the schema they publish, and return a well-formed result. In one
-case a tool that scans code for package imports was handed an integer and replied
-\texttt{CLEAN}, with neither an error code nor an \texttt{isError} flag a client could
-act on. The specification requires servers to validate all tool inputs. A further \MalformedDiesRateCl{} fail to recover from a malformed frame and
+violates the schema they publish, and return a well-formed result. Asked for the
+top stories on Hacker News with a limit of \texttt{"not-a-number"}, one returned an
+empty feed. An agent reads that as there being no stories, and nothing in the reply
+marks it as an error. The specification requires servers to validate all tool inputs. A further \MalformedDiesRateCl{} fail to recover from a malformed frame and
 answer nothing further, although JSON-RPC 2.0 requires a reply to every request.
+
+We then re-ran the same frame on \SeptDate{}. The servers were launched at the same
+versions with the same commands, and \NLost{} that had answered in July no longer did. Most of the loss has one cause. The
+official Python SDK published a breaking major release nine days after our snapshot,
+servers that declared the dependency as a range resolved to it, and they no longer
+start: \PySDKLostCI{} of the Python-SDK servers that worked in July. Pinning the SDK
+below the new release restores them. Conformance among the servers that still start
+did not move.
 
 We organize the study around five research questions:
 
@@ -62,18 +70,21 @@ We organize the study around five research questions:
     package registry a server ships on?
 \end{itemize}
 
-This paper makes four contributions:
+This paper makes five contributions:
 \begin{itemize}
   \item \textbf{A protocol-level conformance measurement of the MCP ecosystem by
     execution} (C1): prior ecosystem studies read code and metadata. We install every
     eligible server in the registry, speak the protocol to it, and test how it
     responds to inputs.
-  \item \textbf{A two-dimensional taxonomy} (C2) of startup-failure classes and
-    conformance-violation classes, each tied to a concrete agent-facing consequence.
+  \item \textbf{A taxonomy} (C2) of why installable servers fail to start, and of
+    what a server that fails to reject a bad argument returns to the client.
   \item \textbf{A root-cause account of the spec--practice divergence} (C3): by
     attributing each server to its SDK, we show that the dominant divergence comes from defaults in the official SDKs.
-  \item \textbf{Open infrastructure} (C4): a conformance harness that extends the
-    official suite's scenarios to arbitrary deployed servers, plus the released
-    measurement dataset. Others can repeat the census, and authors can check
-    their own servers.
+  \item \textbf{Open infrastructure} (C4): a conformance harness whose checks align
+    with the official suite's categories and that runs against any deployed stdio
+    server, with a test suite, and the released measurement dataset. Others can
+    repeat the census, and authors can check their own servers.
+  \item \textbf{A dated natural experiment} (C5): re-running the same frame isolates
+    a single SDK release that stopped more than half of the Python-SDK servers that had
+    worked, confirmed by reversing it.
 \end{itemize}

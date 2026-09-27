@@ -6,9 +6,11 @@ runs with no verdict about the server. We report them with the funnel and exclud
 from every denominator, which leaves \Nprobed{} graded servers.
 
 \subsection{RQ1: Runnability and the startup funnel}
-\HandshakeCountCorr{} of \Nprobed{} servers (\HandshakeRateCorr{}) complete the MCP
-handshake once the entry-point artifact described in Section~\ref{sec:rq5} is
-corrected, against an uncorrected census figure of \HandshakeRateCl{}. Roughly two in
+Once the entry-point artifact described in Section~\ref{sec:rq5} is corrected,
+\HandshakeCountCorr{} of \Nprobed{} servers complete the MCP handshake, a rate of
+\HandshakeRateCorr{}, against an uncorrected census figure of \HandshakeRateCl{}. Both
+are lower bounds, because the census did not pass the launch arguments some registry
+entries declare (Section~\ref{sec:threats}). Roughly two in
 five never serve the protocol, and Figure~\ref{fig:failures} classifies those
 failures by cause.
 
@@ -114,9 +116,9 @@ error-reporting divergence. \SilentExecTS{} of the \NSilentExec{} are built on
 the official TypeScript SDK and \SilentExecPy{} on either Python SDK, against
 responding populations of \SDKPopTS{} and \SDKPopPy{} respectively. A behavior absent
 from one language ecosystem and concentrated in another points to the library, and we
-went on to test the SDKs (Section~\ref{sec:sdk-probe}). On
-\texttt{@modelcontextprotocol/sdk} 1.30.0, the current release at the time of writing,
-a server built with the low-level \texttt{Server} API publishes an
+went on to test the SDKs (Section~\ref{sec:sdk-probe}). We ran this on
+\texttt{@modelcontextprotocol/sdk} 1.30.0 and again on 1.30.1, the current release on
+27 September 2026. On both, a server built with the low-level \texttt{Server} API publishes an
 \texttt{inputSchema} in \texttt{tools/list} and the SDK then does not check
 \texttt{tools/call} arguments against it. A tool declaring a string property, called
 with an integer, runs and returns a well-formed result. The same tool built with the
@@ -150,14 +152,18 @@ probe asked a low-level server for a tool it does not have and received that ser
 ordinary answer, reporting a clean scan of code it was never given. Nothing in the
 response marks the tool as missing.
 
-In the recorded responses, a code-scanning tool asked to scan the integer
-\texttt{12345} answered \texttt{CLEAN}. A prompt-scoring tool returned a complete
-rubric with per-dimension sub-scores for the same integer, and a project
-registry confirmed that a project named \texttt{12345} had been registered. All three
-are well-formed successful results, and none answers what was asked. At the protocol
-level none can be told apart from a correct answer: there is no
-error code and no \texttt{isError} flag. Each server published a schema that would
-have caught the call and then left it unenforced.
+Table~\ref{tab:consequences} shows what came back. The clearest cases are those
+where the argument cannot be turned into what the schema asked for. A Hacker News tool
+asked for top stories with a limit of \texttt{"not-a-number"} returned an empty feed,
+which an agent reads as there being no stories. A regulatory tool asked for deadlines
+within \texttt{"not-a-number"} days returned a dated snapshot, and a trading tool
+returned a report whose requested and returned counts are both null. In the other
+cases an integer was sent where a string was declared, and a runtime that stringifies
+it may answer correctly: a code scanner handed \texttt{12345} reported no imports in
+it. Every reply is a well-formed success. At the protocol level none can be told apart
+from a correct answer, since there is no error code and no \texttt{isError} flag, and
+each server published a schema that would have caught the call and then left it
+unenforced.
 
 \input{tables/consequences}
 
@@ -205,7 +211,9 @@ into that SDK's family. That leaves the residual as the sharpest contrast in the
 table: \SDKNoSDKRate{} of its \SDKNoSDK{} servers answer an unknown tool with an
 \texttt{isError} result, against about nine in ten in every official-SDK family.
 A few SDK defaults, whether used first-hand or through wrappers, account for this
-behavior across the ecosystem, and where they are absent so is the behavior.
+behavior across the ecosystem, and where no known SDK is present it falls to about
+half. The residual is not free of SDKs, only of SDKs our attribution can see, and
+the next paragraph shows what one of them does.
 
 \paragraph{A third SDK, found inside the residual}
 A maintainer's report gave us a way to test that claim on a library we never sampled

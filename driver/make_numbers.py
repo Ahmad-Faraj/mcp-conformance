@@ -341,6 +341,38 @@ def main():
         go_unknown_proto = sum(1 for n in _responding
                                if _verdict(n, "tools-call-unknown") == "pass")
 
+    # Servers the July census launched without the arguments their registry entry
+    # declares. The census used those arguments only to exclude servers with
+    # required input and never passed the rest, so a server whose entry says to run
+    # it as "tool serve" was started as "tool".
+    from run_batch import render_args as _render
+    _by_name = {r.get("server_name"): r for r in rows}
+    args_changed, args_declared = [], []
+    with open(args.frame, encoding="utf-8") as _f:
+        for _line in _f:
+            _e = json.loads(_line)
+            if _e["meta"].get("status") != "active":
+                continue
+            _srv = _e["server"]
+            _pk = list(eligible_packages(_srv))
+            if not _pk or _srv["name"] not in _by_name:
+                continue
+            _p = _pk[0]
+            if (_p.get("packageArguments") or []) + (_p.get("runtimeArguments") or []):
+                args_declared.append(_srv["name"])
+                if _render(_p.get("runtimeArguments")) + _render(_p.get("packageArguments")):
+                    args_changed.append(_srv["name"])
+    _hs = lambda names: sum(1 for x in names if _by_name[x].get("handshake_ok"))
+    _rest = [r["server_name"] for r in rows if r["server_name"] not in set(args_declared)]
+    rate_changed = _hs(args_changed) / max(len(args_changed), 1)
+    rate_rest = _hs(_rest) / max(len(_rest), 1)
+    # Bound: if every affected server started as often as the rest do.
+    args_bound_pp = 100 * max(rate_rest - rate_changed, 0) * len(args_changed) / len(rows)
+
+    # Flags set by make_release before withholding strips the text they read.
+    n_outbound = sum(1 for r in attempted if r.get("outbound_error_logged"))
+    n_cred = sum(1 for r in attempted if r.get("credential_redacted"))
+
     macros = {
         "Nframe": f"{frame_n:,}",
         "NFunnelInactive": f"{funnel['inactive']:,}",
@@ -363,6 +395,13 @@ def main():
         "NInterruptedDepressionPP": f"{100*n_interrupted_nohs/n_attempted:.1f}",
         "Nprobed": f"{n:,}",
         "NNeedsConfig": f"{n_needs_config:,}",
+        "NArgsDeclared": f"{len(args_declared):,}",
+        "NArgsChanged": f"{len(args_changed):,}",
+        "ArgsChangedRate": f"{100*rate_changed:.1f}" + chr(92) + "%",
+        "ArgsRestRate": f"{100*rate_rest:.1f}" + chr(92) + "%",
+        "ArgsBoundPP": f"{args_bound_pp:.1f}",
+        "OutboundFailPct": f"{100*n_outbound/n_attempted:.1f}" + chr(92) + "%",
+        "NCredRedacted": f"{n_cred:,}",
         "NMalformedOpaque": f"{n_opaque:,}",
         "NMalformedGo": f"{n_go:,}",
         "NGoResidual": f"{go_n:,}",

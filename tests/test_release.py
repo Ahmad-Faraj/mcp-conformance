@@ -85,3 +85,49 @@ def test_september_rows_carry_their_break_cause():
         rows = [json.loads(line) for line in f]
     assert all("rerun_break_cause" in r for r in rows)
     assert sum(1 for r in rows if r["rerun_break_cause"] == "python-sdk-2") > 0
+
+
+def test_withheld_reply_text_is_scrubbed_of_the_servers_own_identifiers():
+    """A tool's reply can name its own product or repository.
+
+    Withholding the server's name while publishing that reply withheld nothing: a
+    regulatory tool reported the repository that served its snapshot. The release
+    removes each withheld server's identifying strings from its reply text.
+    """
+    import sys
+    sys.path.insert(0, str(RELEASE.parent.parent / "driver"))
+    from make_release import identifying_tokens, scrub_tokens
+
+    entry = {"server": {"name": "io.github.acme/deadline-tracker",
+                        "packages": [{"identifier": "@acme/deadline-tracker"}],
+                        "repository": {"url": "https://github.com/acme/deadline-tracker"}}}
+    toks = identifying_tokens("io.github.acme/deadline-tracker", entry)
+    rec = {"tool": "upcoming", "text": '{"served_by": "acme/deadline-tracker", "n": 3}'}
+    out = scrub_tokens(rec, toks)
+    assert "acme" not in out["text"].lower()
+    assert "deadline-tracker" not in out["text"].lower()
+    assert '"n": 3' in out["text"], "non-identifying content must survive"
+
+
+def test_withheld_set_cannot_be_recovered_by_subtraction():
+    """The census is complete, so the frame must not name what the census withholds.
+
+    If it did, eligible names in the frame minus names in the census would be
+    exactly the list of servers with a security-relevant finding.
+    """
+    import sys
+    sys.path.insert(0, str(RELEASE.parent.parent / "driver"))
+    from run_batch import eligible_packages
+
+    census = released_names()
+    eligible_real = set()
+    with (RELEASE / "frame_latest.jsonl").open(encoding="utf-8") as f:
+        for line in f:
+            e = json.loads(line)
+            if e["meta"].get("status") != "active":
+                continue
+            s = e["server"]
+            if list(eligible_packages(s)) and not s["name"].startswith("withheld-"):
+                eligible_real.add(s["name"])
+    recovered = eligible_real - census
+    assert not recovered, f"{len(recovered)} withheld servers recoverable, e.g. {sorted(recovered)[:3]}"

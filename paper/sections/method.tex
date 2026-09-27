@@ -26,11 +26,11 @@ launch without provisioning secrets, which limits what mass execution can do to
 third-party systems and keeps the population reproducible.
 
 Applied in order, the criteria remove \NFunnelInactive{} entries whose registry status
-is not active, \NFunnelRemote{} that declare no package and are reachable only as a
-hosted endpoint, \NFunnelNoStdio{} whose packages use another transport,
-\NFunnelOtherReg{} whose stdio packages are published outside npm and PyPI (OCI images,
-NuGet, MCP bundles), \NFunnelEnv{} that require an environment variable with no default,
-and \NFunnelArg{} that require a launch argument with no default. \NFunnelEligible{}
+is not active and \NFunnelRemote{} that declare no package, being reachable only as a
+hosted endpoint. They then remove \NFunnelNoStdio{} whose packages use another
+transport and \NFunnelOtherReg{} whose stdio packages are published outside npm and
+PyPI (OCI images, NuGet, MCP bundles). Last, \NFunnelEnv{} require an environment
+variable with no default and \NFunnelArg{} a launch argument with no default. \NFunnelEligible{}
 servers remain. The frame is the denominator for every rate, and we launch all of it,
 which makes the measurement a census of the eligible population rather than a sample.
 
@@ -80,8 +80,12 @@ where an analogue exists:
     example, and it uses no RFC-2119 \textsf{MUST}/\textsf{SHOULD} keyword. A
     diverging response is never scored as a ``violation''. Each server's choice
     between the two mechanisms is recorded (see \textsf{error-as-result} below).
-  \item \textbf{tools-call-invalid-args}: for a tool with a typed required
-    property, calling it with a wrong-typed value should be rejected. The spec is
+  \item \textbf{tools-call-invalid-args}: for the first listed tool with a typed
+    property, calling it with a value of the wrong type should be rejected. The
+    harness poisons the first typed required property when the schema declares
+    required properties, and the first typed property when it declares none; in the September run, where this was recorded, the
+    poisoned property was optional in \PoisonOptionalPct{} of calls. A schema-declared
+    type binds whether or not the property is required. The spec is
     ambiguous here, since it lists ``Invalid arguments'' under Protocol Errors
     but ``Invalid input data'' under Tool Execution Errors. We count \emph{either} a
     protocol error \emph{or} an \texttt{isError} result as acceptable, and flag only

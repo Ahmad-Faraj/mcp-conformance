@@ -1,30 +1,29 @@
 \begin{table*}[t]
 \centering
-\caption{Servers that ran a tool on input their published schema rejects and
-returned ordinary-looking output. Inputs are the harness's type-poisoned values, and
-outputs are verbatim but truncated. None carries an error indication a client
-could act on.}
+\caption{Servers that ran a tool on an argument their published schema rejects
+and returned an ordinary result. In the first three the argument cannot be
+coerced into the declared type, and each reply answers a question that was not
+asked. In the last two an integer was sent where a string was declared, and a
+runtime that stringifies it may answer correctly (Section~\ref{sec:threats}).
+Replies are verbatim, collapsed to one line and truncated. None carries an error
+indication a client could act on.}
 \label{tab:consequences}
 \small
-\begin{tabular}{p{0.30\linewidth}p{0.20\linewidth}p{0.42\linewidth}}
+\begin{tabular}{p{0.24\linewidth}p{0.22\linewidth}p{0.46\linewidth}}
 \toprule
-Tool & Argument sent & Result returned to the client \\
+Tool & Argument sent & Reply returned to the client \\
 \midrule
-\texttt{scan\_code\_imports} & \texttt{code: 12345} &
-``CLEAN --- No npm package imports found in the provided code'' \\
+\texttt{hn\_top\_stories} & \texttt{limit: "not-a-number"} & \texttt{\{ "count": 0, "feed": "top", "stories": [] \}} \\
 \addlinespace
-\texttt{register\_project} & \texttt{name: 12345} &
-``Project 12345 registered successfully. Framework: generic'' \\
+\texttt{upcoming\_deadlines} & \texttt{within\_days: "not-a-number"} & \texttt{\{ "snapshot\_as\_of": "2026-05-30T04:25:00Z", "snapshot\_source": "bundled", "served\_by": "[withheld]/[withhel...} \\
 \addlinespace
-\texttt{score\_prompt} & \texttt{prompt: 12345} &
-a complete scoring rubric: \texttt{score: 8}, \texttt{grade: "F"}, with per-dimension
-sub-scores \\
+\texttt{get\_recent\_trades} & \texttt{limit: "not-an-int"} & \texttt{\{ "generated\_at": "2026-06-18T01:15:05.152403+00:00", "requested": null, "returned": null, "slice\_win\_rate"...} \\
 \addlinespace
-\texttt{upcoming\_deadlines} & \texttt{within\_days: "not-a-number"} &
-a dated regulatory snapshot with a populated result envelope \\
+\midrule
+\texttt{scan\_code\_imports} & \texttt{code: 12345} & \texttt{ CLEAN  No npm package imports found in the provided code (only built-ins / local paths).} \\
 \addlinespace
-\texttt{search} & \texttt{query: 12345} &
-\texttt{\{"results":[]\}} \\
+\texttt{register\_project} & \texttt{name: 12345} & \texttt{Project "12345" registered successfully. Path: x Framework: generic} \\
+\addlinespace
 \bottomrule
 \end{tabular}
 \end{table*}

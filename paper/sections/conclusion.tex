@@ -2,18 +2,27 @@ Earlier studies measured the MCP server ecosystem statically, or ran servers to 
 for vulnerabilities. We installed every eligible server in the official registry,
 launched each in a disposable sandbox, and tested whether it follows the protocol.
 
-\HandshakeRateCorr{} complete a handshake. The rest never serve the protocol, for the
+Of the installable servers, \HandshakeRateCorr{} complete a handshake. The rest
+never serve the protocol, for the
 reasons broken down in Figure~\ref{fig:failures}. Of the servers that respond,
 \ErrAsResultRateCl{} report an unknown tool in the same way, and the cause is the SDKs
 they are built on as a direct dependency or through a third-party wrapper.
 An open proposal would change the specification to match this behavior, and our
 numbers show how much of the ecosystem it already describes. A smaller group,
 \SilentExecRateCl{}, run a tool on input their own schema rejects and return an answer
-with no sign that anything is wrong. One was asked to scan an integer for package
-imports and reported it clean, and the specification makes input validation a
+with no sign that anything is wrong. One, asked for top stories with a limit that is
+not a number, returned an empty feed, and the specification makes input validation a
 requirement these servers do not meet.
+
+Re-running the same servers sixty-nine days later showed how far that dependence on
+the SDKs reaches. A breaking release of the official Python SDK, published nine days
+after our snapshot, stopped \PySDKLostRate{} of the Python-SDK servers that had worked,
+through dependency ranges their authors never touched, and pinning the SDK below it
+restores them. Conformance among the servers that still ran did not change.
 
 A static scan or a registry crawl shows none of this. The harness and the dataset are
 public, and others can repeat the measurement, extend it to remote and credentialed
 servers, or check their own servers before publishing. Because the error-reporting
-and input-validation behavior comes from a few SDKs, it can be changed there.
+and input-validation behavior comes from a few SDKs, it can be changed there, and the
+re-run shows that a change there reaches a large part of the ecosystem at once,
+whichever direction it goes.

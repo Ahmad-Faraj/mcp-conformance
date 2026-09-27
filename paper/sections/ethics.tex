@@ -19,12 +19,13 @@ so could send real requests to third-party systems.
 
 \paragraph{Observed side effects of networked measurement}
 Because the census ran with the network available, we audited the captured output
-for evidence that server code produced effects outside its container. At least \(1.3\%\) of servers attempted an
+for evidence that server code produced effects outside its container. At least \OutboundFailPct{} of servers attempted an
 outbound connection that failed and logged an error. A successful connection leaves
-no trace in the captured output, and this figure is a lower bound. Five servers
-emitted live credential material into their own logs (session tokens they had
-generated), and one auto-provisioned an API key and account against a third-party
-service. That last effect is the class our frame's exclusion of credential-requiring
+no trace in the captured output, and this figure is a lower bound. Our redactor caught credential-shaped values in the output of
+\NCredRedacted{} servers, and on reading each one, four were live: three printed
+session tokens they had generated for local use, and one auto-provisioned an API key
+and account against a third-party service. The fifth printed a configuration example
+whose key was a placeholder. The provisioned key is the class our frame's exclusion of credential-requiring
 servers was meant to prevent, and we have redacted every such value from the released
 dataset and asked the service to revoke the provisioned key and delete the account.
 Excluding servers that \emph{declare} required
@@ -52,13 +53,13 @@ maintainer corrected our severity assessment, and the paper follows that correct
 TypeScript SDK's low-level \texttt{Server} API (Section~\ref{sec:consequences}) to
 the SDK maintainers, who have labeled it for design work on both the 1.x and 2.x
 lines. We did not open an issue against each of the \NSilentNotices{} servers that run a
-tool on an argument their own schema rejects. The defect we identify there is in the
-library rather than in those servers: \SilentExecTS{} of them are built on the SDK
-whose low-level API publishes a schema it does not enforce, and a per-server report
-would tell an author their code is at fault where our own analysis says it is not.
+tool on an argument their own schema rejects. The defect we identify there belongs to the library.
+\SilentExecTS{} of them are built on the SDK whose low-level API publishes a schema it
+does not enforce, and a per-server report would tell an author their code is at fault
+where our own analysis says it is not.
 Notices are drafted and released with the harness so that any maintainer can check
-their own server, their identities are withheld from the dataset, and the finding is
-reported where it can be fixed. The
+their own server, their identities are withheld from the dataset, and the report went to the SDK, which
+can fix it. The
 remaining findings concern unknown-tool handling and stdout contamination, and they
 are of lower severity and appear only in aggregate.
 
@@ -68,8 +69,13 @@ remain linkable across files. That set includes every server in the silent-execu
 class. Naming a server beside a transcript of it answering a poisoned call is a
 claim about its author's work. The empirical standard for secondary data asks that
 the reputation of the subjects be respected in the reporting of a study as well as
-in its conduct. Identities are restored only where a maintainer has fixed the
-defect or asked to be named.
+in its conduct. The registry snapshot in the release carries the same pseudonyms, so the withheld
+set cannot be recovered from the release by subtracting the servers the census names
+from the servers the frame lists. The registry itself is public, and someone who
+compared the release with an archived copy of it could still recover which servers
+were withheld. The comparison cannot reveal which finding belongs to which server,
+nor any transcript, and we withhold both. Identities are restored only
+where a maintainer has fixed the defect or asked to be named.
 
 \paragraph{Registry and maintainer impact}
 Our crawl pages sequentially through the registry's public API and backs off on

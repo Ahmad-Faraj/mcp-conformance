@@ -54,29 +54,33 @@ Protocol Registry}
 \affil[1]{\orgdiv{Faculty of Computers and Informatics},
 \orgname{Suez Canal University}, \city{Ismailia}, \country{Egypt}}
 
-\abstract{The Model Context Protocol (MCP) connects LLM agents to external tools,
-and public registries now list tens of thousands of MCP servers. Most empirical
-studies of this ecosystem are \emph{static}: they scan source code, mine issue
-trackers, or read registry metadata. None calls the tools of registry servers at
-scale to check whether the servers start and follow the protocol. This paper does.
-From the official registry (\Nframe{} unique servers) we run a complete census of
-all \Nprobed{} self-contained, locally-installable servers, each launched in an
-isolated sandbox and driven through a conformance harness. The harness checks the
-initialization lifecycle and declared-schema validity across every tool a server
-lists, then sends an unknown tool name, an argument of the wrong type and a
-malformed protocol frame. Only \HandshakeRateCorr{} of installable servers start
-and complete a handshake, and \ErrAsResultRateCl{} of those that respond report an
-unknown tool the same way, which differs from the error reporting the
-specification illustrates. We trace this to SDK defaults, and an open
-specification proposal would make it the specified behavior. \SilentExecRateCl{}
-execute a tool on an argument their own declared schema rejects, although the
-specification requires servers to validate all tool inputs. The result is
-well-formed, and a client cannot tell it apart from a correct answer. Both
-behaviors come from the SDKs and can be measured and fixed there. We release the
-harness with the disclosure-filtered dataset.}
+\abstract{
+The Model Context Protocol (MCP) connects LLM agents to external tools, and public
+registries now list tens of thousands of MCP servers. Most empirical studies of this
+ecosystem are \emph{static}: they scan source code, mine issue trackers, or read
+registry metadata. None calls the tools of registry servers at scale to check whether
+the servers start and follow the protocol. This paper does. From the official registry
+(\Nframe{} unique servers) we run a complete census of all \Nattempted{} self-contained, locally-installable
+servers, each launched in an isolated sandbox. A conformance harness then sends each
+one an unknown tool name, an argument of the wrong type and a malformed protocol
+frame. Only \HandshakeRateCorr{} of installable
+servers start and complete a handshake. Of those that respond, \ErrAsResultRateCl{}
+report an unknown tool in a way that differs from the error reporting the
+specification illustrates, and an open proposal would make it the specified behavior.
+Another \SilentExecRateCl{} run a tool on an argument their own declared schema rejects and
+return an ordinary result, although the specification requires servers to validate
+all tool inputs; asked for top stories with a limit of \texttt{"not-a-number"}, one
+returned an empty feed. Both behaviors trace to SDK defaults rather than to server
+authors. Re-running the same frame sixty-nine days later shows how far that dependence
+reaches: a breaking release of the official Python SDK, published nine days after our
+snapshot, stopped \PySDKLostRate{} of the Python-SDK servers that had worked, and
+pinning the SDK below it restores them. Conformance among the servers that still ran
+did not change. We release the harness, its test suite and the disclosure-filtered
+dataset.}
 
 \keywords{Model Context Protocol, conformance testing, mining software
-repositories, ecosystem measurement, LLM agents, responsible disclosure}
+repositories, software ecosystems, dependency management, LLM agents, responsible
+disclosure}
 
 \maketitle
 
@@ -136,10 +140,7 @@ the third-party services some of them contacted.
 \bmhead{Data and code availability}
 The conformance harness is available at \ArtifactURL{} with the analysis pipeline
 and the disclosure-filtered census dataset, and the code that produced the census
-is tagged \texttt{census-v1}. The release contains one record per probed server
-(every verdict behind every number in this paper). It also carries the raw JSON-RPC
-transcripts and the registry snapshot that defines the sampling frame, which is
-everything needed to recompute the eligibility funnel and the reported rates. Two
+is tagged \texttt{census-v1}. The release contains one record per probed server, carrying every verdict behind every number in this paper, and the same for the September re-run. It also holds the raw JSON-RPC transcripts, the registry snapshot that defines the sampling frame, the classified responses to the invalid-argument check, the blinded rating labels with their codebook, the pinning experiment and the eligibility validation. Together they recompute the funnel and every reported rate, and a test suite that runs on every change checks the harness verdicts and the release itself. Two
 filters are applied and documented with the data. The identities of \NWithheld{}
 servers with security-relevant findings are withheld pending disclosure, as is one
 server whose maintainer asked to be removed. These servers keep every measurement,

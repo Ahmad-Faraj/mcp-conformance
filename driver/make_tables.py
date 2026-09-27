@@ -72,7 +72,7 @@ def verdicts_table(rows):
         for ch in r.get("checks", []):
             tally[ch["id"]][ch["verdict"]] += 1
     out = [r"\begin{table}[t]", r"\centering",
-           r"\caption{Verdict distribution per check over responding servers, with 95\% Wilson CIs on the pass (or documented) rate.}",
+           r"\caption{Verdict distribution per check over responding servers, with 95\% Wilson CIs on the pass rate. For \textsf{tools-call-unknown}, Other is almost entirely error-as-result, which is not scored as a failure, so its low pass rate measures how many servers emit the protocol error rather than how many conform. Other is otherwise skip or warn.}",
            r"\label{tab:verdicts}", r"\begin{tabular}{lrrrr}", r"\toprule",
            r"Check & Pass & Fail & Other & Pass rate (95\% CI) \\", r"\midrule"]
     for cid in CHECK_ORDER:

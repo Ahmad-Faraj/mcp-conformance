@@ -188,6 +188,62 @@ def _scrub_text(obj):
                 _scrub_text(v)
 
 
+# A failed outbound connection leaves a recognisable line in the server's output.
+# A successful one leaves nothing, so a count built on these is a lower bound.
+OUTBOUND_FAIL = re.compile(
+    r"ECONNREFUSED|ENOTFOUND|EAI_AGAIN|ETIMEDOUT|ECONNRESET|getaddrinfo|"
+    r"Connection refused|Name or service not known|Temporary failure in name "
+    r"resolution|Failed to establish a new connection|NewConnectionError|"
+    r"ConnectError|ConnectionError|fetch failed|socket hang up|"
+    r"Could not resolve host|Network is unreachable", re.I)
+
+
+def outbound_failure_logged(row: dict) -> bool:
+    parts = list(row.get("stderr_tail") or []) + list(row.get("stdout_noise") or [])
+    parts += [c.get("detail") or "" for c in row.get("checks") or []]
+    return bool(OUTBOUND_FAIL.search("\n".join(map(str, parts))))
+
+
+def identifying_tokens(real: str, entry: dict | None) -> set[str]:
+    """Strings that would name a withheld server if they appeared in its output.
+
+    A tool's own reply often names its product, its publisher or its repository:
+    a regulatory tool reported which repository served its snapshot, a scoring
+    tool printed its brand. Withholding the server's name while publishing that
+    reply withholds nothing, so these are removed from the reply text too.
+    """
+    toks = {real, real.split("/")[-1]}
+    ns = real.split("/")[0].split(".")[-1]
+    toks.add(ns)
+    srv = (entry or {}).get("server", {})
+    for p in srv.get("packages") or []:
+        ident = p.get("identifier") or ""
+        toks |= {ident, ident.split("/")[-1], ident.lstrip("@").split("/")[0]}
+    repo = (srv.get("repository") or {}).get("url") or ""
+    if "github.com/" in repo:
+        owner_repo = repo.split("github.com/")[1].strip("/")
+        if owner_repo.endswith(".git"):
+            owner_repo = owner_repo[:-4]
+        toks |= {owner_repo, owner_repo.split("/")[0], owner_repo.split("/")[-1]}
+    # Short tokens would erase ordinary words; four characters is the floor.
+    return {t for t in toks if t and len(t) >= 4}
+
+
+def scrub_tokens(obj, tokens):
+    """Replace every identifying token in every string of a record, longest first."""
+    if not tokens:
+        return obj
+    pat = re.compile("|".join(re.escape(t) for t in sorted(tokens, key=len, reverse=True)),
+                     re.I)
+    if isinstance(obj, str):
+        return pat.sub("[withheld]", obj)
+    if isinstance(obj, list):
+        return [scrub_tokens(v, tokens) for v in obj]
+    if isinstance(obj, dict):
+        return {k: scrub_tokens(v, tokens) for k, v in obj.items()}
+    return obj
+
+
 def withhold_frame_entry(obj: dict, alias: str) -> dict:
     """Strip identifying strings from a registry entry, keeping the fields the
     eligibility funnel reads (package registry type, transport, remotes)."""
@@ -241,8 +297,11 @@ def main():
     withheld, redactions, n_sensitive = {}, 0, 0
     released = []
     for r in rows:
+        # Classified before redaction and withholding strip the text they read.
+        r["outbound_error_logged"] = outbound_failure_logged(r)
         r, n = redact_any(r)
         redactions += n
+        r["credential_redacted"] = n > 0
         # Stable, non-identifying publisher key, derived BEFORE pseudonymisation.
         # Without it the publisher-clustering robustness check cannot be reproduced
         # from the release: a pseudonym has no "namespace/" prefix, so each withheld
@@ -385,7 +444,15 @@ def main():
                 obj, n = redact_any(json.loads(line))
                 frame_redactions += n
                 name = obj.get("server", {}).get("name")
-                if name in OPT_OUT:
+                # Every withheld server, not only the opt-out. The census is complete,
+                # so a frame that still named the withheld servers would give them
+                # away by subtraction: eligible names in the frame, minus names in the
+                # census, is exactly the list of servers with a security-relevant
+                # finding. The same alias also keeps frame and census joinable, which
+                # the launch-argument count needs.
+                if name in withheld:
+                    obj = withhold_frame_entry(obj, withheld[name])
+                elif name in OPT_OUT:
                     obj = withhold_frame_entry(obj, pseudonym(name, key))
                 g.write(json.dumps(obj, ensure_ascii=False) + "\n")
 
@@ -397,16 +464,27 @@ def main():
     # checked from the release alone. Server identities are replaced by the same
     # pseudonyms used elsewhere, and the rating key, which maps an item back to its
     # server, stays unreleased.
+    frame_by_name = {}
+    _fp = DATA / "frame_latest.jsonl"
+    if _fp.exists():
+        with _fp.open(encoding="utf-8") as _f:
+            for _line in _f:
+                _e = json.loads(_line)
+                frame_by_name[_e["server"]["name"]] = _e
     src_cons = DATA / "consequences.json"
     if src_cons.exists():
         cons = json.loads(src_cons.read_text(encoding="utf-8"))
         for bucket, rows in cons.items():
             if not isinstance(rows, list):
                 continue
-            for r in rows:
+            for i, r in enumerate(rows):
                 if isinstance(r, dict) and r.get("server") in withheld:
-                    r["server"] = withheld[r["server"]]
+                    real = r["server"]
+                    toks = identifying_tokens(real, frame_by_name.get(real))
+                    r = scrub_tokens(r, toks)
+                    r["server"] = withheld[real]
                     r["identity_withheld"] = True
+                    rows[i] = r
         cons, _ = redact_any(cons)
         (out / "consequences.json").write_text(
             json.dumps(cons, ensure_ascii=False, indent=1), encoding="utf-8")
