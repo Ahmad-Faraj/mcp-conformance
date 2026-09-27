@@ -131,3 +131,17 @@ def test_withheld_set_cannot_be_recovered_by_subtraction():
                 eligible_real.add(s["name"])
     recovered = eligible_real - census
     assert not recovered, f"{len(recovered)} withheld servers recoverable, e.g. {sorted(recovered)[:3]}"
+
+
+def test_every_release_file_is_tracked_by_git():
+    """A release file that exists only on the machine that built it is invisible to
+    a reviewer's clone, and twice a number reproduced here and not on a clean clone
+    for exactly that reason. This fails locally, before the push.
+    """
+    import subprocess
+    root = RELEASE.parent.parent
+    tracked = set(subprocess.run(["git", "ls-files", "data/release"], cwd=root,
+                                 capture_output=True, text=True).stdout.split())
+    on_disk = {p.relative_to(root).as_posix() for p in RELEASE.rglob("*") if p.is_file()}
+    untracked = sorted(on_disk - tracked)
+    assert not untracked, f"release files not tracked by git: {untracked}"

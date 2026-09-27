@@ -234,8 +234,10 @@ def main():
     # entry specifies is the right one, so its outcome replaces the census outcome
     # in either direction: a server that starts only with its arguments counts, and
     # one that stops starting when given them counts against.
-    _args_p = _beside(args.inp, "args_reprobe.jsonl")
-    args_rows = load(_args_p) if _args_p.exists() else []
+    # Required, like the other companions: a missing file used to mean no
+    # correction, which on a clean clone printed a different headline without error.
+    _args_p = _require(_beside(args.inp, "args_reprobe.jsonl"))
+    args_rows = load(_args_p)
     _census_ok = {r.get("server_name"): bool(r.get("handshake_ok")) for r in rows}
     _raw_ok = {r.get("server_name"): bool(r.get("handshake_ok")) for r in args_rows}
     _drift = {r.get("server_name"): r.get("drift_cause") for r in args_rows}

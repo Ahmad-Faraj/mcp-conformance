@@ -25,6 +25,8 @@ data/release/*
 # the dependency-graph SDK attribution.
 !data/release/repo_languages.csv
 !data/release/residual_languages.csv
+# The launch-argument re-probe; the corrected headline reads it.
+!data/release/args_reprobe.jsonl
 # The September re-run of the same frame, and the pinning experiment that
 # establishes what broke the servers it lost.
 !data/release/probe_census_sept.jsonl
