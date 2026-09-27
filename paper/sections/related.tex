@@ -9,11 +9,13 @@ specification is versioned by date, and servers may negotiate down to a version 
 support.
 
 \subsection{Static studies of the MCP ecosystem}
-The ecosystem has been studied at scale but rarely by running it, and the two
-peer-reviewed studies of this ecosystem are both static. One analyzes source
-and metadata for roughly 1,900 GitHub-sourced servers with static scanners and
-code-smell detectors~\cite{mcpfirstglance}. The other surveys the protocol's
-ecosystem and its security threats~\cite{mcplandscape}. Ours differs on both axes: the
+The ecosystem has been studied at scale but rarely by running it, and the
+peer-reviewed studies of it are static. One analyzes source and metadata for roughly
+1,900 GitHub-sourced servers with static scanners and code-smell
+detectors~\cite{mcpfirstglance}. Another surveys the protocol's ecosystem and its
+security threats~\cite{mcplandscape}. A third examines 67,057 servers across six
+registries and finds registry weaknesses that allow a server's identity to be
+hijacked, again by static analysis~\cite{mcpfirstlooksecurity}. Ours differs on both axes: the
 population comes from the official registry a client resolves against, and every
 server is executed.
 
@@ -23,8 +25,12 @@ marketplace data without running any of them~\cite{mcpcrawler}. A companion data
 effort catalogues 3,238 candidate MCP
 repositories on GitHub and classifies them by operational role, again from repository evidence~\cite{mcpgithubdataset}, and a parallel line studies
 the \emph{application} side, characterizing how 1,723 MCP applications configure and
-supervise the servers they consume~\cite{mcpapps}. Fault taxonomies take a third
-route and mine GitHub issues~\cite{runtimefaults,realfaults}. One finds tool faults
+supervise the servers they consume~\cite{mcpapps}. A census of the registry's version
+history finds that 51.1\% of servers with more than one version changed what they
+advertise between versions, most of them without notice, and that such drift
+predicts security findings~\cite{mcpsilentdrift}; it reads each version's metadata and
+source and runs none of them. Fault taxonomies take another route and mine GitHub
+issues~\cite{runtimefaults,realfaults}. One finds tool faults
 and data-schema faults the two most frequent categories~\cite{runtimefaults}, the same two areas our harness tests. None of this
 work executes a server.
 

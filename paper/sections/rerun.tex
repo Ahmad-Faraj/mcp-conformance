@@ -50,6 +50,13 @@ Restricting attention to the servers this could affect, \NPySDKWas{} PyPI server
 attributed to a Python MCP SDK completed a handshake in July and \NPySDKNow{} do now.
 \PySDKLostCI{} of them stopped working, and no author changed anything.
 
+A census of the same registry's version history reports drift of another
+kind: servers that change what they advertise from one version to the
+next~\cite{mcpsilentdrift}. What we observe needs no new version at all. Each
+server here was launched at the version it declared in July, and what changed was
+what its dependency ranges resolved to. A registry that tracks version history, or a
+client that pins a server's version, sees no change and is still exposed to this one.
+
 \paragraph{What this run is and is not}
 It is not an independent census. It is the same frame re-probed, so it says nothing
 about servers published after July, and the \NGained{} recoveries are not a sample of
