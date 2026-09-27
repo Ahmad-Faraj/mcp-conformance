@@ -2,9 +2,12 @@
 
 `mcpprobe` installs Model Context Protocol (MCP) servers from a registry, runs
 each in an isolated sandbox, and drives it through a suite of protocol-conformance
-and robustness checks. It is the measurement harness behind the study *"Does Your
-MCP Server Actually Follow the Protocol? A Large-Scale Execution-Based Conformance
-Study of the Model Context Protocol Ecosystem."*
+and robustness checks. It is the measurement harness behind the paper *"Installed,
+Launched, Probed: An Execution-Based Conformance Census of the Model Context
+Protocol Registry"*, under review at Empirical Software Engineering.
+
+- Preprint: https://doi.org/10.5281/zenodo.22996025
+- Code and data archive: https://doi.org/10.5281/zenodo.22981443
 
 Where the official `modelcontextprotocol/conformance` suite tests the handful of
 official SDKs in CI, `mcpprobe` extends the same categories of scenarios to
