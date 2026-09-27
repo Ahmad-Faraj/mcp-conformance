@@ -37,6 +37,7 @@
 
 \input{../numbers}              % \Nframe, \Neligible, \Nprobed, ... (generated)
 \input{../validation_numbers}   % \ValKappa, \ValPrecision, ... (generated)
+\newcommand{\theauthor}{the author}
 \input{../comparison_numbers} % July against the September re-run (generated)
 \input{../disclosure_numbers}   % \NMalformedFixed, ... (generated)
 
@@ -114,14 +115,7 @@ disclosure}
 \backmatter
 
 \bmhead{Acknowledgements}
-Claude (Anthropic) is a generative AI system, and it was used extensively in this
-work, generating the text of every section of this paper. It wrote the measurement
-harness and the analysis code, including the code behind every figure, table and
-reported number. It also assisted with literature search, running the census and
-statistical analysis. Every reference and every claim attributed to a cited source
-was verified against that source, and every number is regenerated from the
-released data by the released scripts. No AI system is an author, and the authors
-take full responsibility for the content.
+The author conceived the study, made its design and interpretive decisions, and directed the writing. Claude (Anthropic), a generative AI system, used as Claude Opus 5 and Claude Opus 5.5, wrote the measurement harness and the analysis code, assisted with literature search, running the census and the statistical analysis, and drafted and edited the text under that direction. The interpretation and recommendations in the Discussion were written from answers the author supplied and were approved by the author. Every reference and every claim attributed to a cited source was checked against that source, and every number is regenerated from the released data by the released scripts. No AI system is an author, and the author takes full responsibility for the content.
 
 \section*{Declarations}
 
@@ -129,7 +123,7 @@ take full responsibility for the content.
 No funding was received for conducting this study.
 
 \bmhead{Competing interests}
-The authors declare no competing interests.
+The author declares no competing interests.
 
 \bmhead{Ethics approval}
 This study executes and measures publicly published software packages. It involves
@@ -153,10 +147,11 @@ resolves to the current version; the version this paper reports is
 \texttt{10.5281/zenodo.22981444}.
 
 \bmhead{Author contribution}
-The sole author designed the study, built the measurement harness and the analysis
-pipeline, ran the census, carried out the rating pass, handled the disclosure
-process and wrote the manuscript. The use of a generative AI system in that work is
-described under Acknowledgements.
+The sole author conceived and designed the study, directed the construction of the
+harness and the analysis pipeline, ran the census, carried out the rating pass,
+handled the disclosure process, and made the interpretive decisions in the
+manuscript. The use of a generative AI system is described in
+Section~\ref{sec:genai} and under Acknowledgements.
 
 \bibliography{../refs}
 

@@ -68,14 +68,20 @@ work.
 The lifecycle we measure is being retired. Revision 2026-07-28 drops the
 initialization handshake and negotiates a version on every request instead, with an
 optional \texttt{server/discover} call for clients that want to ask up
-front~\cite{mcpversioning}. Handshake-based behavior is now described as a backward
-compatibility concern. Our population sits well behind that boundary:
+front~\cite{mcpversioning}. Our population sits well behind that boundary:
 \PctVerOffered{} of responders settled on 2025-06-18, and \NVerDowngraded{} answered
-with something older still. This census records an installed base at the point its
-mechanism left the specification, and measures the distance between the two. A server
-published today inherits whichever default its SDK shipped with, and the revision that
-removes the handshake reaches those servers only when their authors upgrade, which the
-version spread here suggests is slow.
+with something older still.
+
+The revision did not wait for authors to adopt it. The official Python SDK released
+2.0.0 on the same day, implementing the new revision and renaming a class many servers
+import~\cite{pysdk200}, and that release is the one the September re-run found in the
+output of the servers it lost (Section~\ref{sec:rerun-top}). For a server that
+declared the SDK as a range, the new revision arrived as a dependency update its
+author never chose, and for most of those servers it arrived as a failure to start.
+The July census therefore records this ecosystem immediately before the revision
+reached it, and the re-run records its arrival. Behavior measured from now on reflects
+that transition, and the July census is the baseline against which it can be
+compared.
 
 \paragraph{Recommendations}
 The specification should accept SEP-2145, state it with an RFC-2119 keyword instead
