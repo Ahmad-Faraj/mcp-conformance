@@ -69,3 +69,6 @@ tools/flags.tsv
 tools/sentences.tsv
 tools/ngrams.txt
 tools/numbers.txt
+
+# Submission bundles are built by tools/make_submission.py, not tracked.
+dist/
