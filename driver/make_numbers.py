@@ -9,6 +9,7 @@ Usage:
 
 import argparse
 import json
+import sys
 import re
 from collections import Counter
 from pathlib import Path
@@ -69,6 +70,17 @@ def main():
     # the servers that ran a tool on an argument their own schema rejects.
     _sec = {("malformed-json", "fail"), ("stdout-purity", "fail"),
             ("tools-call-unknown", "fail"), ("tools-call-invalid-args", "fail")}
+    def _require(path):
+        """A companion the paper's macros read must exist.
+
+        Every one of these used to fall back to zero when its file was missing,
+        which made a clean clone print zero Go servers into the paper without an
+        error. Refuse instead, and say which file.
+        """
+        if not path.exists():
+            sys.exit(f"make_numbers: required input missing: {path}")
+        return path
+
     def _beside(census, name):
         """Find a companion file next to the census we were handed.
 
@@ -268,7 +280,7 @@ def main():
     # dependency and lands in the no-known-SDK residual whatever it is built on. A
     # maintainer demonstrated exactly this for the official Go SDK.
     n_opaque = n_go = 0
-    _lang_p = _beside(args.inp, "repo_languages.csv")
+    _lang_p = _require(_beside(args.inp, "repo_languages.csv"))
     if _lang_p.exists():
         with _lang_p.open(encoding="utf-8") as _f:
             _langs = list(_csv.DictReader(_f))
@@ -282,7 +294,7 @@ def main():
     # Identified by repository language rather than by dependency graph, because a Go
     # binary shipped through npm declares no MCP dependency at all.
     go_n = go_resp = go_malformed = go_unknown_proto = 0
-    _res_p = _beside(args.inp, "residual_languages.csv")
+    _res_p = _require(_beside(args.inp, "residual_languages.csv"))
     if _res_p.exists():
         with _res_p.open(encoding="utf-8") as _f:
             _go = [r["server"] for r in _csv.DictReader(_f) if r["language"] == "Go"]

@@ -24,6 +24,7 @@ data/release/*
 # Repository language per malformed-frame failure, which sizes the blind spot in
 # the dependency-graph SDK attribution.
 !data/release/repo_languages.csv
+!data/release/residual_languages.csv
 # The September re-run of the same frame, and the pinning experiment that
 # establishes what broke the servers it lost.
 !data/release/probe_census_sept.jsonl
