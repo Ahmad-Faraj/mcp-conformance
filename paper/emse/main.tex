@@ -58,30 +58,26 @@ Protocol Registry}
 \abstract{
 The Model Context Protocol (MCP) connects LLM agents to external tools, and public
 registries now list tens of thousands of MCP servers. Most empirical studies of this
-ecosystem are \emph{static}: they scan source code, mine issue trackers, or read
-registry metadata. None calls the tools of registry servers at scale to check whether
-the servers start and follow the protocol. This paper does. From the official registry
-(\Nframe{} unique servers) we run a complete census of all \Nattempted{} self-contained, locally-installable
-servers, each launched in an isolated sandbox. A conformance harness then sends each
-one an unknown tool name, an argument of the wrong type and a malformed protocol
-frame. Only \HandshakeRateCorr{} of installable
-servers start and complete a handshake. Of those that respond, \ErrAsResultRateCl{}
-report an unknown tool in a way that differs from the error reporting the
-specification illustrates, and an open proposal would make it the specified behavior.
-Another \SilentExecRateCl{} run a tool on an argument their own declared schema rejects and
-return an ordinary result, although the specification requires servers to validate
-all tool inputs; asked for top stories with a limit of \texttt{"not-a-number"}, one
-returned an empty feed. Both behaviors trace to SDK defaults rather than to server
-authors. Re-running the same frame sixty-nine days later shows how far that dependence
-reaches: a breaking release of the official Python SDK, published nine days after our
-snapshot, stopped \PySDKLostRate{} of the Python-SDK servers that had worked, and
-pinning the SDK below it restores them. Conformance among the servers that still ran
-did not change. We release the harness, its test suite and the disclosure-filtered
-dataset.}
+ecosystem are \emph{static}. None calls the tools of registry servers at scale to check
+whether the servers start and follow the protocol. This paper does. From the official
+registry (\Nframe{} unique servers) we run a complete census of all \Nattempted{}
+self-contained, locally-installable servers, each launched in an isolated sandbox. A
+conformance harness then sends each one an unknown tool name, an argument of the wrong
+type and a malformed protocol frame. Only \HandshakeRateCorr{} of installable servers
+start and complete a handshake. Of those that respond, \ErrAsResultRateCl{} report an
+unknown tool differently from the specification's illustration. Another
+\SilentExecRateCl{} run a tool on an argument their own declared schema rejects and
+return an ordinary result, although the specification requires servers to validate all
+tool inputs; asked for top stories with a limit of \texttt{"not-a-number"}, one returned
+an empty feed. Both behaviors trace to SDK defaults rather than to server authors. A
+re-run sixty-nine days later shows how far that dependence reaches: a breaking release
+of the official Python SDK, published nine days after our snapshot, stopped
+\PySDKLostRate{} of the Python-SDK servers that had worked, and pinning the SDK below it
+restores them. Conformance among the servers that still ran did not change. We release
+the harness and the disclosure-filtered dataset.}
 
-\keywords{Model Context Protocol, conformance testing, mining software
-repositories, software ecosystems, dependency management, LLM agents, responsible
-disclosure}
+\keywords{Model Context Protocol, conformance testing, software ecosystems,
+dependency management, LLM agents, mining software repositories}
 
 \maketitle
 
@@ -117,7 +113,7 @@ disclosure}
 \bmhead{Acknowledgements}
 The author conceived the study, made its design and interpretive decisions, and directed the writing. Claude (Anthropic), a generative AI system, used as Claude Opus 5 and Claude Opus 5.5, wrote the measurement harness and the analysis code, assisted with literature search, running the census and the statistical analysis, and drafted and edited the text under that direction. The interpretation and recommendations in the Discussion were written from answers the author supplied and were approved by the author. Every reference and every claim attributed to a cited source was checked against that source, and every number is regenerated from the released data by the released scripts. No AI system is an author, and the author takes full responsibility for the content.
 
-\section*{Declarations}
+\section*{Statements and Declarations}
 
 \bmhead{Funding}
 No funding was received for conducting this study.
